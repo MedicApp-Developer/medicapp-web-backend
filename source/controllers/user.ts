@@ -25,7 +25,7 @@ const register = (req: Request, res: Response, next: NextFunction) => {
         return makeResponse(res, 400, "Validation Failed", errors, true);
     }
     
-    let { firstName, lastName, email, password } = req.body;
+    let { email, password } = req.body;
 
     User.find({ email }).exec().then(user => {
         if(user.length > 0){
@@ -41,8 +41,6 @@ const register = (req: Request, res: Response, next: NextFunction) => {
             const _user = new User({
                 _id: new mongoose.Types.ObjectId(),
                 email,
-                firstName,
-                lastName,
                 password: hash
             });
 
@@ -95,23 +93,6 @@ const login = (req: Request, res: Response, next: NextFunction) => {
         })
 };
 
-const updateUserAddress = (req: Request, res: Response, next: NextFunction) => {
-    const { address1, address2, city, postalCode } = req.body;
-    const filter = {_id: req.params.userId};
-    const update = { address: {
-        address1,
-        address2,
-        city,
-        postalCode
-    }};
-    const options = { new: true };
-    User.findOneAndUpdate(filter, update, options).then(result => {
-        return makeResponse(res, 200, "User Address Updated", result, false);
-    }).catch(error => {
-        return makeResponse(res, 400, error.message, null, true);
-    })
-};
-
 const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
  User.find().select("-password").exec()
     .then(users => {
@@ -130,11 +111,49 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
+const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, role: string, referenceId: string) => {
+    await User.find({ email }).exec().then(user => {
+        if(user.length > 0){
+            return makeResponse(res, 400, "Email already exists", null, true);
+        }
+
+        // If email is valid
+        bcryptjs.hash(password, 10, (hashError, hash) => {
+            if(hashError){
+                return makeResponse(res, 400, hashError.message, null, true);
+            }
+
+            const _user = new User({
+                _id: new mongoose.Types.ObjectId(),
+                email,
+                password: hash,
+                role,
+                referenceId
+            });
+
+            return _user.save().then(user => {
+                return true
+            }).catch(error => {
+                return false
+            });
+        });
+    });
+}
+
+const deleteUserWithEmail = async (email: string) => {
+     User.deleteOne({ email }).then(user => {
+        return true;
+    }).catch(err => {
+        return false;
+    });
+}
+
 export default { 
     validateToken, 
     login, 
     register, 
     getAllUsers,
-    updateUserAddress,
-    deleteUser
+    deleteUser,
+    createUserFromEmailAndPassword,
+    deleteUserWithEmail
 };

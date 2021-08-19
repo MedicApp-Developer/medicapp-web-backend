@@ -35,8 +35,8 @@ const MONGO_OPTIONS = {
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME || "superuser";
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || "supersecretpasswords";
-const MONGO_HOST = process.env.MONGO_URL || 'mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-// mongodb://127.0.0.1:27017/starter-kit
+const MONGO_HOST = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/medicapp';
+// mongodb://127.0.0.1:27017/medicapp
 // mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 
 const MONGO = {

@@ -3,14 +3,6 @@ import IUser from '../interfaces/user';
 
 const UserSchema: Schema = new Schema(
     {
-        firstName: {
-            type: String,
-            required: true
-        },
-        lastName: {
-            type: String,
-            required: true
-        },
         email: {
             type: String,
             required: true
@@ -19,11 +11,13 @@ const UserSchema: Schema = new Schema(
             type: String,
             required: true
         },
-        address: {
-            address1: String,
-            address2: String,
-            city: String,
-            postalCode: String
+        role: {
+            type: String,
+            required: true
+        },
+        referenceId: {
+            type: String,
+            required: false
         }
     },
     {

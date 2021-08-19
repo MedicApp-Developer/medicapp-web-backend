@@ -5,6 +5,8 @@ import logging from './config/logging';
 import config from './config/config';
 import mongoose from 'mongoose';
 import userRoutes from './routes/user';
+import roleRoutes from './routes/role';
+import patientRoutes from './routes/patient';
 
 const NAMESPACE = 'Server';
 const router = express();
@@ -53,12 +55,15 @@ router.use(express.static("./source/images"));
 
 /** Routes go here */
 router.use('/api/users', userRoutes);
+router.use('/api/roles', roleRoutes);
+router.use('/api/patients', patientRoutes);
+
 // Simple Root Message
 router.get('/', (req, res) => {
     res.setHeader("Content-Type", "text/html");
     res.write("<html>");
-    res.write("<head><title>Welcome to R1 Mobile</title></head>");
-    res.write("<body><h4>Welcome to R1 Backend API's, Please use Postman Collection for respective API's</h4></body>");
+    res.write("<head><title>Welcome to Medicapp</title></head>");
+    res.write("<body><h4>Welcome to Medicapp Backend API's, Please use Postman Collection for respective API's</h4></body>");
     res.write("</html>");
     return res.end(); 
 });
