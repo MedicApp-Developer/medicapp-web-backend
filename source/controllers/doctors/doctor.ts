@@ -33,12 +33,17 @@ const createDoctor = async (req: Request, res: Response, next: NextFunction) => 
                     sendEmail(options);
                     
                     return newDoctor.save()
-                        .then(result => {
-                            if(UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.DOCTOR, result._id)){
-                                return makeResponse(res, 201, "Doctor Created Successfully", result, false);
-                            }else {
-                                return makeResponse(res, 201, "Something went wrong while creating Doctor", result, false);
-                            };
+                        .then(async result => {
+                            await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.DOCTOR, result._id)
+                            return makeResponse(res, 201, "Doctor Created Successfully", result, false);
+                            
+                            // TODO: Need to be fixed
+                            
+                            // if(){
+                            //     return makeResponse(res, 201, "Doctor Created Successfully", result, false);
+                            // }else {
+                            //     return makeResponse(res, 201, "Something went wrong while creating Doctor", result, false);
+                            // };
                         })
                         .catch(err => {
                             return makeResponse(res, 400, err.message, null, true);
@@ -89,11 +94,14 @@ const deleteDoctor = async (req: Request, res: Response, next: NextFunction) => 
     try {
         const doctor = await Doctor.findByIdAndDelete(_id);
     if (!doctor) return res.sendStatus(404);
-        if(UserController.deleteUserWithEmail(doctor.email)){
-            return makeResponse(res, 200, "Deleted Successfully", doctor, false);
-        }else {
-            return makeResponse(res, 400, "Error while deleting Doctor", null, true);
-        }
+        await UserController.deleteUserWithEmail(doctor.email);
+        return makeResponse(res, 200, "Deleted Successfully", doctor, false);
+        
+        // if(){
+        //     return makeResponse(res, 200, "Deleted Successfully", doctor, false);
+        // }else {
+        //     return makeResponse(res, 400, "Error while deleting Doctor", null, true);
+        // }
     } catch (e) {
         return res.sendStatus(400);
     }

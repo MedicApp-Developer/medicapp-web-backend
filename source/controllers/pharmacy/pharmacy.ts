@@ -22,12 +22,15 @@ const createPharmacy = async (req: Request, res: Response, next: NextFunction) =
                 });
                 
                 return newPharmacy.save()
-                    .then(result => {
-                        if(UserController.createUserFromEmailAndPassword(req, res, email, password, name, Roles.PHARMACY, result._id)){
-                            return makeResponse(res, 201, "Pharmacy Created Successfully", result, false);
-                        }else {
-                            return makeResponse(res, 201, "Something went wrong while creating Pharmacy", result, false);
-                        };
+                    .then(async result => {
+                        await UserController.createUserFromEmailAndPassword(req, res, email, password, name, Roles.PHARMACY, result._id)
+                        return makeResponse(res, 201, "Pharmacy Created Successfully", result, false);
+
+                        // if(){
+                        //     return makeResponse(res, 201, "Pharmacy Created Successfully", result, false);
+                        // }else {
+                        //     return makeResponse(res, 201, "Something went wrong while creating Pharmacy", result, false);
+                        // };
                     })
                     .catch(err => {
                         return makeResponse(res, 400, err.message, null, true);
@@ -78,11 +81,14 @@ const deletePharmacy = async (req: Request, res: Response, next: NextFunction) =
     try {
         const pharmacy = await Pharmacy.findByIdAndDelete(_id);
     if (!pharmacy) return res.sendStatus(404);
-        if(UserController.deleteUserWithEmail(pharmacy.email)){
-            return makeResponse(res, 200, "Deleted Successfully", pharmacy, false);
-        }else {
-            return makeResponse(res, 400, "Error while deleting Pharmacy", null, true);
-        }
+        await UserController.deleteUserWithEmail(pharmacy.email)
+        return makeResponse(res, 200, "Deleted Successfully", pharmacy, false);
+        
+        // if(){
+        //     return makeResponse(res, 200, "Deleted Successfully", pharmacy, false);
+        // }else {
+        //     return makeResponse(res, 400, "Error while deleting Pharmacy", null, true);
+        // }
     } catch (e) {
         return res.sendStatus(400);
     }

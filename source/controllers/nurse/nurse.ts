@@ -34,12 +34,15 @@ const createNurse = async (req: Request, res: Response, next: NextFunction) => {
                     sendEmail(options);
 
                     return newNurse.save()
-                        .then(result => {
-                            if(UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.NURSE, result._id)){
-                                return makeResponse(res, 201, "Nurse Created Successfully", result, false);
-                            }else {
-                                return makeResponse(res, 201, "Something went wrong while creating Nurse", result, false);
-                            };
+                        .then(async result => {
+                            await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.NURSE, result._id)
+                            return makeResponse(res, 201, "Nurse Created Successfully", result, false);
+                            
+                            // if(){
+                            //     return makeResponse(res, 201, "Nurse Created Successfully", result, false);
+                            // }else {
+                            //     return makeResponse(res, 201, "Something went wrong while creating Nurse", result, false);
+                            // };
                         })
                         .catch(err => {
                             return makeResponse(res, 400, err.message, null, true);
@@ -90,11 +93,14 @@ const deleteNurse = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const nurse = await Nurse.findByIdAndDelete(_id);
     if (!nurse) return res.sendStatus(404);
-        if(UserController.deleteUserWithEmail(nurse.email)){
-            return makeResponse(res, 200, "Deleted Successfully", nurse, false);
-        }else {
-            return makeResponse(res, 400, "Error while deleting Nurse", null, true);
-        }
+        await UserController.deleteUserWithEmail(nurse.email)
+        return makeResponse(res, 200, "Deleted Successfully", nurse, false);
+        
+        // if(){
+        //     return makeResponse(res, 200, "Deleted Successfully", nurse, false);
+        // }else {
+        //     return makeResponse(res, 400, "Error while deleting Nurse", null, true);
+        // }
     } catch (e) {
         return res.sendStatus(400);
     }

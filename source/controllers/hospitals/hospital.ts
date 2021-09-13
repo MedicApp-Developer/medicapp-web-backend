@@ -24,12 +24,15 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                 });
                 
                 return newHospital.save()
-                    .then(result => {
-                        if(UserController.createUserFromEmailAndPassword(req, res, email, password, name, Roles.HOSPITAL, result._id)){
-                            return makeResponse(res, 201, "Hospital Created Successfully", result, false);
-                        }else {
-                            return makeResponse(res, 201, "Something went wrong while creating Hospital", result, false);
-                        };
+                    .then(async result => {
+                        await UserController.createUserFromEmailAndPassword(req, res, email, password, name, Roles.HOSPITAL, result._id);
+                        return makeResponse(res, 201, "Hospital Created Successfully", result, false);
+                        
+                        // if(){
+                        //     return makeResponse(res, 201, "Hospital Created Successfully", result, false);
+                        // }else {
+                        //     return makeResponse(res, 201, "Something went wrong while creating Hospital", result, false);
+                        // };
                     })
                     .catch(err => {
                         return makeResponse(res, 400, err.message, null, true);
@@ -80,11 +83,14 @@ const deleteHospital = async (req: Request, res: Response, next: NextFunction) =
     try {
         const hospital = await Hospital.findByIdAndDelete(_id);
     if (!hospital) return res.sendStatus(404);
-        if(UserController.deleteUserWithEmail(hospital.email)){
-            return makeResponse(res, 200, "Deleted Successfully", Hospital, false);
-        }else {
-            return makeResponse(res, 400, "Error while deleting Hospital", null, true);
-        }
+        await UserController.deleteUserWithEmail(hospital.email);
+        return makeResponse(res, 200, "Deleted Successfully", Hospital, false);
+        
+        // if(){
+        //     return makeResponse(res, 200, "Deleted Successfully", Hospital, false);
+        // }else {
+        //     return makeResponse(res, 400, "Error while deleting Hospital", null, true);
+        // }
     } catch (e) {
         return res.sendStatus(400);
     }

@@ -34,12 +34,15 @@ const createLabortory = async (req: Request, res: Response, next: NextFunction) 
                     sendEmail(options);
 
                             return newLabortory.save()
-                                .then(result => {
-                                    if(UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName ,Roles.LABORTORY, result._id)){
-                                        return makeResponse(res, 201, "Labortory Created Successfully", result, false);
-                                    }else {
-                                        return makeResponse(res, 201, "Something went wrong while creating Labortory", result, false);
-                                    };
+                                .then(async result => {
+                                    await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName ,Roles.LABORTORY, result._id)
+                                    return makeResponse(res, 201, "Labortory Created Successfully", result, false);
+                                    
+                                    // if(){
+                                    //     return makeResponse(res, 201, "Labortory Created Successfully", result, false);
+                                    // }else {
+                                    //     return makeResponse(res, 201, "Something went wrong while creating Labortory", result, false);
+                                    // };
                                 })
                                 .catch(err => {
                                     return makeResponse(res, 400, err.message, null, true);
@@ -90,11 +93,12 @@ const deleteLabortory = async (req: Request, res: Response, next: NextFunction) 
     try {
         const labortory = await Labortory.findByIdAndDelete(_id);
     if (!labortory) return res.sendStatus(404);
-        if(UserController.deleteUserWithEmail(labortory.email)){
-            return makeResponse(res, 200, "Deleted Successfully", labortory, false);
-        }else {
-            return makeResponse(res, 400, "Error while deleting Labortory", null, true);
-        }
+        await UserController.deleteUserWithEmail(labortory.email)
+        // if(){
+        //     return makeResponse(res, 200, "Deleted Successfully", labortory, false);
+        // }else {
+        //     return makeResponse(res, 400, "Error while deleting Labortory", null, true);
+        // }
     } catch (e) {
         return res.sendStatus(400);
     }

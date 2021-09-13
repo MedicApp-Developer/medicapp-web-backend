@@ -114,13 +114,13 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
 const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, name: string, role: string, referenceId: string) => {
     await User.find({ email }).exec().then(user => {
         if(user.length > 0){
-            return makeResponse(res, 400, "Email already exists", null, true);
+            return false;
         }
 
         // If email is valid
         bcryptjs.hash(password, 10, (hashError, hash) => {
             if(hashError){
-                return makeResponse(res, 400, hashError.message, null, true);
+                return false;
             }
 
             const _user = new User({
