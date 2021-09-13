@@ -36,11 +36,11 @@ const MONGO_OPTIONS = {
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME || "superuser";
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || "supersecretpasswords";
-const MONGO_HOST = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/medicapp';
+const MONGO_HOST = process.env.MONGO_URL || 'mongodb+srv://Usama123:Usama123@cluster0.jgcrk.mongodb.net/Cluster0?retryWrites=true&w=majority';
 const NODEMAILER_USER = process.env.NODEMAILER_USER || "usamafarooq2007@gmail.com";
 const NODEMAILER_PASS = process.env.NODEMAILER_PASS || "03157721671"
 // mongodb://127.0.0.1:27017/medicapp
-// mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+// mongodb+srv://Usama123:Usama123@cluster0.jgcrk.mongodb.net/Cluster0?retryWrites=true&w=majority
 
 const MONGO = {
     host: MONGO_HOST,
@@ -61,7 +61,7 @@ const config = {
     mailer: NODEMAILER
 };
 
-// Note: Application URL: https://secret-cove-54253.herokuapp.com
+// Note: Application URL: https://sheltered-depths-86378.herokuapp.com
 // Local URL: http://localhost:1337
 
 export default config;
