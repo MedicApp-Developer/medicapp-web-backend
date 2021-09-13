@@ -18,12 +18,15 @@ const createPatient = (req: Request, res: Response, next: NextFunction) => {
         }); 
 
         return newPatient.save()
-            .then(result => {
-                if(UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.PATIENT, result._id)){
-                    return makeResponse(res, 201, "Patient Created Successfully", result, false);
-                }else {
-                    return makeResponse(res, 201, "Something went wrong while creating patient", result, false);
-                };
+            .then(async result => {
+                await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.PATIENT, result._id)
+                return makeResponse(res, 201, "Patient Created Successfully", result, false);
+                
+                // if(){
+                //     return makeResponse(res, 201, "Patient Created Successfully", result, false);
+                // }else {
+                //     return makeResponse(res, 201, "Something went wrong while creating patient", result, false);
+                // };
             })
             .catch(err => {
                 return makeResponse(res, 400, err.message, null, true);
@@ -70,11 +73,14 @@ const deletePatient = async (req: Request, res: Response, next: NextFunction) =>
     try {
         const patient = await Patient.findByIdAndDelete(_id);
     if (!patient) return res.sendStatus(404);
-        if(UserController.deleteUserWithEmail(patient.email)){
-            return makeResponse(res, 200, "Deleted Successfully", patient, false);
-        }else {
-            return makeResponse(res, 400, "Error while deleting patient", null, true);
-        }
+        await UserController.deleteUserWithEmail(patient.email)
+        return makeResponse(res, 200, "Deleted Successfully", patient, false);
+        
+        // if(){
+        //     return makeResponse(res, 200, "Deleted Successfully", patient, false);
+        // }else {
+        //     return makeResponse(res, 400, "Error while deleting patient", null, true);
+        // }
     } catch (e) {
         return res.sendStatus(400);
     }

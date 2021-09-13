@@ -35,7 +35,7 @@ const signJWT = (user: IUser, callback: (error: Error | null, token: string | nu
                 }
             }
         )
-    }catch(error){
+    }catch(error: any){
         logging.error(NAMESPACE, error.message, error);
         callback(error, null);
     }
