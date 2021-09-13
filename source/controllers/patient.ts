@@ -4,20 +4,22 @@ import Patient from '../models/patient';
 import makeResponse from '../functions/makeResponse';
 import UserController from '../controllers/user';
 import { Roles } from '../constants/roles';
+import config from '../config/config';
 
 const NAMESPACE = "Patient";
 
 const createPatient = (req: Request, res: Response, next: NextFunction) => {
     const { email, password, firstName, lastName, birthday, gender, emiratesId, location } = req.body;
-    if(email && password && firstName && lastName && birthday && gender && emiratesId && location ){
+    if(req && req.file && req.file.filename && email && password && firstName && lastName && birthday && gender && emiratesId && location ){
         const newPatient = new Patient({
             _id: new mongoose.Types.ObjectId(),
-            email, firstName, lastName, birthday, gender, emiratesId, location
+            email, firstName, lastName, birthday, gender, emiratesId, location,
+            emiratesIdFile: config.server.APP_URL + "/" + (( req && req.file && req.file.filename ) ? req.file.filename : "")
         }); 
 
         return newPatient.save()
             .then(result => {
-                if(UserController.createUserFromEmailAndPassword(req, res, email, password, Roles.PATIENT, result._id)){
+                if(UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.PATIENT, result._id)){
                     return makeResponse(res, 201, "Patient Created Successfully", result, false);
                 }else {
                     return makeResponse(res, 201, "Something went wrong while creating patient", result, false);

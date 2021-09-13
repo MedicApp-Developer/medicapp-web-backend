@@ -1,9 +1,13 @@
 import mongoose, { Schema } from 'mongoose';
-import IUser from '../interfaces/user';
+import INurse from '../../interfaces/nurse/nurse';
 
-const UserSchema: Schema = new Schema(
+const NurseSchema: Schema = new Schema(
     {
-        name: {
+        firstName: {
+            type: String,
+            required: true
+        },
+        lastName: {
             type: String,
             required: true
         },
@@ -11,17 +15,14 @@ const UserSchema: Schema = new Schema(
             type: String,
             required: true
         },
-        password: { 
+        mobile: {
             type: String,
             required: true
         },
-        role: {
-            type: String,
-            required: true
-        },
-        referenceId: {
-            type: String,
-            required: false
+        hospitalId: {
+            type: Schema.Types.ObjectId,
+            ref: "Hospital",
+            index: false
         }
     },
     {
@@ -29,4 +30,4 @@ const UserSchema: Schema = new Schema(
     }
 );
 
-export default mongoose.model<IUser>('User', UserSchema);
+export default mongoose.model<INurse>('Nurse', NurseSchema);

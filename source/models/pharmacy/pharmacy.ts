@@ -1,13 +1,17 @@
 import mongoose, { Schema } from 'mongoose';
-import IHospital from '../interfaces/hospital';
+import IPharmacy from '../../interfaces/pharmacy/pharmacy';
 
-const HospitalSchema: Schema = new Schema(
+const PharmacySchema: Schema = new Schema(
     {
         name: {
             type: String,
             required: true
         },
-        tradeLicenseNo: { 
+        email: {
+            type: String,
+            required: true
+        },
+        tradeLicenseNo: {
             type: String,
             required: true
         },
@@ -19,12 +23,12 @@ const HospitalSchema: Schema = new Schema(
             type: String,
             required: true
         },
-        tradeLicense: {
+        tradeLicenseFile: {
             type: String,
             required: true
         },
-        location: {
-            type: String,
+        noOfBranches: {
+            type: Number,
             required: true
         }
     },
@@ -33,4 +37,4 @@ const HospitalSchema: Schema = new Schema(
     }
 );
 
-export default mongoose.model<IHospital>('Hospital', HospitalSchema);
+export default mongoose.model<IPharmacy>('Pharmacy', PharmacySchema);

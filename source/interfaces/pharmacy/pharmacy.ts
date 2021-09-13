@@ -1,10 +1,11 @@
 import { Document } from 'mongoose';
 
-export default interface IHospital extends Document {
+export default interface IPharmacy extends Document {
     name: string;
+    email: string;
     tradeLicenseNo: string;
     issueDate: string;
     expiryDate: string;
-    tradeLicense: string;
-    location: string;
+    tradeLicenseFile: string;
+    noOfBranches: number;
 }

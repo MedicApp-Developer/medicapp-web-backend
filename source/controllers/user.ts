@@ -69,18 +69,18 @@ const login = (req: Request, res: Response, next: NextFunction) => {
         .exec()
         .then(users => {
             if(users.length !== 1){
-                return makeResponse(res, 401, "Unauthorized", null, true);
+                return makeResponse(res, 400, "Unauthorized", null, true);
             }
 
             bcryptjs.compare(password, users[0].password, (error, result) => {
                 if(!result){
-                    return makeResponse(res, 401, "Unauthorized", null, true);
+                    return makeResponse(res, 400, "Unauthorized", null, true);
                 }else if(result){
                     signJWT(users[0], (_error, token) => {
                         if(_error){
                             logging.error(NAMESPACE, 'Unable to sign token: ', _error);
                             
-                            return makeResponse(res, 401, "Unauthorized", null, true);
+                            return makeResponse(res, 400, "Unauthorized", null, true);
 
                         }else if(token){
                             return makeResponse(res, 200, "Authentication Successful", {user: users[0], token: token}, false);
@@ -111,7 +111,7 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, role: string, referenceId: string) => {
+const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, name: string, role: string, referenceId: string) => {
     await User.find({ email }).exec().then(user => {
         if(user.length > 0){
             return makeResponse(res, 400, "Email already exists", null, true);
@@ -125,6 +125,7 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
 
             const _user = new User({
                 _id: new mongoose.Types.ObjectId(),
+                name,
                 email,
                 password: hash,
                 role,

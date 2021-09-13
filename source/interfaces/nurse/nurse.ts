@@ -1,9 +1,9 @@
 import { Document } from 'mongoose';
 
-export default interface IUser extends Document {
+export default interface INurse extends Document {
     firstName: string;
     lastName: string;
     email: string;
-    password: string;
-    role: string;
+    mobile: string;
+    hospitalId: string;
 }

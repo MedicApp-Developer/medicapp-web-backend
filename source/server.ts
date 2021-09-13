@@ -5,8 +5,16 @@ import logging from './config/logging';
 import config from './config/config';
 import mongoose from 'mongoose';
 import userRoutes from './routes/user';
-import roleRoutes from './routes/role';
 import patientRoutes from './routes/patient';
+import hospitalRoutes from './routes/hospitals/hospital';
+import categoryRoutes from './routes/category';
+import servicesRoutes from './routes/hospitals/services';
+import doctorRoutes from './routes/doctors/doctor';
+import nurseRoutes from './routes/nurse/nurse';
+import labortoryRoutes from './routes/labortories/labortory';
+import appointmentRoutes from './routes/appointments';
+import pharmacyRoutes from './routes/pharmacy/pharmacy';
+import branchRoutes from './routes/pharmacy/branch';
 
 const NAMESPACE = 'Server';
 const router = express();
@@ -55,8 +63,16 @@ router.use(express.static("./source/images"));
 
 /** Routes go here */
 router.use('/api/users', userRoutes);
-router.use('/api/roles', roleRoutes);
 router.use('/api/patients', patientRoutes);
+router.use('/api/hospitals', hospitalRoutes);
+router.use('/api/categories', categoryRoutes);
+router.use('/api/hospitals/services', servicesRoutes);
+router.use('/api/doctors', doctorRoutes);
+router.use('/api/nurse', nurseRoutes);
+router.use('/api/labortories', labortoryRoutes);
+router.use('/api/appointments', appointmentRoutes);
+router.use('/api/pharmacy', pharmacyRoutes);
+router.use('/api/pharmacy/branch', branchRoutes);
 
 // Simple Root Message
 router.get('/', (req, res) => {

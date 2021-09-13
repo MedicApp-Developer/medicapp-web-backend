@@ -2,21 +2,24 @@ import { Request, Response, NextFunction } from 'express';
 import logging from '../config/logging';
 import jwt from 'jsonwebtoken';
 import config from '../config/config';
+import { Roles } from '../constants/roles';
 import makeResponse from '../functions/makeResponse';
 
-const NAMESPACE = "Auth";
+const NAMESPACE = "IsHospital";
 
-const extractJWT = (req: Request, res: Response, next: NextFunction) => {
+const isHospital = (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, 'Validating Token');
-
+    
     let token = req.headers.authorization?.split(" ")[1];
     if(token){
-        jwt.verify(token, config.server.token.secret, (error, decoded) => {
+        jwt.verify(token, config.server.token.secret, (error, decoded: any) => {
             if(error){
                 return makeResponse(res, 404, error.message, error, true);
-            }else {
+            }else if(decoded?.role === Roles.HOSPITAL){
                 res.locals.jwt = decoded;
                 next();
+            }else {
+                return makeResponse(res, 404, "Only Hospital Admins can perform this task", null, true);
             }
         });
     }else {
@@ -26,4 +29,4 @@ const extractJWT = (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-export default extractJWT;
+export default isHospital;

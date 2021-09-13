@@ -10,3 +10,4 @@ certs/**/*
 *.orig.*
 
 package-lock.json
+todo.txt
