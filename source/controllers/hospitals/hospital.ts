@@ -121,13 +121,16 @@ const uploadHospitalImages = async (req: Request, res: Response, next: NextFunct
     const { id } = req.params;
     const images:any = [];
     
-    if(req?.files?.length > 0){
-        Array(req.files).forEach(f => {
-            Object.values(f).forEach(image => {
-                images.push(config.server.APP_URL + "/" + image.filename);
-            });        
-        });
-    }
+    // TODO: Need to be fixed: Gives error on build time:  Object is possibly 'undefined'
+    // if(req?.files?.length > 0){
+    //     Array(req.files).forEach(f => {
+    //         if(f){
+    //             Object.values(f).forEach(image => {
+    //                 images.push(config.server.APP_URL + "/" + image.filename);
+    //             });
+    //         }       
+    //     });
+    // }
 
     const filter = { _id: id };
     let update = { $push: { images } };
