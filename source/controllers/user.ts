@@ -118,7 +118,7 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
         }
 
         // If email is valid
-        bcryptjs.hash(password, 10, (hashError, hash) => {
+        bcryptjs.hash(password, 10, async (hashError, hash) => {
             if(hashError){
                 return false;
             }
@@ -132,17 +132,31 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
                 referenceId
             });
 
-            return _user.save().then(user => {
-                return true
-            }).catch(error => {
-                return false
-            });
+            return await _user.save();
         });
     });
 }
 
 const deleteUserWithEmail = async (email: string) => {
      User.deleteOne({ email }).then(user => {
+        return true;
+    }).catch(err => {
+        return false;
+    });
+}
+
+const updateUser = async (req: Request, res: Response, id: string, user: any) => {
+    
+    let update = {...req.body};
+
+    if(req.body.password) {
+        const hash = await bcryptjs.hash(user.password, 10);
+        update = { ...update, password: hash }
+    }else {
+        delete update.password;
+    }
+
+    User.findOneAndUpdate({_id: id}, { ...update }).then(updatedHospital => {
         return true;
     }).catch(err => {
         return false;
@@ -156,5 +170,6 @@ export default {
     getAllUsers,
     deleteUser,
     createUserFromEmailAndPassword,
-    deleteUserWithEmail
+    deleteUserWithEmail,
+    updateUser
 };

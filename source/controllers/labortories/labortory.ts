@@ -8,6 +8,8 @@ import { Roles } from '../../constants/roles';
 import { getRandomPassword } from '../../functions/utilities';
 import config from '../../config/config';
 import { sendEmail } from '../../functions/mailer';
+import { Pagination } from '../../constants/pagination';
+import Doctor from '../../models/doctors/doctor';
 
 const NAMESPACE = "Labortory";
 
@@ -21,7 +23,7 @@ const createLabortory = async (req: Request, res: Response, next: NextFunction) 
                 if(email && password && firstName && lastName && mobile){
                             const newLabortory = new Labortory({
                                 _id: new mongoose.Types.ObjectId(),
-                                email, firstName, lastName, mobile, hospitalId: res.locals.jwt._id
+                                email, firstName, lastName, mobile, hospitalId: res.locals.jwt.reference_id
                             }); 
 
                     const options = {
@@ -56,10 +58,15 @@ const createLabortory = async (req: Request, res: Response, next: NextFunction) 
         })
 };
 
-const getAllLabortories = (req: Request, res: Response, next: NextFunction) => {
-    Labortory.find({ hospitalId: res.locals.jwt._id })
+const getAllLabortories = async (req: Request, res: Response, next: NextFunction) => {
+    // @ts-ignore
+    const page = parseInt(req.query.page || "0");
+
+    const total = await Labortory.find({ hospitalId: res.locals.jwt.reference_id }).countDocuments({});
+
+    Labortory.find({ hospitalId: res.locals.jwt.reference_id }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
         .then(result => {
-            return makeResponse(res, 200, "All Labortories", result, false);
+            return makeResponse(res, 200, "All Labortories", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), labs: result}, false);
         })
         .catch(err => {
             return makeResponse(res, 400, err.message, null, true);
@@ -94,11 +101,7 @@ const deleteLabortory = async (req: Request, res: Response, next: NextFunction) 
         const labortory = await Labortory.findByIdAndDelete(_id);
     if (!labortory) return res.sendStatus(404);
         await UserController.deleteUserWithEmail(labortory.email)
-        // if(){
-        //     return makeResponse(res, 200, "Deleted Successfully", labortory, false);
-        // }else {
-        //     return makeResponse(res, 400, "Error while deleting Labortory", null, true);
-        // }
+        return makeResponse(res, 200, "Deleted Successfully", labortory, false);
     } catch (e) {
         return res.sendStatus(400);
     }
@@ -106,21 +109,26 @@ const deleteLabortory = async (req: Request, res: Response, next: NextFunction) 
 
 const searchLabortory = async (req: Request, res: Response, next: NextFunction) => {
     const { searchedText } = req.params;
+    // @ts-ignore
+    const page = parseInt(req.query.page || "0");
 
-    // Regex 
+    // Regex
     const searchedTextRegex = new RegExp(searchedText, 'i');
 
     const searchQuery = [
-        { firstName: searchedTextRegex }, 
+        { firstName: searchedTextRegex },
         { lastName: searchedTextRegex },
         { email: searchedTextRegex },
-        { mobile: searchedTextRegex } 
+        { mobile: searchedTextRegex }
     ]
 
-    Labortory.find({$or: searchQuery}).then(result => {
-        return makeResponse(res, 200, "Search Results", result, false);
-    }).catch(err => {
-        return makeResponse(res, 400, "Error while searching Labortory", null, true);
+    const total = await Labortory.find({$and: [{$or: searchQuery}, {hospitalId :  res.locals.jwt.reference_id }]}).countDocuments({});
+
+    Labortory.find({$and: [{$or: searchQuery}, {hospitalId:  res.locals.jwt.reference_id }]}).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+        .then(result => {
+            return makeResponse(res, 200, "Search Results", {searchedText, totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), labs: result}, false);
+        }).catch(err => {
+        return makeResponse(res, 400, "No labs found", null, true);
     });
 
 };

@@ -8,6 +8,7 @@ import { Roles } from '../../constants/roles';
 import { getRandomPassword } from '../../functions/utilities';
 import config from '../../config/config';
 import { sendEmail } from '../../functions/mailer';
+import { Pagination } from '../../constants/pagination';
 
 const NAMESPACE = "Doctor";
 
@@ -21,7 +22,7 @@ const createNurse = async (req: Request, res: Response, next: NextFunction) => {
                 if(email && firstName && lastName && mobile){
                     const newNurse = new Nurse({
                         _id: new mongoose.Types.ObjectId(),
-                        email, firstName, lastName, mobile, hospitalId: res.locals.jwt._id
+                        email, firstName, lastName, mobile, hospitalId: res.locals.jwt.reference_id
                     }); 
 
                     const options = {
@@ -56,10 +57,15 @@ const createNurse = async (req: Request, res: Response, next: NextFunction) => {
         })
 };
 
-const getAllNurses = (req: Request, res: Response, next: NextFunction) => {
-    Nurse.find({ hospitalId: res.locals.jwt._id })
+const getAllNurses = async (req: Request, res: Response, next: NextFunction) => {
+    // @ts-ignore
+    const page = parseInt(req.query.page || "0");
+
+    const total = await Nurse.find({ hospitalId: res.locals.jwt.reference_id }).countDocuments({});
+
+    Nurse.find({ hospitalId: res.locals.jwt.reference_id }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
         .then(result => {
-            return makeResponse(res, 200, "All Nurses", result, false);
+            return makeResponse(res, 200, "All Nurses", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), nurses: result}, false);
         })
         .catch(err => {
             return makeResponse(res, 400, err.message, null, true);
@@ -76,16 +82,25 @@ const getSingleNurse = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const updateNurse = (req: Request, res: Response, next: NextFunction) => {
+    const { _id } = res.locals.jwt;
+
+    // This id is updated nurse itself id 
     const { id } = req.params;
 
-    const filter = { _id: id };
-    let update = {...req.body};
+    const update = JSON.parse(JSON.stringify({...req.body}));
+0
+    update.password && delete update.password;
 
+    const filter = { _id: id };
+
+    UserController.updateUser(req, res, _id, req.body);
+    
     Nurse.findOneAndUpdate(filter, update).then(updatedNurse => {
         return makeResponse(res, 200, "Nurse updated Successfully", updatedNurse, false);
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true);
     });
+
 };
 
 const deleteNurse = async (req: Request, res: Response, next: NextFunction) => {
@@ -108,6 +123,8 @@ const deleteNurse = async (req: Request, res: Response, next: NextFunction) => {
 
 const searchNurse = async (req: Request, res: Response, next: NextFunction) => {
     const { searchedText } = req.params;
+    // @ts-ignore
+    const page = parseInt(req.query.page || "0");
 
     // Regex 
     const searchedTextRegex = new RegExp(searchedText, 'i');
@@ -119,10 +136,20 @@ const searchNurse = async (req: Request, res: Response, next: NextFunction) => {
         { mobile: searchedTextRegex } 
     ]
 
-    Nurse.find({$or: searchQuery}).then(result => {
-        return makeResponse(res, 200, "Search Results", result, false);
+    const query = {
+        $and: [
+            { hospitalId:  res.locals.jwt.reference_id },
+            { $or:  searchQuery},
+        ]
+    };
+    
+    const total = await Nurse.find(query).countDocuments({});
+
+    Nurse.find(query).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+    .then(result => {
+        return makeResponse(res, 200, "Search Results", {searchedText, totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), nurses: result}, false);
     }).catch(err => {
-        return makeResponse(res, 400, "Error while searching Nurse", null, true);
+        return makeResponse(res, 400, "No doctor found", null, true);
     });
 
 };

@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/validate', extractJWT,controller.validateToken);
 router.post('/register', controller.register);
 router.post('/login', controller.login);
-router.get('/get/all', controller.getAllUsers);
+router.get('/get/all',extractJWT, controller.getAllUsers);
 router.delete('/delete/:id',extractJWT, controller.deleteUser);
 
 export = router;

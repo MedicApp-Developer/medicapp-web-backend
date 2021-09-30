@@ -17,19 +17,19 @@ const PatientSchema: Schema = new Schema(
         },
         birthday: {
             type: String,
-            required: true
+            required: false
         },
         gender: {
             type: String,
-            required: true
+            required: false
         },
         emiratesIdFile: {
             type: String,
-            required: true
+            required: false
         },
         location: {
             type: String,
-            required: true
+            required: false
         },
         age: {
             type: Number,
@@ -68,6 +68,10 @@ const PatientSchema: Schema = new Schema(
             required: false
         },
         temprature: {
+            type: String,
+            required: false
+        },
+        glucose: {
             type: String,
             required: false
         }

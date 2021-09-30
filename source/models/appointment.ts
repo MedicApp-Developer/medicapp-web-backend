@@ -16,6 +16,11 @@ const AppointmentSchema: Schema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Patient",
             index: false
+        },
+        hospitalId: {
+            type: Schema.Types.ObjectId,
+            ref: "Hospital",
+            index: false
         }
     }
 );

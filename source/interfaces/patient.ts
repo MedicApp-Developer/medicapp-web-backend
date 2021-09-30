@@ -18,4 +18,5 @@ export default interface IPatient extends Document {
     age: number;
     temprature: string;
     heartRate: string;
+    doctors?: string;
 }

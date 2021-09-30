@@ -6,9 +6,9 @@ import makeResponse from '../functions/makeResponse';
 const NAMESPACE = "Appointment";
 
 const createAppointment = (req: Request, res: Response, next: NextFunction) => {
-     const { time, doctorId, patientId } = req.body;
+     const { time, doctorId, patientId, hospitalId } = req.body;
 
-     const newAppointment = new Appointment({ time, doctorId, patientId });
+     const newAppointment = new Appointment({ time, doctorId, patientId, hospitalId });
      newAppointment.save().then(result => {
         return makeResponse(res, 201, "Appointment Created Successfully", result, false);
      })
@@ -64,10 +64,49 @@ const deleteAppointment = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+export const createAppointmentByNurse = (req: Request, res: Response, next: NextFunction, time: string, doctorId: string, patientId: string, hospitalId: string) => {
+    
+    const newAppointment = new Appointment({ time, doctorId, patientId, hospitalId });
+    newAppointment.save().then(result => {
+       return true;
+    })
+    .catch(err => {
+       return false;
+    });
+
+};
+
+export const getHospitalAppointments = (req: Request, res: Response, next: NextFunction) => {
+    const { hospitalId } = req.params;
+    
+    Appointment.find({hospitalId})
+        .populate("doctorId")
+        .populate("patientId")
+        .then(appointments => {
+            return makeResponse(res, 200, "Hospital Appointments", appointments, false);
+        }).catch(err => {
+            return res.sendStatus(400);
+        })
+};
+
+export const getDoctorAppointments = (req: Request, res: Response, next: NextFunction) => {
+    const { doctorId } = req.params;
+    
+    Appointment.find({doctorId})
+        .populate("patientId")
+        .then(appointments => {
+            return makeResponse(res, 200, "Doctor Appointments", appointments, false);
+        }).catch(err => {
+            return res.sendStatus(400);
+        })
+}
+
 export default { 
     createAppointment, 
     getAllAppointments,
     getSingleAppointment,
     updateAppointment,
-    deleteAppointment
+    deleteAppointment,
+    getHospitalAppointments,
+    getDoctorAppointments
 };

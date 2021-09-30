@@ -66,11 +66,20 @@ const getSingleHospital = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const updateHospital = (req: Request, res: Response, next: NextFunction) => {
+    // This _id is Hospital User ID
+    const { _id } = res.locals.jwt;
+
+    // This id is updated hospital itself id 
     const { id } = req.params;
 
-    const filter = { _id: id };
-    let update = {...req.body};
+    const update = JSON.parse(JSON.stringify({...req.body}));
 
+    update.password && delete update.password;
+
+    const filter = { _id: id };
+
+    UserController.updateUser(req, res, _id, req.body);
+    
     Hospital.findOneAndUpdate(filter, update).then(updatedHospital => {
         return makeResponse(res, 200, "Hospital updated Successfully", updatedHospital, false);
     }).catch(err => {
@@ -119,24 +128,13 @@ const searchHospital = async (req: Request, res: Response, next: NextFunction) =
 
 const uploadHospitalImages = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const images:any = [];
-    
-    // TODO: Need to be fixed: Gives error on build time:  Object is possibly 'undefined'
-    // if(req?.files?.length > 0){
-    //     Array(req.files).forEach(f => {
-    //         if(f){
-    //             Object.values(f).forEach(image => {
-    //                 images.push(config.server.APP_URL + "/" + image.filename);
-    //             });
-    //         }       
-    //     });
-    // }
 
     const filter = { _id: id };
-    let update = { $push: { images } };
+
+    let update = { $push: { images: [config.server.APP_URL + "/" + (( req && req.file && req.file.filename ) ? req.file.filename : "")] } };
 
     Hospital.update(filter, update).then(updatedHospital => {
-        return makeResponse(res, 200, "Hospital images uploaded Successfully", updatedHospital, false);
+        return makeResponse(res, 200, "Hospital image uploaded Successfully", updatedHospital, false);
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true);
     });

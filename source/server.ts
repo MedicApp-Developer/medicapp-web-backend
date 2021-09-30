@@ -15,6 +15,7 @@ import labortoryRoutes from './routes/labortories/labortory';
 import appointmentRoutes from './routes/appointments';
 import pharmacyRoutes from './routes/pharmacy/pharmacy';
 import branchRoutes from './routes/pharmacy/branch';
+import cors from 'cors';
 
 const NAMESPACE = 'Server';
 const router = express();
@@ -43,6 +44,7 @@ router.use((req, res, next) => {
 /** Parse the body of the request */
 router.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 router.use(bodyParser.json({ limit: '50mb' }));
+// router.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 
 /** Rules of our API */
 router.use((req, res, next) => {

@@ -23,6 +23,7 @@ const getAllServices = (req: Request, res: Response, next: NextFunction) => {
             return makeResponse(res, 200, "All Servicess", result, false);
         })
         .catch(err => {
+            console.log("Result => ", err);
             return makeResponse(res, 400, err.message, null, true);
         })
 };
