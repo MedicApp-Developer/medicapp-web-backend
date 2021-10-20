@@ -7,7 +7,8 @@
     "dev": "SET PORT=5000 && ts-node-dev source/server.ts",
     "start": "export NODE_ENV=production && ts-node source/server.ts",
     "local": "nodemon source/server.ts",
-    "run-pm2": "HTTPS=true NODE_ENV=development ts-node-dev --inspect --respawn source/server.ts"
+    "build": "rimraf build && tsc -p tsconfig.json",
+    "run-pm2": "pm2 start build/server.js --watch -i max"
   },
   "author": "",
   "license": "ISC",
