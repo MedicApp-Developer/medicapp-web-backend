@@ -8,8 +8,8 @@ import isNurse from '../middleware/isNurse';
 
 const router = express.Router();
 
-router.get('/', isHospitalOrNurse,controller.getAllPatients);
-router.get('/:id', isHospitalOrNurse,controller.getSinglePatient);
+router.get('/', extractJWT,controller.getAllPatients);
+router.get('/:id', extractJWT,controller.getSinglePatient);
 router.post('/', isHospitalOrNurse, controller.createPatient);
 // router.post('/', [ isHospitalOrNurse, upload.single("emiratesIdFile") ] ,controller.createPatient);
 router.put('/:id',isHospitalOrNurse, controller.updatePatient);

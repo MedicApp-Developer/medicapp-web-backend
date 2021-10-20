@@ -62,15 +62,26 @@ const getAllLabortories = async (req: Request, res: Response, next: NextFunction
     // @ts-ignore
     const page = parseInt(req.query.page || "0");
 
-    const total = await Labortory.find({ hospitalId: res.locals.jwt.reference_id }).countDocuments({});
-
-    Labortory.find({ hospitalId: res.locals.jwt.reference_id }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+    if(req.query.getAll){
+        // @ts-ignore
+        Labortory.find({ hospitalId: req.query.hospitalId })
         .then(result => {
-            return makeResponse(res, 200, "All Labortories", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), labs: result}, false);
+            return makeResponse(res, 200, "All Labortories", {labs: result}, false);
         })
         .catch(err => {
             return makeResponse(res, 400, err.message, null, true);
-        })
+        })    
+    }else {
+        const total = await Labortory.find({ hospitalId: res.locals.jwt.reference_id }).countDocuments({});
+
+        Labortory.find({ hospitalId: res.locals.jwt.reference_id }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+            .then(result => {
+                return makeResponse(res, 200, "All Labortories", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), labs: result}, false);
+            })
+            .catch(err => {
+                return makeResponse(res, 400, err.message, null, true);
+            })
+    }
 };
 
 const getSingleLabortory = (req: Request, res: Response, next: NextFunction) => {
@@ -83,13 +94,21 @@ const getSingleLabortory = (req: Request, res: Response, next: NextFunction) => 
 };
 
 const updateLabortory = (req: Request, res: Response, next: NextFunction) => {
+    const { _id } = res.locals.jwt;
+    
+    // This id is updated hospital itself id 
     const { id } = req.params;
 
-    const filter = { _id: id };
-    let update = {...req.body};
+    const update = JSON.parse(JSON.stringify({...req.body}));
 
-    Labortory.findOneAndUpdate(filter, update).then(updatedLabortory => {
-        return makeResponse(res, 200, "Labortory updated Successfully", updatedLabortory, false);
+    update.password && delete update.password;
+
+    const filter = { _id: id };
+
+    UserController.updateUser(req, res, _id, req.body);
+    
+    Labortory.findOneAndUpdate(filter, update).then(updatedLab => {
+        return makeResponse(res, 200, "Laboratory updated Successfully", updatedLab, false);
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true);
     });

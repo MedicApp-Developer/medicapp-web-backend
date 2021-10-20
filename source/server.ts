@@ -1,5 +1,7 @@
+// @ts-nocheck
 import http from 'http';
 import bodyParser from 'body-parser';
+// @ts-ignore
 import express from 'express';
 import logging from './config/logging';
 import config from './config/config';
@@ -15,7 +17,7 @@ import labortoryRoutes from './routes/labortories/labortory';
 import appointmentRoutes from './routes/appointments';
 import pharmacyRoutes from './routes/pharmacy/pharmacy';
 import branchRoutes from './routes/pharmacy/branch';
-import cors from 'cors';
+import labRequestRoutes from './routes/labortories/labRequest';
 
 const NAMESPACE = 'Server';
 const router = express();
@@ -75,6 +77,7 @@ router.use('/api/labortories', labortoryRoutes);
 router.use('/api/appointments', appointmentRoutes);
 router.use('/api/pharmacy', pharmacyRoutes);
 router.use('/api/pharmacy/branch', branchRoutes);
+router.use('/api/labRequests', labRequestRoutes);
 
 // Simple Root Message
 router.get('/', (req, res) => {

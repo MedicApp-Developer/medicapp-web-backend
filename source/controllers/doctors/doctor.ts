@@ -92,7 +92,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 const getSingleDoctor = (req: Request, res: Response, next: NextFunction) => {
-    Doctor.findById({ _id: req.params.id })
+    Doctor.findById({ _id: req.params.id }).populate('hospitalId')
     .then(data => {
         return makeResponse(res, 200, "Doctor", data, false);
     }).catch(err => {
@@ -101,11 +101,19 @@ const getSingleDoctor = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const updateDoctor = (req: Request, res: Response, next: NextFunction) => {
+    const { _id } = res.locals.jwt;
+
+    // This id is updated hospital itself id 
     const { id } = req.params;
 
-    const filter = { _id: id };
-    let update = {...req.body};
+    const update = JSON.parse(JSON.stringify({...req.body}));
 
+    update.password && delete update.password;
+
+    const filter = { _id: id };
+
+    UserController.updateUser(req, res, _id, req.body);
+    
     Doctor.findOneAndUpdate(filter, update).then(updatedDoctor => {
         return makeResponse(res, 200, "Doctor updated Successfully", updatedDoctor, false);
     }).catch(err => {

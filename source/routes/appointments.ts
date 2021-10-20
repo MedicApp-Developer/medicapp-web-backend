@@ -2,6 +2,7 @@ import express from 'express';
 import controller from '../controllers/appointments';
 import extractJWT from '../middleware/extractJWT';
 import isHospital from '../middleware/isHospital';
+import isHospitalOrDoctor from '../middleware/isHospitalOrDoctor';
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.post('/', controller.createAppointment);
 router.put('/:id',extractJWT, controller.updateAppointment);
 router.delete('/:id',extractJWT, controller.deleteAppointment);
 router.get('/hospitalAppointments/:hospitalId', isHospital, controller.getHospitalAppointments)
-router.get('/doctorAppointments/:doctorId', isHospital, controller.getDoctorAppointments);
+router.get('/doctorAppointments/:doctorId', isHospitalOrDoctor, controller.getDoctorAppointments);
 // Get todays appointments
 
 export = router;

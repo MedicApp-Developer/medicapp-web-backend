@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Appointment from '../models/appointment';
 import makeResponse from '../functions/makeResponse';
+import { Pagination } from '../constants/pagination';
 
 const NAMESPACE = "Appointment";
 
@@ -89,13 +90,19 @@ export const getHospitalAppointments = (req: Request, res: Response, next: NextF
         })
 };
 
-export const getDoctorAppointments = (req: Request, res: Response, next: NextFunction) => {
+export const getDoctorAppointments = async (req: Request, res: Response, next: NextFunction) => {
     const { doctorId } = req.params;
-    
+    // @ts-ignore
+    const page = parseInt(req.query.page || "0");
+    const total = await Appointment.find({doctorId}).countDocuments({});
+
     Appointment.find({doctorId})
         .populate("patientId")
+        .populate("doctorId")
+        .limit(Pagination.PAGE_SIZE)
+        .skip(Pagination.PAGE_SIZE * page)
         .then(appointments => {
-            return makeResponse(res, 200, "Doctor Appointments", appointments, false);
+            return makeResponse(res, 200, "Doctor Appointments", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), appointments}, false);
         }).catch(err => {
             return res.sendStatus(400);
         })

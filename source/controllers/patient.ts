@@ -86,8 +86,8 @@ const createPatientFromNurse = async (req: Request, res: Response, next: NextFun
 }
 
 const getAllPatients = async (req: Request, res: Response, next: NextFunction) => {
-
-    const { role, reference_id } = res.locals.jwt;
+    const { role, reference_id, _id } = res.locals.jwt;
+    
     // @ts-ignore
     const page = parseInt(req.query.page || "0");
 
@@ -100,18 +100,32 @@ const getAllPatients = async (req: Request, res: Response, next: NextFunction) =
         const hospital: any  = await Hospital.findById(reference_id);
         hospitalId = hospital._id;
     }
-    const total = await Appointment.find({ hospitalId }).countDocuments({});
 
-    Appointment.find({ hospitalId }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page).populate('patientId')
-        .then(result => {
-            const patients = result.map(item => ( item.patientId ))
+    if(role === Roles.DOCTOR){
+        const total = await Appointment.find({ doctorId: reference_id }).countDocuments({});
 
-            return makeResponse(res, 200, "All Patients", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), patients }, false);
-        })
-        .catch(err => {
-            return makeResponse(res, 400, err.message, null, true);
-        })
+        Appointment.find({ doctorId: reference_id }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page).populate('patientId')
+            .then(result => {
+                const patients = result.map(item => ( item.patientId ))
+    
+                return makeResponse(res, 200, "All Patients", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), patients }, false);
+            })
+            .catch(err => {
+                return makeResponse(res, 400, err.message, null, true);
+            })
+    }else {
+        const total = await Appointment.find({ hospitalId }).countDocuments({});
 
+        Appointment.find({ hospitalId }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page).populate('patientId')
+            .then(result => {
+                const patients = result.map(item => ( item.patientId ))
+
+                return makeResponse(res, 200, "All Patients", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), patients }, false);
+            })
+            .catch(err => {
+                return makeResponse(res, 400, err.message, null, true);
+            })    
+    }
 };
 
 const getSinglePatient = async (req: Request, res: Response, next: NextFunction) => {
