@@ -23,7 +23,7 @@ import cors from 'cors'
 const NAMESPACE = 'Server';
 const router = express();
 
-app.use(cors())
+router.use(cors())
 
 /** Connect to MONGO **/ 
 mongoose.connect(config.mongo.url, config.mongo.options)
