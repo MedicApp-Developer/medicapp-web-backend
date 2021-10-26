@@ -18,9 +18,12 @@ import appointmentRoutes from './routes/appointments';
 import pharmacyRoutes from './routes/pharmacy/pharmacy';
 import branchRoutes from './routes/pharmacy/branch';
 import labRequestRoutes from './routes/labortories/labRequest';
+import cors from 'cors'
 
 const NAMESPACE = 'Server';
 const router = express();
+
+app.use(cors())
 
 /** Connect to MONGO **/ 
 mongoose.connect(config.mongo.url, config.mongo.options)
