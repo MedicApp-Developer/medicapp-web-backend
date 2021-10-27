@@ -42,12 +42,23 @@ const NODEMAILER_PASS = process.env.NODEMAILER_PASS || "03157721671"
 // mongodb://127.0.0.1:27017/medicapp
 // mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority
 
+// AWS S3 Bucket
+const ACCESSKEYID = "AKIA3KPUHOWAFWNQKVFH";
+const SECRETACCESSKEY = "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";
+const BUCKET_NAME = "medicapp-bucket";
+
 const MONGO = {
     host: MONGO_HOST,
     username: MONGO_USERNAME,
     password: MONGO_PASSWORD,
     options: MONGO_OPTIONS,
     url: MONGO_HOST
+}
+
+const BUCKET = {
+    name: BUCKET_NAME,
+    accessKeyId: ACCESSKEYID,
+    secretAccessKey: SECRETACCESSKEY
 }
 
 const NODEMAILER = {
@@ -58,7 +69,8 @@ const NODEMAILER = {
 const config = {
     server: SERVER,
     mongo: MONGO,
-    mailer: NODEMAILER
+    mailer: NODEMAILER,
+    bucket: BUCKET
 };
 
 // Note: Application URL: https://sheltered-depths-86378.herokuapp.com

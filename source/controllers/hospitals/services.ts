@@ -55,7 +55,7 @@ const deleteService = async (req: Request, res: Response, next: NextFunction) =>
     try {
         const services = await Services.findByIdAndDelete(_id);
     if (!services) return res.sendStatus(404);
-        return makeResponse(res, 200, "Deleted Successfully", Services, false);
+        return makeResponse(res, 200, "Deleted Successfully", services, false);
     } catch (e) {
         return res.sendStatus(400);
     }

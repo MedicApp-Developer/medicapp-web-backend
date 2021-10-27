@@ -18,6 +18,7 @@ import appointmentRoutes from './routes/appointments';
 import pharmacyRoutes from './routes/pharmacy/pharmacy';
 import branchRoutes from './routes/pharmacy/branch';
 import labRequestRoutes from './routes/labortories/labRequest';
+import promoVideoRoutes from './routes/hospitals/promos';
 import cors from 'cors'
 
 const NAMESPACE = 'Server';
@@ -32,17 +33,6 @@ mongoose.connect(config.mongo.url, config.mongo.options)
     }).catch(error => {
         logging.error(NAMESPACE, error.message, error);
     });
-
-    router.use(function(req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        if ('OPTIONS' == req.method) {
-           res.sendStatus(200);
-         }
-         else {
-           next();
-         }});
 
 /** Log the request */
 router.use((req, res, next) => {
@@ -79,6 +69,9 @@ router.use((req, res, next) => {
 router.use(express.static("./source/images"));
 // Note:- Simply save ( req.file/files.filename ) into the database and then get the file with URL:- http://localhost:1337/filename
 
+router.use( bodyParser.urlencoded({ extended: true, limit: "100mb", parameterLimit: 10000000 }));
+router.use( bodyParser.json({ limit: "50mb", extended: true }));
+
 /** Routes go here */
 router.use('/api/users', userRoutes);
 router.use('/api/patients', patientRoutes);
@@ -92,6 +85,7 @@ router.use('/api/appointments', appointmentRoutes);
 router.use('/api/pharmacy', pharmacyRoutes);
 router.use('/api/pharmacy/branch', branchRoutes);
 router.use('/api/labRequests', labRequestRoutes);
+router.use('/api/promos', promoVideoRoutes);
 
 // Simple Root Message
 router.get('/', (req, res) => {
