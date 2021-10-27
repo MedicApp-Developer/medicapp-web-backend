@@ -14,4 +14,3 @@ yarn.lock
 # NPM
 package-lock.json
 *.zip
-dist
