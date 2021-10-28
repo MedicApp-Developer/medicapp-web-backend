@@ -95,8 +95,8 @@ router.use(function (req, res, next) {
     });
 });
 var options = {
-    key: fs_1.default.readFileSync('./certs/server-key.pem'),
-    cert: fs_1.default.readFileSync('./certs/server-cert.pem'),
+    key: fs_1.default.readFileSync('../certs/server-key.pem'),
+    cert: fs_1.default.readFileSync('../certs/server-cert.pem'),
 };
 var httpServer = https_1.default.createServer(options, router);
 httpServer.listen(config_1.default.server.port, function () { return logging_1.default.info(NAMESPACE, "Server is running " + config_1.default.server.hostname + ":" + config_1.default.server.port); });
