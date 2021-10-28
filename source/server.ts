@@ -109,8 +109,8 @@ router.use((req, res, next) => {
 });
 
 var options = {
-    key: fs.readFileSync('./certs/server-key.pem'),
-    cert: fs.readFileSync('./certs/server-cert.pem'),
+    key: fs.readFileSync('../certs/server-key.pem'),
+    cert: fs.readFileSync('../certs/server-cert.pem'),
 };
 
 const httpServer = https.createServer(options,router);
