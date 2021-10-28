@@ -1,8 +1,6 @@
 // @ts-nocheck
 import http from 'http';
-import https from 'https';
 import bodyParser from 'body-parser';
-import fs from 'fs';
 // @ts-ignore
 import express from 'express';
 import logging from './config/logging';
@@ -108,11 +106,6 @@ router.use((req, res, next) => {
     });
 });
 
-var options = {
-    key: fs.readFileSync('../certs/server-key.pem'),
-    cert: fs.readFileSync('../certs/server-cert.pem'),
-};
-
-const httpServer = https.createServer(options,router);
+const httpServer = http.createServer(router);
 
 httpServer.listen(config.server.port, () => logging.info(NAMESPACE, `Server is running ${config.server.hostname}:${config.server.port}`));
