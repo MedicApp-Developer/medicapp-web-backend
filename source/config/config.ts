@@ -4,7 +4,7 @@ dotenv.config();
 
 /*** Server ***/ 
 const SERVER_HOSTNAME = process.env.SERVER_HOSTNAME || 'localhost';
-const SERVER_PORT = process.env.PORT || 1337;
+const SERVER_PORT = process.env.PORT || 8080;
 const SERVER_TOKEN_EXPIRETIME = process.env.SERVER_TOKEN_EXPIRETIME || 3600;
 const SERVER_TOKEN_ISSUER = process.env.SERVER_TOKEN_ISSUER || "coolIssuer";
 const SERVER_TOKEN_SECRET = process.env.SERVER_TOKEN_SECRET || "superencryptedsecret";

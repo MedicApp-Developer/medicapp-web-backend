@@ -7,7 +7,7 @@ var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 /*** Server ***/
 var SERVER_HOSTNAME = process.env.SERVER_HOSTNAME || 'localhost';
-var SERVER_PORT = process.env.PORT || 1337;
+var SERVER_PORT = process.env.PORT || 8080;
 var SERVER_TOKEN_EXPIRETIME = process.env.SERVER_TOKEN_EXPIRETIME || 3600;
 var SERVER_TOKEN_ISSUER = process.env.SERVER_TOKEN_ISSUER || "coolIssuer";
 var SERVER_TOKEN_SECRET = process.env.SERVER_TOKEN_SECRET || "superencryptedsecret";
