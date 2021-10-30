@@ -35,7 +35,7 @@ var MONGO_OPTIONS = {
 };
 var MONGO_USERNAME = process.env.MONGO_USERNAME || "superuser";
 var MONGO_PASSWORD = process.env.MONGO_PASSWORD || "supersecretpasswords";
-var MONGO_HOST = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/medicapp';
+var MONGO_HOST = process.env.MONGO_URL || 'mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority';
 var NODEMAILER_USER = process.env.NODEMAILER_USER || "usamafarooq2007@gmail.com";
 var NODEMAILER_PASS = process.env.NODEMAILER_PASS || "03157721671";
 // mongodb://127.0.0.1:27017/medicapp
