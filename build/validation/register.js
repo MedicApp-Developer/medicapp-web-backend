@@ -8,11 +8,11 @@ var is_empty_1 = __importDefault(require("is-empty"));
 var validateRegisterInput = function (data) {
     var errors = {};
     // Convert empty fields to an empty string so we can use validator functions
-    data.firstName = !is_empty_1.default(data.firstName) ? data.firstName : "";
-    data.lastName = !is_empty_1.default(data.lastName) ? data.lastName : "";
-    data.email = !is_empty_1.default(data.email) ? data.email : "";
-    data.password = !is_empty_1.default(data.password) ? data.password : "";
-    data.password2 = !is_empty_1.default(data.password2) ? data.password2 : "";
+    data.firstName = !(0, is_empty_1.default)(data.firstName) ? data.firstName : "";
+    data.lastName = !(0, is_empty_1.default)(data.lastName) ? data.lastName : "";
+    data.email = !(0, is_empty_1.default)(data.email) ? data.email : "";
+    data.password = !(0, is_empty_1.default)(data.password) ? data.password : "";
+    data.password2 = !(0, is_empty_1.default)(data.password2) ? data.password2 : "";
     // firstName checks
     if (validator_1.default.isEmpty(data.firstName)) {
         errors.firstName = "firstName field is required";
@@ -42,7 +42,7 @@ var validateRegisterInput = function (data) {
     }
     return {
         errors: errors,
-        isValid: is_empty_1.default(errors),
+        isValid: (0, is_empty_1.default)(errors),
     };
 };
 exports.default = validateRegisterInput;

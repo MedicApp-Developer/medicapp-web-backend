@@ -7,6 +7,7 @@ import { uploadsOnlyVideo } from '../../functions/uploadS3';
 const NAMESPACE = "Promos";
 
 const createPromo = (req: Request, res: Response, next: NextFunction) => {
+    console.log("Uploading File...");
     uploadsOnlyVideo(req, res, async (error: any) => {
         if (error) {
           res.json({ error: error });
@@ -31,10 +32,10 @@ const createPromo = (req: Request, res: Response, next: NextFunction) => {
             });
 
            await newPromo.save()
-              .then((video) => {
+              .then((video: any) => {
                 return makeResponse(res, 201, "Promo video uploaded successfully", video, false);
               })
-              .catch((err) => {
+              .catch((err: any) => {
                 res.status(400).json({
                   statusCode: 400,
                   message: "Update Failed",
@@ -53,10 +54,10 @@ const getAllPromos = async (req: Request, res: Response, next: NextFunction) => 
     const total = await Promos.find({ hospitalId: res.locals.jwt.reference_id }).countDocuments({});
 
     Promos.find({ hospitalId: res.locals.jwt.reference_id }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
-        .then(result => {
+        .then((result: any) => {
             return makeResponse(res, 200, "All Promo Videos", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), videos: result}, false);
         })
-        .catch(err => {
+        .catch((err: any) => {
             return makeResponse(res, 400, err.message, null, true);
         })
 };

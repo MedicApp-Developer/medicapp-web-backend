@@ -26,8 +26,8 @@ var labRequest_1 = __importDefault(require("./routes/labortories/labRequest"));
 var promos_1 = __importDefault(require("./routes/hospitals/promos"));
 var cors_1 = __importDefault(require("cors"));
 var NAMESPACE = 'Server';
-var router = express_1.default();
-router.use(cors_1.default());
+var router = (0, express_1.default)();
+router.use((0, cors_1.default)());
 /** Connect to MONGO **/
 mongoose_1.default.connect(config_1.default.mongo.url, config_1.default.mongo.options)
     .then(function (result) {

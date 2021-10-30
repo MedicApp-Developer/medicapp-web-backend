@@ -67,20 +67,20 @@ var validateToken = function (req, res, next) {
 };
 var register = function (req, res, next) {
     // Form validation
-    var _a = register_1.default(req.body), errors = _a.errors, isValid = _a.isValid;
+    var _a = (0, register_1.default)(req.body), errors = _a.errors, isValid = _a.isValid;
     // Check validation
     if (!isValid) {
-        return makeResponse_1.default(res, 400, "Validation Failed", errors, true);
+        return (0, makeResponse_1.default)(res, 400, "Validation Failed", errors, true);
     }
     var _b = req.body, email = _b.email, password = _b.password;
     user_1.default.find({ email: email }).exec().then(function (user) {
         if (user.length > 0) {
-            return makeResponse_1.default(res, 400, "Email already exists", null, true);
+            return (0, makeResponse_1.default)(res, 400, "Email already exists", null, true);
         }
         // If email is valid
         bcryptjs_1.default.hash(password, 10, function (hashError, hash) {
             if (hashError) {
-                return makeResponse_1.default(res, 400, hashError.message, null, true);
+                return (0, makeResponse_1.default)(res, 400, hashError.message, null, true);
             }
             var _user = new user_1.default({
                 _id: new mongoose_1.default.Types.ObjectId(),
@@ -88,61 +88,61 @@ var register = function (req, res, next) {
                 password: hash
             });
             return _user.save().then(function (user) {
-                return makeResponse_1.default(res, 201, "User Registered Successfully", user, false);
+                return (0, makeResponse_1.default)(res, 201, "User Registered Successfully", user, false);
             }).catch(function (error) {
-                return makeResponse_1.default(res, 400, error.message, null, true);
+                return (0, makeResponse_1.default)(res, 400, error.message, null, true);
             });
         });
     });
 };
 var login = function (req, res, next) {
     // Form validation
-    var _a = login_1.default(req.body), errors = _a.errors, isValid = _a.isValid;
+    var _a = (0, login_1.default)(req.body), errors = _a.errors, isValid = _a.isValid;
     // Check validation
     if (!isValid) {
-        return makeResponse_1.default(res, 400, "Validation Failed", errors, true);
+        return (0, makeResponse_1.default)(res, 400, "Validation Failed", errors, true);
     }
     var _b = req.body, email = _b.email, password = _b.password;
     user_1.default.find({ email: email })
         .exec()
         .then(function (users) {
         if (users.length !== 1) {
-            return makeResponse_1.default(res, 400, "Unauthorized", null, true);
+            return (0, makeResponse_1.default)(res, 400, "Unauthorized", null, true);
         }
         bcryptjs_1.default.compare(password, users[0].password, function (error, result) {
             if (!result) {
-                return makeResponse_1.default(res, 400, "Unauthorized", null, true);
+                return (0, makeResponse_1.default)(res, 400, "Unauthorized", null, true);
             }
             else if (result) {
-                signJWT_1.default(users[0], function (_error, token) {
+                (0, signJWT_1.default)(users[0], function (_error, token) {
                     if (_error) {
                         logging_1.default.error(NAMESPACE, 'Unable to sign token: ', _error);
-                        return makeResponse_1.default(res, 400, "Unauthorized", null, true);
+                        return (0, makeResponse_1.default)(res, 400, "Unauthorized", null, true);
                     }
                     else if (token) {
-                        return makeResponse_1.default(res, 200, "Authentication Successful", { user: users[0], token: token }, false);
+                        return (0, makeResponse_1.default)(res, 200, "Authentication Successful", { user: users[0], token: token }, false);
                     }
                 });
             }
         });
     }).catch(function (error) {
-        return makeResponse_1.default(res, 400, error.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, error.message, null, true);
     });
 };
 var getAllUsers = function (req, res, next) {
     user_1.default.find().select("-password").exec()
         .then(function (users) {
-        return makeResponse_1.default(res, 200, "Users List", users, false);
+        return (0, makeResponse_1.default)(res, 200, "Users List", users, false);
     })
         .catch(function (error) {
-        return makeResponse_1.default(res, 400, error.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, error.message, null, true);
     });
 };
 var deleteUser = function (req, res, next) {
     user_1.default.deleteOne({ _id: req.params.id }).then(function (user) {
-        return makeResponse_1.default(res, 200, "User Deleted Successfully", null, false);
+        return (0, makeResponse_1.default)(res, 200, "User Deleted Successfully", null, false);
     }).catch(function (err) {
-        return makeResponse_1.default(res, 400, err.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
 var createUserFromEmailAndPassword = function (req, res, email, password, name, role, referenceId) { return __awaiter(void 0, void 0, void 0, function () {

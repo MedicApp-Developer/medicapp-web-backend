@@ -67,13 +67,17 @@ var createNurse = function (req, res, next) { return __awaiter(void 0, void 0, v
         switch (_b.label) {
             case 0:
                 _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile;
-                password = utilities_1.getRandomPassword();
+                password = (0, utilities_1.getRandomPassword)();
                 return [4 /*yield*/, user_1.default.find({ email: email }).then(function (result) {
                         if (result.length === 0) {
                             if (email && firstName && lastName && mobile) {
                                 var newNurse = new nurse_1.default({
                                     _id: new mongoose_1.default.Types.ObjectId(),
-                                    email: email, firstName: firstName, lastName: lastName, mobile: mobile, hospitalId: res.locals.jwt.reference_id
+                                    email: email,
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    mobile: mobile,
+                                    hospitalId: res.locals.jwt.reference_id
                                 });
                                 var options = {
                                     from: config_1.default.mailer.user,
@@ -81,7 +85,7 @@ var createNurse = function (req, res, next) { return __awaiter(void 0, void 0, v
                                     subject: "Welcome to Medicapp",
                                     text: "Your account account has been created as a nurse, and your password is " + password
                                 };
-                                mailer_1.sendEmail(options);
+                                (0, mailer_1.sendEmail)(options);
                                 return newNurse.save()
                                     .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
@@ -89,20 +93,20 @@ var createNurse = function (req, res, next) { return __awaiter(void 0, void 0, v
                                             case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, roles_1.Roles.NURSE, result._id)];
                                             case 1:
                                                 _a.sent();
-                                                return [2 /*return*/, makeResponse_1.default(res, 201, "Nurse Created Successfully", result, false)];
+                                                return [2 /*return*/, (0, makeResponse_1.default)(res, 201, "Nurse Created Successfully", result, false)];
                                         }
                                     });
                                 }); })
                                     .catch(function (err) {
-                                    return makeResponse_1.default(res, 400, err.message, null, true);
+                                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
                                 });
                             }
                             else {
-                                return makeResponse_1.default(res, 400, "Validation Failed", null, true);
+                                return (0, makeResponse_1.default)(res, 400, "Validation Failed", null, true);
                             }
                         }
                         else {
-                            return makeResponse_1.default(res, 400, "Email already exists", null, true);
+                            return (0, makeResponse_1.default)(res, 400, "Email already exists", null, true);
                         }
                     })];
             case 1:
@@ -122,10 +126,10 @@ var getAllNurses = function (req, res, next) { return __awaiter(void 0, void 0, 
                 total = _a.sent();
                 nurse_1.default.find({ hospitalId: res.locals.jwt.reference_id }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
-                    return makeResponse_1.default(res, 200, "All Nurses", { totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), nurses: result }, false);
+                    return (0, makeResponse_1.default)(res, 200, "All Nurses", { totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), nurses: result }, false);
                 })
                     .catch(function (err) {
-                    return makeResponse_1.default(res, 400, err.message, null, true);
+                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
                 });
                 return [2 /*return*/];
         }
@@ -134,9 +138,9 @@ var getAllNurses = function (req, res, next) { return __awaiter(void 0, void 0, 
 var getSingleNurse = function (req, res, next) {
     nurse_1.default.findById({ _id: req.params.id })
         .then(function (data) {
-        return makeResponse_1.default(res, 200, "Nurse", data, false);
+        return (0, makeResponse_1.default)(res, 200, "Nurse", data, false);
     }).catch(function (err) {
-        return makeResponse_1.default(res, 400, err.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
 var updateNurse = function (req, res, next) {
@@ -149,9 +153,9 @@ var updateNurse = function (req, res, next) {
     var filter = { _id: id };
     user_2.default.updateUser(req, res, _id, req.body);
     nurse_1.default.findOneAndUpdate(filter, update).then(function (updatedNurse) {
-        return makeResponse_1.default(res, 200, "Nurse updated Successfully", updatedNurse, false);
+        return (0, makeResponse_1.default)(res, 200, "Nurse updated Successfully", updatedNurse, false);
     }).catch(function (err) {
-        return makeResponse_1.default(res, 400, err.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
 var deleteNurse = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -171,7 +175,7 @@ var deleteNurse = function (req, res, next) { return __awaiter(void 0, void 0, v
                 return [4 /*yield*/, user_2.default.deleteUserWithEmail(nurse.email)];
             case 3:
                 _a.sent();
-                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", nurse, false)];
+                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", nurse, false)];
             case 4:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];
@@ -204,9 +208,9 @@ var searchNurse = function (req, res, next) { return __awaiter(void 0, void 0, v
                 total = _a.sent();
                 nurse_1.default.find(query).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
-                    return makeResponse_1.default(res, 200, "Search Results", { searchedText: searchedText, totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), nurses: result }, false);
+                    return (0, makeResponse_1.default)(res, 200, "Search Results", { searchedText: searchedText, totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), nurses: result }, false);
                 }).catch(function (err) {
-                    return makeResponse_1.default(res, 400, "No doctor found", null, true);
+                    return (0, makeResponse_1.default)(res, 400, "No doctor found", null, true);
                 });
                 return [2 /*return*/];
         }
