@@ -45,7 +45,6 @@ var pagination_1 = require("../../constants/pagination");
 var uploadS3_1 = require("../../functions/uploadS3");
 var NAMESPACE = "Promos";
 var createPromo = function (req, res, next) {
-    console.log("Uploading File...");
     (0, uploadS3_1.uploadsOnlyVideo)(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
         var newPromo;
         return __generator(this, function (_a) {
@@ -58,7 +57,6 @@ var createPromo = function (req, res, next) {
                     if (!(req.file === undefined)) return [3 /*break*/, 2];
                     return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "No File Selected", null, true)];
                 case 2:
-                    console.log("file => ", req.file);
                     newPromo = new promo_1.default({
                         // @ts-ignore
                         url: req.file.location,

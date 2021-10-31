@@ -7,13 +7,14 @@ import UserController from '../user';
 import { Roles } from '../../constants/roles';
 import { HospitalType } from '../../constants/hospital';
 import config from '../../config/config';
+import { uploadsOnlyVideo } from '../../functions/uploadS3';
 
 const NAMESPACE = "Hospital";
 
 const createHospital = async (req: Request, res: Response, next: NextFunction) => {
     const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location } = req.body;
     
-    await User.find({ email }).then(result => {
+    await User.find({ email }).then((result: any) => {
         if(result.length === 0){
             if(req && req.file && req.file.filename && email && phoneNo && password && name && tradeLicenseNo && issueDate && expiryDate && location ){
                 const newHospital = new Hospital({
@@ -24,7 +25,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                 });
                 
                 return newHospital.save()
-                    .then(async result => {
+                    .then(async (result: any) => {
                         await UserController.createUserFromEmailAndPassword(req, res, email, password, name, Roles.HOSPITAL, result._id);
                         return makeResponse(res, 201, "Hospital Created Successfully", result, false);
                         
@@ -34,7 +35,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                         //     return makeResponse(res, 201, "Something went wrong while creating Hospital", result, false);
                         // };
                     })
-                    .catch(err => {
+                    .catch((err: any) => {
                         return makeResponse(res, 400, err.message, null, true);
                     });
             }else {
@@ -48,19 +49,19 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
     Hospital.find({})
-        .then(result => {
+        .then((result: any) => {
             return makeResponse(res, 200, "All Hospitals", result, false);
         })
-        .catch(err => {
+        .catch((err: any) => {
             return makeResponse(res, 400, err.message, null, true);
         })
 };
 
 const getSingleHospital = (req: Request, res: Response, next: NextFunction) => {
     Hospital.findById({ _id: req.params.id })
-    .then(data => {
+    .then((data: any) => {
         return makeResponse(res, 200, "Hospital", data, false);
-    }).catch(err => {
+    }).catch((err: any) => {
         return makeResponse(res, 400, err.message, null, true);
     })
 };
@@ -80,9 +81,9 @@ const updateHospital = (req: Request, res: Response, next: NextFunction) => {
 
     UserController.updateUser(req, res, _id, req.body);
     
-    Hospital.findOneAndUpdate(filter, update).then(updatedHospital => {
+    Hospital.findOneAndUpdate(filter, update).then((updatedHospital: any) => {
         return makeResponse(res, 200, "Hospital updated Successfully", updatedHospital, false);
-    }).catch(err => {
+    }).catch((err: any) => {
         return makeResponse(res, 400, err.message, null, true);
     });
 };
@@ -120,24 +121,36 @@ const searchHospital = async (req: Request, res: Response, next: NextFunction) =
 
     Hospital.find({$or: searchQuery}).then(result => {
         return makeResponse(res, 200, "Search Results", result, false);
-    }).catch(err => {
+    }).catch((err: any) => {
         return makeResponse(res, 400, "Error while searching hospital", null, true);
     });
 
 };
 
 const uploadHospitalImages = async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    uploadsOnlyVideo(req, res, async (error: any) => {
+        if (error) {
+          res.json({ error: error });
+          return makeResponse(res, 400, "Error in uploading image", null, true);
+        } else {
+          if (req.file === undefined) {
+            return makeResponse(res, 400, "No File Selected", null, true);
+          } else {
+            const { id } = req.params;
 
-    const filter = { _id: id };
-
-    let update = { $push: { images: [config.server.APP_URL + "/" + (( req && req.file && req.file.filename ) ? req.file.filename : "")] } };
-
-    Hospital.update(filter, update).then(updatedHospital => {
-        return makeResponse(res, 200, "Hospital image uploaded Successfully", updatedHospital, false);
-    }).catch(err => {
-        return makeResponse(res, 400, err.message, null, true);
-    });
+            const filter = { _id: id };
+            
+            // @ts-ignore
+            let update = { $push: { images: [req.file.location] } };
+            
+            Hospital.update(filter, update).then((updatedHospital: any) => {
+                return makeResponse(res, 200, "Hospital image uploaded Successfully", updatedHospital, false);
+            }).catch((err: any) => {
+                return makeResponse(res, 400, err.message, null, true);
+            });
+          }
+        }
+      });
 }
 
 export default { 

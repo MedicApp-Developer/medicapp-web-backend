@@ -7,7 +7,6 @@ import { uploadsOnlyVideo } from '../../functions/uploadS3';
 const NAMESPACE = "Promos";
 
 const createPromo = (req: Request, res: Response, next: NextFunction) => {
-    console.log("Uploading File...");
     uploadsOnlyVideo(req, res, async (error: any) => {
         if (error) {
           res.json({ error: error });
@@ -18,9 +17,7 @@ const createPromo = (req: Request, res: Response, next: NextFunction) => {
           if (req.file === undefined) {
             return makeResponse(res, 400, "No File Selected", null, true);
           } else {
-
-            console.log("file => ", req.file);
-            
+  
             const newPromo = new Promos({
               // @ts-ignore
               url: req.file.location,

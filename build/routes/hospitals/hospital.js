@@ -13,5 +13,5 @@ router.post('/', [fileUpload_1.default.single("tradeLicenseFile")], hospital_1.d
 router.put('/:id', extractJWT_1.default, hospital_1.default.updateHospital);
 router.delete('/:id', extractJWT_1.default, hospital_1.default.deleteHospital);
 router.get('/search/:searchedText', extractJWT_1.default, hospital_1.default.searchHospital);
-router.put('/uploadImage/:id', [extractJWT_1.default, fileUpload_1.default.single("image")], hospital_1.default.uploadHospitalImages);
+router.put('/uploadImage/:id', extractJWT_1.default, hospital_1.default.uploadHospitalImages);
 module.exports = router;

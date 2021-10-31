@@ -58,6 +58,7 @@ var user_2 = __importDefault(require("../user"));
 var roles_1 = require("../../constants/roles");
 var hospital_2 = require("../../constants/hospital");
 var config_1 = __importDefault(require("../../config/config"));
+var uploadS3_1 = require("../../functions/uploadS3");
 var NAMESPACE = "Hospital";
 var createHospital = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location;
@@ -186,16 +187,32 @@ var searchHospital = function (req, res, next) { return __awaiter(void 0, void 0
     });
 }); };
 var uploadHospitalImages = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, filter, update;
     return __generator(this, function (_a) {
-        id = req.params.id;
-        filter = { _id: id };
-        update = { $push: { images: [config_1.default.server.APP_URL + "/" + ((req && req.file && req.file.filename) ? req.file.filename : "")] } };
-        hospital_1.default.update(filter, update).then(function (updatedHospital) {
-            return (0, makeResponse_1.default)(res, 200, "Hospital image uploaded Successfully", updatedHospital, false);
-        }).catch(function (err) {
-            return (0, makeResponse_1.default)(res, 400, err.message, null, true);
-        });
+        (0, uploadS3_1.uploadsOnlyVideo)(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
+            var id, filter, update;
+            return __generator(this, function (_a) {
+                if (error) {
+                    res.json({ error: error });
+                    return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "Error in uploading image", null, true)];
+                }
+                else {
+                    if (req.file === undefined) {
+                        return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "No File Selected", null, true)];
+                    }
+                    else {
+                        id = req.params.id;
+                        filter = { _id: id };
+                        update = { $push: { images: [req.file.location] } };
+                        hospital_1.default.update(filter, update).then(function (updatedHospital) {
+                            return (0, makeResponse_1.default)(res, 200, "Hospital image uploaded Successfully", updatedHospital, false);
+                        }).catch(function (err) {
+                            return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                        });
+                    }
+                }
+                return [2 /*return*/];
+            });
+        }); });
         return [2 /*return*/];
     });
 }); };

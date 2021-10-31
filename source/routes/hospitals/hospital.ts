@@ -11,6 +11,6 @@ router.post('/', [ upload.single("tradeLicenseFile") ], controller.createHospita
 router.put('/:id',extractJWT, controller.updateHospital);
 router.delete('/:id',extractJWT, controller.deleteHospital);
 router.get('/search/:searchedText', extractJWT, controller.searchHospital);
-router.put('/uploadImage/:id', [ extractJWT, upload.single("image") ], controller.uploadHospitalImages);
+router.put('/uploadImage/:id', extractJWT, controller.uploadHospitalImages);
 
 export = router;
