@@ -36,10 +36,14 @@ var MONGO_OPTIONS = {
 var MONGO_USERNAME = process.env.MONGO_USERNAME || "superuser";
 var MONGO_PASSWORD = process.env.MONGO_PASSWORD || "supersecretpasswords";
 var MONGO_HOST = process.env.MONGO_URL || 'mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority';
-var NODEMAILER_USER = process.env.NODEMAILER_USER || "usamafarooq2007@gmail.com";
-var NODEMAILER_PASS = process.env.NODEMAILER_PASS || "03157721671";
 // mongodb://127.0.0.1:27017/medicapp
 // mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority
+// NODEMAILER OPTIONS
+var CLIENT_ID = "389397570591-nosb4jnm4i3p13sm9mlpl4j10pkkujeo.apps.googleusercontent.com";
+var CLIENT_SECRET = "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";
+var REDIRECT_URI = "https://developers.google.com/oauthplayground";
+var REFRESH_TOKEN = "1//04OpKKM7k0ZW2CgYIARAAGAQSNwF-L9Irr-y9gOsFwaupz60hPg54C439xsVd-Vpx6scTi53pTaTOLD-1zTRUQIXYXCa2jt5QP8o";
+var MEDICAPP_EMAIL = "collaborations@medicappae.com";
 // AWS S3 Bucket
 var ACCESSKEYID = "AKIA3KPUHOWAFWNQKVFH";
 var SECRETACCESSKEY = "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";
@@ -57,8 +61,11 @@ var BUCKET = {
     secretAccessKey: SECRETACCESSKEY
 };
 var NODEMAILER = {
-    user: NODEMAILER_USER,
-    pass: NODEMAILER_PASS
+    clientID: CLIENT_ID,
+    secretKey: CLIENT_SECRET,
+    redirect_uri: REDIRECT_URI,
+    refresh_token: REFRESH_TOKEN,
+    user: MEDICAPP_EMAIL
 };
 var config = {
     server: SERVER,
