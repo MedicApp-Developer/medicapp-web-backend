@@ -19,6 +19,7 @@ const createDoctor = async (req: Request, res: Response, next: NextFunction) => 
 
         await User.find({email}).then(result => {
             if(result.length === 0){
+                
                 if(email && firstName && lastName && mobile){
                     const newDoctor = new Doctor({
                         _id: new mongoose.Types.ObjectId(),
