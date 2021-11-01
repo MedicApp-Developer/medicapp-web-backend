@@ -57,27 +57,27 @@ var createCategory = function (req, res, next) {
     var name = req.body.name;
     var newCategory = new category_1.default({ name: name });
     newCategory.save().then(function (result) {
-        return (0, makeResponse_1.default)(res, 201, "Category Created Successfully", result, false);
+        return makeResponse_1.default(res, 201, "Category Created Successfully", result, false);
     })
         .catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var getAllCategories = function (req, res, next) {
     category_1.default.find({})
         .then(function (result) {
-        return (0, makeResponse_1.default)(res, 200, "All Categorys", result, false);
+        return makeResponse_1.default(res, 200, "All Categorys", result, false);
     })
         .catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var getSingleCategory = function (req, res, next) {
     category_1.default.findById({ _id: req.params.id })
         .then(function (data) {
-        return (0, makeResponse_1.default)(res, 200, "Category", data, false);
+        return makeResponse_1.default(res, 200, "Category", data, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var updateCategory = function (req, res, next) {
@@ -85,9 +85,9 @@ var updateCategory = function (req, res, next) {
     var filter = { _id: id };
     var update = __assign({}, req.body);
     category_1.default.findOneAndUpdate(filter, update).then(function (updatedCategory) {
-        return (0, makeResponse_1.default)(res, 200, "Category updated Successfully", updatedCategory, false);
+        return makeResponse_1.default(res, 200, "Category updated Successfully", updatedCategory, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var deleteCategory = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -104,7 +104,7 @@ var deleteCategory = function (req, res, next) { return __awaiter(void 0, void 0
                 category = _a.sent();
                 if (!category)
                     return [2 /*return*/, res.sendStatus(404)];
-                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", category_1.default, false)];
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", category_1.default, false)];
             case 3:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];

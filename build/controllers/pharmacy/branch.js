@@ -61,21 +61,18 @@ var createBranch = function (req, res, next) { return __awaiter(void 0, void 0, 
         if (location && mobile && about && pharmacyId) {
             newBranch = new branch_1.default({
                 _id: new mongoose_1.default.Types.ObjectId(),
-                location: location,
-                mobile: mobile,
-                about: about,
-                pharmacyId: pharmacyId
+                location: location, mobile: mobile, about: about, pharmacyId: pharmacyId
             });
             return [2 /*return*/, newBranch.save()
                     .then(function (result) {
-                    return (0, makeResponse_1.default)(res, 201, "Branch Created Successfully", result, false);
+                    return makeResponse_1.default(res, 201, "Branch Created Successfully", result, false);
                 })
                     .catch(function (err) {
-                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                    return makeResponse_1.default(res, 400, err.message, null, true);
                 })];
         }
         else {
-            return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "Validation Failed", null, true)];
+            return [2 /*return*/, makeResponse_1.default(res, 400, "Validation Failed", null, true)];
         }
         return [2 /*return*/];
     });
@@ -83,18 +80,18 @@ var createBranch = function (req, res, next) { return __awaiter(void 0, void 0, 
 var getAllBranchesOfPharmacy = function (req, res, next) {
     branch_1.default.find({ pharmacyId: req.params.pharmacyId })
         .then(function (result) {
-        return (0, makeResponse_1.default)(res, 200, "All Branches", result, false);
+        return makeResponse_1.default(res, 200, "All Branches", result, false);
     })
         .catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var getSingleBranch = function (req, res, next) {
     branch_1.default.findById({ _id: req.params.branchId })
         .then(function (data) {
-        return (0, makeResponse_1.default)(res, 200, "Branch", data, false);
+        return makeResponse_1.default(res, 200, "Branch", data, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var updateBranch = function (req, res, next) {
@@ -102,9 +99,9 @@ var updateBranch = function (req, res, next) {
     var filter = { _id: id };
     var update = __assign({}, req.body);
     branch_1.default.findOneAndUpdate(filter, update).then(function (updatedBranch) {
-        return (0, makeResponse_1.default)(res, 200, "Branch updated Successfully", updatedBranch, false);
+        return makeResponse_1.default(res, 200, "Branch updated Successfully", updatedBranch, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var deleteBranch = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -121,7 +118,7 @@ var deleteBranch = function (req, res, next) { return __awaiter(void 0, void 0, 
                 branch = _a.sent();
                 if (!branch)
                     return [2 /*return*/, res.sendStatus(404)];
-                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", branch, false)];
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", branch, false)];
             case 3:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];
@@ -140,9 +137,9 @@ var searchBranch = function (req, res, next) { return __awaiter(void 0, void 0, 
             { about: searchedTextRegex }
         ];
         branch_1.default.find({ $or: searchQuery }).then(function (result) {
-            return (0, makeResponse_1.default)(res, 200, "Search Results", result, false);
+            return makeResponse_1.default(res, 200, "Search Results", result, false);
         }).catch(function (err) {
-            return (0, makeResponse_1.default)(res, 400, "Error while searching Branch", null, true);
+            return makeResponse_1.default(res, 400, "Error while searching Branch", null, true);
         });
         return [2 /*return*/];
     });

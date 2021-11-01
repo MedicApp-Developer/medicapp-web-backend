@@ -9,8 +9,8 @@ var multer_1 = __importDefault(require("multer"));
 var multer_s3_1 = __importDefault(require("multer-s3"));
 var path_1 = __importDefault(require("path"));
 var aws_1 = __importDefault(require("../config/aws"));
-exports.uploadsOnlyVideo = (0, multer_1.default)({
-    storage: (0, multer_s3_1.default)({
+exports.uploadsOnlyVideo = multer_1.default({
+    storage: multer_s3_1.default({
         s3: aws_1.default,
         bucket: config_1.default.bucket.name,
         acl: "public-read",

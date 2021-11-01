@@ -68,20 +68,14 @@ var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
         switch (_b.label) {
             case 0:
                 _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile, speciality = _a.speciality, experience = _a.experience;
-                password = (0, utilities_1.getRandomPassword)();
+                password = utilities_1.getRandomPassword();
                 return [4 /*yield*/, user_1.default.find({ email: email }).then(function (result) {
                         if (result.length === 0) {
                             if (email && firstName && lastName && mobile) {
                                 var newDoctor = new doctor_1.default({
                                     _id: new mongoose_1.default.Types.ObjectId(),
-                                    experience: experience,
-                                    speciality: speciality,
-                                    email: email,
-                                    password: password,
-                                    firstName: firstName,
-                                    lastName: lastName,
-                                    mobile: mobile,
-                                    hospitalId: res.locals.jwt.reference_id
+                                    experience: experience, speciality: speciality,
+                                    email: email, password: password, firstName: firstName, lastName: lastName, mobile: mobile, hospitalId: res.locals.jwt.reference_id
                                 });
                                 var options = {
                                     from: config_1.default.mailer.user,
@@ -89,7 +83,7 @@ var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
                                     subject: "Welcome to Medicapp",
                                     text: "Your account account has been created as a doctor, and your password is " + password
                                 };
-                                (0, mailer_1.sendEmail)(options);
+                                mailer_1.sendEmail(options);
                                 return newDoctor.save()
                                     .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
@@ -97,20 +91,20 @@ var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
                                             case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, roles_1.Roles.DOCTOR, result._id)];
                                             case 1:
                                                 _a.sent();
-                                                return [2 /*return*/, (0, makeResponse_1.default)(res, 201, "Doctor Created Successfully", result, false)];
+                                                return [2 /*return*/, makeResponse_1.default(res, 201, "Doctor Created Successfully", result, false)];
                                         }
                                     });
                                 }); })
                                     .catch(function (err) {
-                                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                                    return makeResponse_1.default(res, 400, err.message, null, true);
                                 });
                             }
                             else {
-                                return (0, makeResponse_1.default)(res, 400, "Validation Failed", null, true);
+                                return makeResponse_1.default(res, 400, "Validation Failed", null, true);
                             }
                         }
                         else {
-                            return (0, makeResponse_1.default)(res, 400, "Email Already in use", null, true);
+                            return makeResponse_1.default(res, 400, "Email Already in use", null, true);
                         }
                     })];
             case 1:
@@ -133,10 +127,10 @@ var getAllDoctors = function (req, res, next) { return __awaiter(void 0, void 0,
                 total_1 = _a.sent();
                 doctor_1.default.find({ hospitalId: hospitalId }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
-                    return (0, makeResponse_1.default)(res, 200, "All Doctors", { totalItems: total_1, totalPages: Math.ceil(total_1 / pagination_1.Pagination.PAGE_SIZE), doctors: result }, false);
+                    return makeResponse_1.default(res, 200, "All Doctors", { totalItems: total_1, totalPages: Math.ceil(total_1 / pagination_1.Pagination.PAGE_SIZE), doctors: result }, false);
                 })
                     .catch(function (err) {
-                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                    return makeResponse_1.default(res, 400, err.message, null, true);
                 });
                 return [3 /*break*/, 4];
             case 2:
@@ -148,10 +142,10 @@ var getAllDoctors = function (req, res, next) { return __awaiter(void 0, void 0,
                 hospitalId = nurse === null || nurse === void 0 ? void 0 : nurse.hospitalId;
                 doctor_1.default.find({ hospitalId: hospitalId })
                     .then(function (result) {
-                    return (0, makeResponse_1.default)(res, 200, "All Doctors", { doctors: result }, false);
+                    return makeResponse_1.default(res, 200, "All Doctors", { doctors: result }, false);
                 })
                     .catch(function (err) {
-                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                    return makeResponse_1.default(res, 400, err.message, null, true);
                 });
                 _a.label = 4;
             case 4: return [2 /*return*/];
@@ -161,9 +155,9 @@ var getAllDoctors = function (req, res, next) { return __awaiter(void 0, void 0,
 var getSingleDoctor = function (req, res, next) {
     doctor_1.default.findById({ _id: req.params.id }).populate('hospitalId')
         .then(function (data) {
-        return (0, makeResponse_1.default)(res, 200, "Doctor", data, false);
+        return makeResponse_1.default(res, 200, "Doctor", data, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var updateDoctor = function (req, res, next) {
@@ -175,9 +169,9 @@ var updateDoctor = function (req, res, next) {
     var filter = { _id: id };
     user_2.default.updateUser(req, res, _id, req.body);
     doctor_1.default.findOneAndUpdate(filter, update).then(function (updatedDoctor) {
-        return (0, makeResponse_1.default)(res, 200, "Doctor updated Successfully", updatedDoctor, false);
+        return makeResponse_1.default(res, 200, "Doctor updated Successfully", updatedDoctor, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var deleteDoctor = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -197,7 +191,7 @@ var deleteDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
                 return [4 /*yield*/, user_2.default.deleteUserWithEmail(doctor.email)];
             case 3:
                 _a.sent();
-                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", doctor, false)];
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", doctor, false)];
             case 4:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];
@@ -224,9 +218,9 @@ var searchDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
                 total = _a.sent();
                 doctor_1.default.find({ $and: [{ $or: searchQuery }, { hospitalId: res.locals.jwt.reference_id }] }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
-                    return (0, makeResponse_1.default)(res, 200, "Search Results", { searchedText: searchedText, totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), doctors: result }, false);
+                    return makeResponse_1.default(res, 200, "Search Results", { searchedText: searchedText, totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), doctors: result }, false);
                 }).catch(function (err) {
-                    return (0, makeResponse_1.default)(res, 400, "No doctor found", null, true);
+                    return makeResponse_1.default(res, 400, "No doctor found", null, true);
                 });
                 return [2 /*return*/];
         }

@@ -71,14 +71,8 @@ var createHospital = function (req, res, next) { return __awaiter(void 0, void 0
                             if (req && req.file && req.file.filename && email && phoneNo && password && name && tradeLicenseNo && issueDate && expiryDate && location) {
                                 var newHospital = new hospital_1.default({
                                     _id: new mongoose_1.default.Types.ObjectId(),
-                                    type: hospital_2.HospitalType.HOSPITAL, category: null, addons: [],
-                                    phoneNo: phoneNo,
-                                    email: email,
-                                    name: name,
-                                    tradeLicenseNo: tradeLicenseNo,
-                                    issueDate: issueDate,
-                                    expiryDate: expiryDate,
-                                    location: location,
+                                    type: hospital_2.HospitalType.HOSPITAL, category: null, addons: [], phoneNo: phoneNo,
+                                    email: email, name: name, tradeLicenseNo: tradeLicenseNo, issueDate: issueDate, expiryDate: expiryDate, location: location,
                                     tradeLicenseFile: config_1.default.server.APP_URL + "/" + ((req && req.file && req.file.filename) ? req.file.filename : "")
                                 });
                                 return newHospital.save()
@@ -88,20 +82,20 @@ var createHospital = function (req, res, next) { return __awaiter(void 0, void 0
                                             case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email, password, name, roles_1.Roles.HOSPITAL, result._id)];
                                             case 1:
                                                 _a.sent();
-                                                return [2 /*return*/, (0, makeResponse_1.default)(res, 201, "Hospital Created Successfully", result, false)];
+                                                return [2 /*return*/, makeResponse_1.default(res, 201, "Hospital Created Successfully", result, false)];
                                         }
                                     });
                                 }); })
                                     .catch(function (err) {
-                                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                                    return makeResponse_1.default(res, 400, err.message, null, true);
                                 });
                             }
                             else {
-                                return (0, makeResponse_1.default)(res, 400, "Validation Failed", null, true);
+                                return makeResponse_1.default(res, 400, "Validation Failed", null, true);
                             }
                         }
                         else {
-                            return (0, makeResponse_1.default)(res, 400, "Email already exists", null, true);
+                            return makeResponse_1.default(res, 400, "Email already exists", null, true);
                         }
                     })];
             case 1:
@@ -113,18 +107,18 @@ var createHospital = function (req, res, next) { return __awaiter(void 0, void 0
 var getAllHospitals = function (req, res, next) {
     hospital_1.default.find({})
         .then(function (result) {
-        return (0, makeResponse_1.default)(res, 200, "All Hospitals", result, false);
+        return makeResponse_1.default(res, 200, "All Hospitals", result, false);
     })
         .catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var getSingleHospital = function (req, res, next) {
     hospital_1.default.findById({ _id: req.params.id })
         .then(function (data) {
-        return (0, makeResponse_1.default)(res, 200, "Hospital", data, false);
+        return makeResponse_1.default(res, 200, "Hospital", data, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var updateHospital = function (req, res, next) {
@@ -137,9 +131,9 @@ var updateHospital = function (req, res, next) {
     var filter = { _id: id };
     user_2.default.updateUser(req, res, _id, req.body);
     hospital_1.default.findOneAndUpdate(filter, update).then(function (updatedHospital) {
-        return (0, makeResponse_1.default)(res, 200, "Hospital updated Successfully", updatedHospital, false);
+        return makeResponse_1.default(res, 200, "Hospital updated Successfully", updatedHospital, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var deleteHospital = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -159,7 +153,7 @@ var deleteHospital = function (req, res, next) { return __awaiter(void 0, void 0
                 return [4 /*yield*/, user_2.default.deleteUserWithEmail(hospital.email)];
             case 3:
                 _a.sent();
-                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", hospital_1.default, false)];
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", hospital_1.default, false)];
             case 4:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];
@@ -179,34 +173,34 @@ var searchHospital = function (req, res, next) { return __awaiter(void 0, void 0
             { tradeLicenseNo: searchedTextRegex }
         ];
         hospital_1.default.find({ $or: searchQuery }).then(function (result) {
-            return (0, makeResponse_1.default)(res, 200, "Search Results", result, false);
+            return makeResponse_1.default(res, 200, "Search Results", result, false);
         }).catch(function (err) {
-            return (0, makeResponse_1.default)(res, 400, "Error while searching hospital", null, true);
+            return makeResponse_1.default(res, 400, "Error while searching hospital", null, true);
         });
         return [2 /*return*/];
     });
 }); };
 var uploadHospitalImages = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        (0, uploadS3_1.uploadsOnlyVideo)(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
+        uploadS3_1.uploadsOnlyVideo(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
             var id, filter, update;
             return __generator(this, function (_a) {
                 if (error) {
                     res.json({ error: error });
-                    return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "Error in uploading image", null, true)];
+                    return [2 /*return*/, makeResponse_1.default(res, 400, "Error in uploading image", null, true)];
                 }
                 else {
                     if (req.file === undefined) {
-                        return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "No File Selected", null, true)];
+                        return [2 /*return*/, makeResponse_1.default(res, 400, "No File Selected", null, true)];
                     }
                     else {
                         id = req.params.id;
                         filter = { _id: id };
                         update = { $push: { images: [req.file.location] } };
                         hospital_1.default.update(filter, update).then(function (updatedHospital) {
-                            return (0, makeResponse_1.default)(res, 200, "Hospital image uploaded Successfully", updatedHospital, false);
+                            return makeResponse_1.default(res, 200, "Hospital image uploaded Successfully", updatedHospital, false);
                         }).catch(function (err) {
-                            return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                            return makeResponse_1.default(res, 400, err.message, null, true);
                         });
                     }
                 }

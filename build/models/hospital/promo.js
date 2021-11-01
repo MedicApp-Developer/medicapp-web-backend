@@ -33,6 +33,11 @@ var PromoSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    likes: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     hospitalId: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "Hospital",

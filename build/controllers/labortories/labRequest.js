@@ -51,10 +51,10 @@ var createLabRequest = function (req, res, next) { return __awaiter(void 0, void
         newlabRequest = new labRequest_1.default({ appointmentId: appointmentId, doctorId: doctorId, patientId: patientId, laboratoryId: laboratoryId, tests: tests });
         return [2 /*return*/, newlabRequest.save()
                 .then(function (result) {
-                return (0, makeResponse_1.default)(res, 201, "Lab Request Created Successfully", result, false);
+                return makeResponse_1.default(res, 201, "Lab Request Created Successfully", result, false);
             })
                 .catch(function (err) {
-                return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                return makeResponse_1.default(res, 400, err.message, null, true);
             })];
     });
 }); };
@@ -73,10 +73,10 @@ var getLabRequests = function (req, res, next) { return __awaiter(void 0, void 0
                 // @ts-ignore
                 labRequest_1.default.find({ laboratoryId: res.locals.jwt.reference_id, status: status }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page).populate('patientId').populate('doctorId')
                     .then(function (result) {
-                    return (0, makeResponse_1.default)(res, 200, "All Lab Results", { totalItems: total_1, totalPages: Math.ceil(total_1 / pagination_1.Pagination.PAGE_SIZE), labResults: result }, false);
+                    return makeResponse_1.default(res, 200, "All Lab Results", { totalItems: total_1, totalPages: Math.ceil(total_1 / pagination_1.Pagination.PAGE_SIZE), labResults: result }, false);
                 })
                     .catch(function (err) {
-                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                    return makeResponse_1.default(res, 400, err.message, null, true);
                 });
                 return [3 /*break*/, 4];
             case 2: return [4 /*yield*/, labRequest_1.default.find({ doctorId: res.locals.jwt.reference_id, status: status }).countDocuments({})];
@@ -85,10 +85,10 @@ var getLabRequests = function (req, res, next) { return __awaiter(void 0, void 0
                 // @ts-ignore
                 labRequest_1.default.find({ doctorId: res.locals.jwt.reference_id, status: status }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page).populate('patientId').populate('doctorId')
                     .then(function (result) {
-                    return (0, makeResponse_1.default)(res, 200, "All Lab Results", { totalItems: total_2, totalPages: Math.ceil(total_2 / pagination_1.Pagination.PAGE_SIZE), labResults: result }, false);
+                    return makeResponse_1.default(res, 200, "All Lab Results", { totalItems: total_2, totalPages: Math.ceil(total_2 / pagination_1.Pagination.PAGE_SIZE), labResults: result }, false);
                 })
                     .catch(function (err) {
-                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                    return makeResponse_1.default(res, 400, err.message, null, true);
                 });
                 _a.label = 4;
             case 4: return [2 /*return*/];
@@ -102,9 +102,9 @@ var updateLabRequest = function (req, res, next) { return __awaiter(void 0, void
         filter = { _id: labRequest };
         update = { tests: req.body, status: "completed" };
         labRequest_1.default.findOneAndUpdate(filter, update).then(function (updatedRequest) {
-            return (0, makeResponse_1.default)(res, 200, "Lab Request updated Successfully", updatedRequest, false);
+            return makeResponse_1.default(res, 200, "Lab Request updated Successfully", updatedRequest, false);
         }).catch(function (err) {
-            return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+            return makeResponse_1.default(res, 400, err.message, null, true);
         });
         return [2 /*return*/];
     });

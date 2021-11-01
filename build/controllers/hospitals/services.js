@@ -57,28 +57,28 @@ var createService = function (req, res, next) {
     var name = req.body.name;
     var newServices = new services_1.default({ name: name });
     newServices.save().then(function (result) {
-        return (0, makeResponse_1.default)(res, 201, "Services Created Successfully", result, false);
+        return makeResponse_1.default(res, 201, "Services Created Successfully", result, false);
     })
         .catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var getAllServices = function (req, res, next) {
     services_1.default.find({})
         .then(function (result) {
-        return (0, makeResponse_1.default)(res, 200, "All Servicess", result, false);
+        return makeResponse_1.default(res, 200, "All Servicess", result, false);
     })
         .catch(function (err) {
         console.log("Result => ", err);
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var getSingleService = function (req, res, next) {
     services_1.default.findById({ _id: req.params.id })
         .then(function (data) {
-        return (0, makeResponse_1.default)(res, 200, "Services", data, false);
+        return makeResponse_1.default(res, 200, "Services", data, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var updateService = function (req, res, next) {
@@ -86,9 +86,9 @@ var updateService = function (req, res, next) {
     var filter = { _id: id };
     var update = __assign({}, req.body);
     services_1.default.findOneAndUpdate(filter, update).then(function (updatedServices) {
-        return (0, makeResponse_1.default)(res, 200, "Services updated Successfully", updatedServices, false);
+        return makeResponse_1.default(res, 200, "Services updated Successfully", updatedServices, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var deleteService = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -105,7 +105,7 @@ var deleteService = function (req, res, next) { return __awaiter(void 0, void 0,
                 services = _a.sent();
                 if (!services)
                     return [2 /*return*/, res.sendStatus(404)];
-                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", services, false)];
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", services, false)];
             case 3:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];

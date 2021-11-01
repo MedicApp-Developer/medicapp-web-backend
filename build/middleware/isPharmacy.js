@@ -16,14 +16,14 @@ var isPharmacy = function (req, res, next) {
     if (token) {
         jsonwebtoken_1.default.verify(token, config_1.default.server.token.secret, function (error, decoded) {
             if (error) {
-                return (0, makeResponse_1.default)(res, 404, error.message, error, true);
+                return makeResponse_1.default(res, 404, error.message, error, true);
             }
             else if ((decoded === null || decoded === void 0 ? void 0 : decoded.role) === roles_1.Roles.PHARMACY) {
                 res.locals.jwt = decoded;
                 next();
             }
             else {
-                return (0, makeResponse_1.default)(res, 404, "Only Pharmacy Admins can perform this task", null, true);
+                return makeResponse_1.default(res, 404, "Only Pharmacy Admins can perform this task", null, true);
             }
         });
     }

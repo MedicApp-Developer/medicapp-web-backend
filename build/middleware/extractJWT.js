@@ -15,7 +15,7 @@ var extractJWT = function (req, res, next) {
     if (token) {
         jsonwebtoken_1.default.verify(token, config_1.default.server.token.secret, function (error, decoded) {
             if (error) {
-                return (0, makeResponse_1.default)(res, 404, error.message, error, true);
+                return makeResponse_1.default(res, 404, error.message, error, true);
             }
             else {
                 res.locals.jwt = decoded;

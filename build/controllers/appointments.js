@@ -59,10 +59,10 @@ var createAppointment = function (req, res, next) {
     var _a = req.body, time = _a.time, doctorId = _a.doctorId, patientId = _a.patientId, hospitalId = _a.hospitalId;
     var newAppointment = new appointment_1.default({ time: time, doctorId: doctorId, patientId: patientId, hospitalId: hospitalId });
     newAppointment.save().then(function (result) {
-        return (0, makeResponse_1.default)(res, 201, "Appointment Created Successfully", result, false);
+        return makeResponse_1.default(res, 201, "Appointment Created Successfully", result, false);
     })
         .catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var getAllAppointments = function (req, res, next) {
@@ -70,10 +70,10 @@ var getAllAppointments = function (req, res, next) {
         .populate("doctorId")
         .populate("patientId")
         .then(function (result) {
-        return (0, makeResponse_1.default)(res, 200, "All Appointments", result, false);
+        return makeResponse_1.default(res, 200, "All Appointments", result, false);
     })
         .catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var getSingleAppointment = function (req, res, next) {
@@ -81,9 +81,9 @@ var getSingleAppointment = function (req, res, next) {
         .populate("doctorId")
         .populate("patientId")
         .then(function (data) {
-        return (0, makeResponse_1.default)(res, 200, "Appointment", data, false);
+        return makeResponse_1.default(res, 200, "Appointment", data, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var updateAppointment = function (req, res, next) {
@@ -91,9 +91,9 @@ var updateAppointment = function (req, res, next) {
     var filter = { _id: id };
     var update = __assign({}, req.body);
     appointment_1.default.findOneAndUpdate(filter, update).then(function (updatedAppointment) {
-        return (0, makeResponse_1.default)(res, 200, "Appointment updated Successfully", updatedAppointment, false);
+        return makeResponse_1.default(res, 200, "Appointment updated Successfully", updatedAppointment, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var deleteAppointment = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -110,7 +110,7 @@ var deleteAppointment = function (req, res, next) { return __awaiter(void 0, voi
                 appointment = _a.sent();
                 if (!appointment)
                     return [2 /*return*/, res.sendStatus(404)];
-                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", appointment, false)];
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", appointment, false)];
             case 3:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];
@@ -134,7 +134,7 @@ var getHospitalAppointments = function (req, res, next) {
         .populate("doctorId")
         .populate("patientId")
         .then(function (appointments) {
-        return (0, makeResponse_1.default)(res, 200, "Hospital Appointments", appointments, false);
+        return makeResponse_1.default(res, 200, "Hospital Appointments", appointments, false);
     }).catch(function (err) {
         return res.sendStatus(400);
     });
@@ -156,7 +156,7 @@ var getDoctorAppointments = function (req, res, next) { return __awaiter(void 0,
                     .limit(pagination_1.Pagination.PAGE_SIZE)
                     .skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (appointments) {
-                    return (0, makeResponse_1.default)(res, 200, "Doctor Appointments", { totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), appointments: appointments }, false);
+                    return makeResponse_1.default(res, 200, "Doctor Appointments", { totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), appointments: appointments }, false);
                 }).catch(function (err) {
                     return res.sendStatus(400);
                 });

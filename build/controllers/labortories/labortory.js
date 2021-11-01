@@ -67,17 +67,13 @@ var createLabortory = function (req, res, next) { return __awaiter(void 0, void 
         switch (_b.label) {
             case 0:
                 _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile;
-                password = (0, utilities_1.getRandomPassword)();
+                password = utilities_1.getRandomPassword();
                 return [4 /*yield*/, user_1.default.find({ email: email }).then(function (result) {
                         if (result.length === 0) {
                             if (email && password && firstName && lastName && mobile) {
                                 var newLabortory = new labortory_1.default({
                                     _id: new mongoose_1.default.Types.ObjectId(),
-                                    email: email,
-                                    firstName: firstName,
-                                    lastName: lastName,
-                                    mobile: mobile,
-                                    hospitalId: res.locals.jwt.reference_id
+                                    email: email, firstName: firstName, lastName: lastName, mobile: mobile, hospitalId: res.locals.jwt.reference_id
                                 });
                                 var options = {
                                     from: config_1.default.mailer.user,
@@ -85,7 +81,7 @@ var createLabortory = function (req, res, next) { return __awaiter(void 0, void 
                                     subject: "Welcome to Medicapp",
                                     text: "Your account account has been created as a Labortory admin, and your password is " + password
                                 };
-                                (0, mailer_1.sendEmail)(options);
+                                mailer_1.sendEmail(options);
                                 return newLabortory.save()
                                     .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
@@ -93,20 +89,20 @@ var createLabortory = function (req, res, next) { return __awaiter(void 0, void 
                                             case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, roles_1.Roles.LABORTORY, result._id)];
                                             case 1:
                                                 _a.sent();
-                                                return [2 /*return*/, (0, makeResponse_1.default)(res, 201, "Labortory Created Successfully", result, false)];
+                                                return [2 /*return*/, makeResponse_1.default(res, 201, "Labortory Created Successfully", result, false)];
                                         }
                                     });
                                 }); })
                                     .catch(function (err) {
-                                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                                    return makeResponse_1.default(res, 400, err.message, null, true);
                                 });
                             }
                             else {
-                                return (0, makeResponse_1.default)(res, 400, "Validation Failed", null, true);
+                                return makeResponse_1.default(res, 400, "Validation Failed", null, true);
                             }
                         }
                         else {
-                            return (0, makeResponse_1.default)(res, 400, "Email already exists", null, true);
+                            return makeResponse_1.default(res, 400, "Email already exists", null, true);
                         }
                     })];
             case 1:
@@ -125,10 +121,10 @@ var getAllLabortories = function (req, res, next) { return __awaiter(void 0, voi
                 // @ts-ignore
                 labortory_1.default.find({ hospitalId: req.query.hospitalId })
                     .then(function (result) {
-                    return (0, makeResponse_1.default)(res, 200, "All Labortories", { labs: result }, false);
+                    return makeResponse_1.default(res, 200, "All Labortories", { labs: result }, false);
                 })
                     .catch(function (err) {
-                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                    return makeResponse_1.default(res, 400, err.message, null, true);
                 });
                 return [3 /*break*/, 3];
             case 1: return [4 /*yield*/, labortory_1.default.find({ hospitalId: res.locals.jwt.reference_id }).countDocuments({})];
@@ -136,10 +132,10 @@ var getAllLabortories = function (req, res, next) { return __awaiter(void 0, voi
                 total_1 = _a.sent();
                 labortory_1.default.find({ hospitalId: res.locals.jwt.reference_id }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
-                    return (0, makeResponse_1.default)(res, 200, "All Labortories", { totalItems: total_1, totalPages: Math.ceil(total_1 / pagination_1.Pagination.PAGE_SIZE), labs: result }, false);
+                    return makeResponse_1.default(res, 200, "All Labortories", { totalItems: total_1, totalPages: Math.ceil(total_1 / pagination_1.Pagination.PAGE_SIZE), labs: result }, false);
                 })
                     .catch(function (err) {
-                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                    return makeResponse_1.default(res, 400, err.message, null, true);
                 });
                 _a.label = 3;
             case 3: return [2 /*return*/];
@@ -149,9 +145,9 @@ var getAllLabortories = function (req, res, next) { return __awaiter(void 0, voi
 var getSingleLabortory = function (req, res, next) {
     labortory_1.default.findById({ _id: req.params.id })
         .then(function (data) {
-        return (0, makeResponse_1.default)(res, 200, "Labortory", data, false);
+        return makeResponse_1.default(res, 200, "Labortory", data, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var updateLabortory = function (req, res, next) {
@@ -163,9 +159,9 @@ var updateLabortory = function (req, res, next) {
     var filter = { _id: id };
     user_2.default.updateUser(req, res, _id, req.body);
     labortory_1.default.findOneAndUpdate(filter, update).then(function (updatedLab) {
-        return (0, makeResponse_1.default)(res, 200, "Laboratory updated Successfully", updatedLab, false);
+        return makeResponse_1.default(res, 200, "Laboratory updated Successfully", updatedLab, false);
     }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
 var deleteLabortory = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -185,7 +181,7 @@ var deleteLabortory = function (req, res, next) { return __awaiter(void 0, void 
                 return [4 /*yield*/, user_2.default.deleteUserWithEmail(labortory.email)];
             case 3:
                 _a.sent();
-                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", labortory, false)];
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", labortory, false)];
             case 4:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];
@@ -212,9 +208,9 @@ var searchLabortory = function (req, res, next) { return __awaiter(void 0, void 
                 total = _a.sent();
                 labortory_1.default.find({ $and: [{ $or: searchQuery }, { hospitalId: res.locals.jwt.reference_id }] }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
-                    return (0, makeResponse_1.default)(res, 200, "Search Results", { searchedText: searchedText, totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), labs: result }, false);
+                    return makeResponse_1.default(res, 200, "Search Results", { searchedText: searchedText, totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), labs: result }, false);
                 }).catch(function (err) {
-                    return (0, makeResponse_1.default)(res, 400, "No labs found", null, true);
+                    return makeResponse_1.default(res, 400, "No labs found", null, true);
                 });
                 return [2 /*return*/];
         }
