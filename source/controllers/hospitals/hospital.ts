@@ -12,39 +12,57 @@ import { uploadsOnlyVideo } from '../../functions/uploadS3';
 const NAMESPACE = "Hospital";
 
 const createHospital = async (req: Request, res: Response, next: NextFunction) => {
-    const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location } = req.body;
     
-    await User.find({ email }).then((result: any) => {
-        if(result.length === 0){
-            if(req && req.file && req.file.filename && email && phoneNo && password && name && tradeLicenseNo && issueDate && expiryDate && location ){
-                const newHospital = new Hospital({
-                    _id: new mongoose.Types.ObjectId(),
-                    type: HospitalType.HOSPITAL, category: null, addons: [], phoneNo,
-                    email, name, tradeLicenseNo, issueDate, expiryDate, location,
-                    tradeLicenseFile: config.server.APP_URL + "/" + (( req && req.file && req.file.filename ) ? req.file.filename : "")
-                });
-                
-                return newHospital.save()
-                    .then(async (result: any) => {
-                        await UserController.createUserFromEmailAndPassword(req, res, email, password, name, Roles.HOSPITAL, result._id);
-                        return makeResponse(res, 201, "Hospital Created Successfully", result, false);
+    uploadsOnlyVideo(req, res, async (error: any) => {
+        if (error) {
+          res.json({ error: error });
+          return makeResponse(res, 400, "Error in uploading image", null, true);
+        } else {
+          // If File not found
+          // console.log("Ressss => ", req.files);
+          if (req.file === undefined) {
+            return makeResponse(res, 400, "No File Selected", null, true);
+          } else {
+  
+            const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location } = req.body;
+    
+            await User.find({ email }).then((result: any) => {
+                if(result.length === 0){
+                    // @ts-ignore
+                    if(req && req.file && req.file.location && email && phoneNo && password && name && tradeLicenseNo && issueDate && expiryDate && location ){
+                        const newHospital = new Hospital({
+                            _id: new mongoose.Types.ObjectId(),
+                            type: HospitalType.HOSPITAL, category: null, addons: [], phoneNo,
+                            email, name, tradeLicenseNo, issueDate, expiryDate, location,
+                            // @ts-ignore
+                            tradeLicenseFile: req.file.location
+                        });
                         
-                        // if(){
-                        //     return makeResponse(res, 201, "Hospital Created Successfully", result, false);
-                        // }else {
-                        //     return makeResponse(res, 201, "Something went wrong while creating Hospital", result, false);
-                        // };
-                    })
-                    .catch((err: any) => {
-                        return makeResponse(res, 400, err.message, null, true);
-                    });
-            }else {
-                return makeResponse(res, 400, "Validation Failed", null, true);
-            }
-        }else {
-            return makeResponse(res, 400, "Email already exists", null, true);
+                        return newHospital.save()
+                            .then(async (result: any) => {
+                                await UserController.createUserFromEmailAndPassword(req, res, email, password, name, Roles.HOSPITAL, result._id);
+                                return makeResponse(res, 201, "Hospital Created Successfully", result, false);
+                                
+                                // if(){
+                                //     return makeResponse(res, 201, "Hospital Created Successfully", result, false);
+                                // }else {
+                                //     return makeResponse(res, 201, "Something went wrong while creating Hospital", result, false);
+                                // };
+                            })
+                            .catch((err: any) => {
+                                return makeResponse(res, 400, err.message, null, true);
+                            });
+                    }else {
+                        return makeResponse(res, 400, "Validation Failed", null, true);
+                    }
+                }else {
+                    return makeResponse(res, 400, "Email already exists", null, true);
+                }
+            }); 
+           
+          }
         }
-    }); 
+      });
 };
 
 const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {

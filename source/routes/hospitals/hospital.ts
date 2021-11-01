@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/', extractJWT,controller.getAllHospitals);
 router.get('/:id', extractJWT,controller.getSingleHospital); 
-router.post('/', [ upload.single("tradeLicenseFile") ], controller.createHospital);
+router.post('/', controller.createHospital);
 router.put('/:id',extractJWT, controller.updateHospital);
 router.delete('/:id',extractJWT, controller.deleteHospital);
 router.get('/search/:searchedText', extractJWT, controller.searchHospital);
