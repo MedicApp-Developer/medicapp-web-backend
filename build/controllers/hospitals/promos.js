@@ -51,8 +51,7 @@ var createPromo = function (req, res, next) {
             switch (_a.label) {
                 case 0:
                     if (!error) return [3 /*break*/, 1];
-                    res.json({ error: error });
-                    return [2 /*return*/, makeResponse_1.default(res, 400, "Error in uploading image", null, true)];
+                    return [2 /*return*/, makeResponse_1.default(res, 400, "Error in uploading Promo Video to S3 Bucket", null, true)];
                 case 1:
                     if (!(req.file === undefined)) return [3 /*break*/, 2];
                     return [2 /*return*/, makeResponse_1.default(res, 400, "No File Selected", null, true)];

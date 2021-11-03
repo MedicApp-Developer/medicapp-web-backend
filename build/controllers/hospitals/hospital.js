@@ -58,13 +58,14 @@ var user_2 = __importDefault(require("../user"));
 var roles_1 = require("../../constants/roles");
 var hospital_2 = require("../../constants/hospital");
 var uploadS3_1 = require("../../functions/uploadS3");
+var hospitalRegisteration_1 = require("../../validation/hospitalRegisteration");
 var NAMESPACE = "Hospital";
 var createHospital = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         uploadS3_1.uploadsOnlyVideo(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
-            var _a, email_1, phoneNo_1, password_1, name_1, tradeLicenseNo_1, issueDate_1, expiryDate_1, location_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _a, errors, isValid, _b, email_1, phoneNo_1, password_1, name_1, tradeLicenseNo_1, issueDate_1, expiryDate_1, location_1;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         if (!error) return [3 /*break*/, 1];
                         res.json({ error: error });
@@ -73,44 +74,44 @@ var createHospital = function (req, res, next) { return __awaiter(void 0, void 0
                         if (!(req.file === undefined)) return [3 /*break*/, 2];
                         return [2 /*return*/, makeResponse_1.default(res, 400, "No File Selected", null, true)];
                     case 2:
-                        _a = req.body, email_1 = _a.email, phoneNo_1 = _a.phoneNo, password_1 = _a.password, name_1 = _a.name, tradeLicenseNo_1 = _a.tradeLicenseNo, issueDate_1 = _a.issueDate, expiryDate_1 = _a.expiryDate, location_1 = _a.location;
+                        _a = hospitalRegisteration_1.validateHospitalRegisteration(req.body), errors = _a.errors, isValid = _a.isValid;
+                        // Check validation
+                        if (!isValid) {
+                            return [2 /*return*/, makeResponse_1.default(res, 400, "Validation Failed", errors, true)];
+                        }
+                        _b = req.body, email_1 = _b.email, phoneNo_1 = _b.phoneNo, password_1 = _b.password, name_1 = _b.name, tradeLicenseNo_1 = _b.tradeLicenseNo, issueDate_1 = _b.issueDate, expiryDate_1 = _b.expiryDate, location_1 = _b.location;
                         return [4 /*yield*/, user_1.default.find({ email: email_1 }).then(function (result) {
                                 if (result.length === 0) {
                                     // @ts-ignore
-                                    if (req && req.file && req.file.location && email_1 && phoneNo_1 && password_1 && name_1 && tradeLicenseNo_1 && issueDate_1 && expiryDate_1 && location_1) {
-                                        var newHospital = new hospital_1.default({
-                                            _id: new mongoose_1.default.Types.ObjectId(),
-                                            type: hospital_2.HospitalType.HOSPITAL, category: null, addons: [], phoneNo: phoneNo_1,
-                                            email: email_1, name: name_1, tradeLicenseNo: tradeLicenseNo_1, issueDate: issueDate_1, expiryDate: expiryDate_1, location: location_1,
-                                            // @ts-ignore
-                                            tradeLicenseFile: req.file.location
+                                    var newHospital = new hospital_1.default({
+                                        _id: new mongoose_1.default.Types.ObjectId(),
+                                        type: hospital_2.HospitalType.HOSPITAL, category: null, addons: [], phoneNo: phoneNo_1,
+                                        email: email_1, name: name_1, tradeLicenseNo: tradeLicenseNo_1, issueDate: issueDate_1, expiryDate: expiryDate_1, location: location_1,
+                                        // @ts-ignore
+                                        tradeLicenseFile: req.file.location
+                                    });
+                                    return newHospital.save()
+                                        .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email_1, password_1, name_1, roles_1.Roles.HOSPITAL, result._id)];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/, makeResponse_1.default(res, 201, "Hospital Created Successfully", result, false)];
+                                            }
                                         });
-                                        return newHospital.save()
-                                            .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email_1, password_1, name_1, roles_1.Roles.HOSPITAL, result._id)];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/, makeResponse_1.default(res, 201, "Hospital Created Successfully", result, false)];
-                                                }
-                                            });
-                                        }); })
-                                            .catch(function (err) {
-                                            return makeResponse_1.default(res, 400, err.message, null, true);
-                                        });
-                                    }
-                                    else {
-                                        return makeResponse_1.default(res, 400, "Validation Failed", null, true);
-                                    }
+                                    }); })
+                                        .catch(function (err) {
+                                        return makeResponse_1.default(res, 400, err.message, null, true);
+                                    });
                                 }
                                 else {
                                     return makeResponse_1.default(res, 400, "Email already exists", null, true);
                                 }
                             })];
                     case 3:
-                        _b.sent();
-                        _b.label = 4;
+                        _c.sent();
+                        _c.label = 4;
                     case 4: return [2 /*return*/];
                 }
             });

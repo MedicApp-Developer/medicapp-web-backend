@@ -10,4 +10,8 @@ const makeResponse = (res: Response, statusCode: number, message: string, data: 
   }
 };
 
+export const sendErrorResponse = (res: Response, statusCode: number, message: string, code: number) => {
+  return res.status(statusCode).json({ statusCode, error: { code, message } });
+}
+
 export default makeResponse;

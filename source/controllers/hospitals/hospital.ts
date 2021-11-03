@@ -8,11 +8,11 @@ import { Roles } from '../../constants/roles';
 import { HospitalType } from '../../constants/hospital';
 import config from '../../config/config';
 import { uploadsOnlyVideo } from '../../functions/uploadS3';
+import { validateHospitalRegisteration } from '../../validation/hospitalRegisteration';
 
 const NAMESPACE = "Hospital";
 
 const createHospital = async (req: Request, res: Response, next: NextFunction) => {
-    
     uploadsOnlyVideo(req, res, async (error: any) => {
         if (error) {
           res.json({ error: error });
@@ -24,12 +24,17 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
             return makeResponse(res, 400, "No File Selected", null, true);
           } else {
   
+            const { errors, isValid } = validateHospitalRegisteration(req.body);
+            // Check validation
+            if (!isValid) {
+                return makeResponse(res, 400, "Validation Failed", errors, true);
+            }
+            
             const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location } = req.body;
     
             await User.find({ email }).then((result: any) => {
                 if(result.length === 0){
                     // @ts-ignore
-                    if(req && req.file && req.file.location && email && phoneNo && password && name && tradeLicenseNo && issueDate && expiryDate && location ){
                         const newHospital = new Hospital({
                             _id: new mongoose.Types.ObjectId(),
                             type: HospitalType.HOSPITAL, category: null, addons: [], phoneNo,
@@ -52,9 +57,6 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                             .catch((err: any) => {
                                 return makeResponse(res, 400, err.message, null, true);
                             });
-                    }else {
-                        return makeResponse(res, 400, "Validation Failed", null, true);
-                    }
                 }else {
                     return makeResponse(res, 400, "Email already exists", null, true);
                 }

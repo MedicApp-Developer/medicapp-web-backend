@@ -33,6 +33,10 @@ var PatientSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    emiratesId: {
+        type: String,
+        required: true
+    },
     birthday: {
         type: String,
         required: false
@@ -45,9 +49,21 @@ var PatientSchema = new mongoose_1.Schema({
         type: String,
         required: false
     },
+    issueDate: {
+        type: String,
+        required: true
+    },
+    expiryDate: {
+        type: String,
+        required: true
+    },
     location: {
         type: String,
-        required: false
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
     },
     age: {
         type: Number,

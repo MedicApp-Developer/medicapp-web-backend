@@ -49,8 +49,8 @@ const REFRESH_TOKEN = "1//04OpKKM7k0ZW2CgYIARAAGAQSNwF-L9Irr-y9gOsFwaupz60hPg54C
 const MEDICAPP_EMAIL = "collaborations@medicappae.com";
 
 // AWS S3 Bucket
-const ACCESSKEYID = "AKIA3KPUHOWAFWNQKVFH";
-const SECRETACCESSKEY = "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";
+const ACCESSKEYID = "AKIA3KPUHOWALTUAZ2N3";
+const SECRETACCESSKEY = "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";
 const BUCKET_NAME = "medicapp-bucket";
 
 const MONGO = {

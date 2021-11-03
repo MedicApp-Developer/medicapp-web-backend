@@ -10,6 +10,25 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -55,9 +74,9 @@ var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var user_1 = __importDefault(require("../models/user"));
 var signJWT_1 = __importDefault(require("../functions/signJWT"));
-var makeResponse_1 = __importDefault(require("../functions/makeResponse"));
-var register_1 = __importDefault(require("../validation/register"));
+var makeResponse_1 = __importStar(require("../functions/makeResponse"));
 var login_1 = __importDefault(require("../validation/login"));
+var statusCode_1 = require("../constants/statusCode");
 var NAMESPACE = "User";
 var validateToken = function (req, res, next) {
     logging_1.default.info(NAMESPACE, "Token validated, user authenticated");
@@ -66,13 +85,13 @@ var validateToken = function (req, res, next) {
     });
 };
 var register = function (req, res, next) {
-    // Form validation
-    var _a = register_1.default(req.body), errors = _a.errors, isValid = _a.isValid;
-    // Check validation
-    if (!isValid) {
-        return makeResponse_1.default(res, 400, "Validation Failed", errors, true);
-    }
-    var _b = req.body, email = _b.email, password = _b.password;
+    // // Form validation
+    // const { errors, isValid } = validateRegisterInput(req.body);
+    // // Check validation
+    // if (!isValid) {
+    //     return makeResponse(res, 400, "Validation Failed", errors, true);
+    // }
+    var _a = req.body, email = _a.email, password = _a.password;
     user_1.default.find({ email: email }).exec().then(function (user) {
         if (user.length > 0) {
             return makeResponse_1.default(res, 400, "Email already exists", null, true);
@@ -100,24 +119,25 @@ var login = function (req, res, next) {
     var _a = login_1.default(req.body), errors = _a.errors, isValid = _a.isValid;
     // Check validation
     if (!isValid) {
-        return makeResponse_1.default(res, 400, "Validation Failed", errors, true);
+        // @ts-ignore
+        return makeResponse_1.sendErrorResponse(res, 400, Object.values(errors)[0], statusCode_1.PARAMETER_MISSING_CODE);
     }
     var _b = req.body, email = _b.email, password = _b.password;
     user_1.default.find({ email: email })
         .exec()
         .then(function (users) {
         if (users.length !== 1) {
-            return makeResponse_1.default(res, 400, "Unauthorized", null, true);
+            return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
         }
         bcryptjs_1.default.compare(password, users[0].password, function (error, result) {
             if (!result) {
-                return makeResponse_1.default(res, 400, "Unauthorized", null, true);
+                return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
             }
             else if (result) {
                 signJWT_1.default(users[0], function (_error, token) {
                     if (_error) {
                         logging_1.default.error(NAMESPACE, 'Unable to sign token: ', _error);
-                        return makeResponse_1.default(res, 400, "Unauthorized", null, true);
+                        return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
                     }
                     else if (token) {
                         return makeResponse_1.default(res, 200, "Authentication Successful", { user: users[0], token: token }, false);

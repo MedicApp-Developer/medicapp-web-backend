@@ -9,8 +9,7 @@ const NAMESPACE = "Promos";
 const createPromo = (req: Request, res: Response, next: NextFunction) => {
     uploadsOnlyVideo(req, res, async (error: any) => {
         if (error) {
-          res.json({ error: error });
-          return makeResponse(res, 400, "Error in uploading image", null, true);
+          return makeResponse(res, 400, "Error in uploading Promo Video to S3 Bucket", null, true);
         } else {
           // If File not found
           // console.log("Ressss => ", req.files);

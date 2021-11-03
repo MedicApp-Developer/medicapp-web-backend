@@ -45,8 +45,8 @@ var REDIRECT_URI = "https://developers.google.com/oauthplayground";
 var REFRESH_TOKEN = "1//04OpKKM7k0ZW2CgYIARAAGAQSNwF-L9Irr-y9gOsFwaupz60hPg54C439xsVd-Vpx6scTi53pTaTOLD-1zTRUQIXYXCa2jt5QP8o";
 var MEDICAPP_EMAIL = "collaborations@medicappae.com";
 // AWS S3 Bucket
-var ACCESSKEYID = "AKIA3KPUHOWAFWNQKVFH";
-var SECRETACCESSKEY = "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";
+var ACCESSKEYID = "AKIA3KPUHOWALTUAZ2N3";
+var SECRETACCESSKEY = "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";
 var BUCKET_NAME = "medicapp-bucket";
 var MONGO = {
     host: MONGO_HOST,

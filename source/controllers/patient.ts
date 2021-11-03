@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Patient from '../models/patient';
-import makeResponse from '../functions/makeResponse';
+import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import UserController from '../controllers/user';
 import { Roles } from '../constants/roles';
 import config from '../config/config';
@@ -13,35 +13,67 @@ import { sendEmail } from '../functions/mailer';
 import { createAppointmentByNurse } from './appointments';
 import Hospital from '../models/hospital/hospital';
 import { Pagination } from '../constants/pagination';
+import { uploadEmirateFileId } from '../functions/uploadS3';
+import { validatePatientRegisteration } from '../validation/patientRegisteration';
+import { DUPLICATE_VALUE_CODE, PARAMETER_MISSING_CODE, SERVER_ERROR_CODE } from '../constants/statusCode';
 
 const NAMESPACE = "Patient";
 
 const createPatient = (req: Request, res: Response, next: NextFunction) => {
-    const { email, password, firstName, lastName, birthday, gender, emiratesId, location } = req.body;
-    if(email && password && firstName && lastName && birthday && gender && emiratesId && location ){
-        const newPatient = new Patient({
-            _id: new mongoose.Types.ObjectId(),
-            email, firstName, lastName, birthday, gender, emiratesId, location,
-            // emiratesIdFile: config.server.APP_URL + "/" + (( req && req.file && req.file.filename ) ? req.file.filename : "")
-        }); 
+    uploadEmirateFileId(req, res, async (error: any) => {
+        if (error) {
+          return sendErrorResponse(res, 400, "Error in uploading Patient Emirate ID File", SERVER_ERROR_CODE);
+        } else {
+          // If File not found
+          // console.log("Ressss => ", req.files);
+          if (req.file === undefined) {
+            return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
+          } else {
+  
+            const { firstName, lastName, email, emiratesId, birthday, gender, issueDate, expiryDate, location, phone, password } = req.body;
+    
+            const { errors, isValid } = validatePatientRegisteration(req.body);
+            // Check validation
+            if (!isValid) {
+                // @ts-ignore
+                return sendErrorResponse(res, 400, Object.values(errors)[0], PARAMETER_MISSING_CODE);
+            }
 
-        return newPatient.save()
-            .then(async result => {
-                await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.PATIENT, result._id)
-                return makeResponse(res, 201, "Patient Created Successfully", result, false);
-                
-                // if(){
-                //     return makeResponse(res, 201, "Patient Created Successfully", result, false);
-                // }else {
-                //     return makeResponse(res, 201, "Something went wrong while creating patient", result, false);
-                // };
-            })
-            .catch(err => {
-                return makeResponse(res, 400, err.message, null, true);
-            });
-    }else {
-        return makeResponse(res, 400, "Validation Failed", null, true);
-    } 
+            await User.find({ email }).then((result: any) => {
+                if(result.length === 0){
+                    // @ts-ignore
+                    const newPatient = new Patient({
+                            _id: new mongoose.Types.ObjectId(),
+                            firstName, lastName, email, emiratesId, birthday, gender, issueDate, expiryDate, location, phone,
+                            // @ts-ignore
+                            emiratesIdFile: req.file.location
+                        }); 
+    
+                        const options = {
+                            from: config.mailer.user,
+                            to: email,
+                            subject: "Welcome to Medicapp",
+                            text: `Your account account has been created as a patient, and your password is ${password}`
+                        }
+    
+                        sendEmail(options);
+                        
+                        return newPatient.save()
+                            .then(async result => {
+                                UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.PATIENT, result._id);
+                                return makeResponse(res, 201, "Patient Created Successfully", result, false);
+                            })
+                            .catch(err => {
+                                return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+                            });
+                }else {
+                    return sendErrorResponse(res, 400, "Email already exists", DUPLICATE_VALUE_CODE);
+                }
+            }); 
+           
+          }
+        }
+      });
 };
 
 const createPatientFromNurse = async (req: Request, res: Response, next: NextFunction) => {
@@ -74,10 +106,10 @@ const createPatientFromNurse = async (req: Request, res: Response, next: NextFun
                             return makeResponse(res, 201, "Patient Created Successfully", result, false);
                         })
                         .catch(err => {
-                            return makeResponse(res, 400, err.message, null, true);
+                            return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
                         });
                 }else {
-                    return makeResponse(res, 400, "Validation Failed", null, true);
+                    return sendErrorResponse(res, 400, "Validation Failed", SERVER_ERROR_CODE);
                 }
             }else {
                 return makeResponse(res, 400, "Email Already in use", null, true);
@@ -111,7 +143,7 @@ const getAllPatients = async (req: Request, res: Response, next: NextFunction) =
                 return makeResponse(res, 200, "All Patients", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), patients }, false);
             })
             .catch(err => {
-                return makeResponse(res, 400, err.message, null, true);
+                return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
             })
     }else {
         const total = await Appointment.find({ hospitalId }).countDocuments({});
@@ -123,7 +155,7 @@ const getAllPatients = async (req: Request, res: Response, next: NextFunction) =
                 return makeResponse(res, 200, "All Patients", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), patients }, false);
             })
             .catch(err => {
-                return makeResponse(res, 400, err.message, null, true);
+                return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
             })    
     }
 };
@@ -142,11 +174,11 @@ const getSinglePatient = async (req: Request, res: Response, next: NextFunction)
                     newTemp.doctors = doctors;
                     return makeResponse(res, 200, "Patient", newTemp, false);
                 }).catch(err => {
-                    return makeResponse(res, 400, err.message, null, true);
+                    return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
                 })
         })
         .catch(err => {
-            return makeResponse(res, 400, err.message, null, true);
+            return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
         })
 };
 
@@ -159,7 +191,7 @@ const updatePatient = (req: Request, res: Response, next: NextFunction) => {
     Patient.findOneAndUpdate(filter, update).then(updatedPatient => {
         return makeResponse(res, 200, "Patient updated Successfully", updatedPatient, false);
     }).catch(err => {
-        return makeResponse(res, 400, err.message, null, true);
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
     });
 };
 
@@ -167,12 +199,13 @@ const deletePatient = async (req: Request, res: Response, next: NextFunction) =>
     const _id = req.params.id;
     try {
         const patient = await Patient.findByIdAndDelete(_id);
-    if (!patient) return res.sendStatus(404);
+    if (!patient) return sendErrorResponse(res, 400, "Patient not found with this ID", SERVER_ERROR_CODE);
         await UserController.deleteUserWithEmail(patient.email)
         await Appointment.deleteMany({ patientId: patient._id});
         return makeResponse(res, 200, "Deleted Successfully", patient, false);
-    } catch (e) {
-        return res.sendStatus(400);
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
     }
 };
 

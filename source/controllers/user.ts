@@ -4,9 +4,9 @@ import bcryptjs from 'bcryptjs';
 import mongoose from 'mongoose';
 import User from '../models/user';
 import signJWT from '../functions/signJWT';
-import makeResponse from '../functions/makeResponse';
-import validateRegisterInput from "../validation/register";
+import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import validateLoginInput from '../validation/login';
+import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE } from '../constants/statusCode';
 
 const NAMESPACE = "User";
 
@@ -18,12 +18,12 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const register = (req: Request, res: Response, next: NextFunction) => {
-    // Form validation
-    const { errors, isValid } = validateRegisterInput(req.body);
-    // Check validation
-    if (!isValid) {
-        return makeResponse(res, 400, "Validation Failed", errors, true);
-    }
+    // // Form validation
+    // const { errors, isValid } = validateRegisterInput(req.body);
+    // // Check validation
+    // if (!isValid) {
+    //     return makeResponse(res, 400, "Validation Failed", errors, true);
+    // }
     
     let { email, password } = req.body;
 
@@ -60,7 +60,8 @@ const login = (req: Request, res: Response, next: NextFunction) => {
     const { errors, isValid } = validateLoginInput(req.body);
     // Check validation
     if (!isValid) {
-        return makeResponse(res, 400, "Validation Failed", errors, true);
+        // @ts-ignore
+        return sendErrorResponse(res, 400, Object.values(errors)[0], PARAMETER_MISSING_CODE);
     }
 
     let { email, password } = req.body;
@@ -69,19 +70,17 @@ const login = (req: Request, res: Response, next: NextFunction) => {
         .exec()
         .then(users => {
             if(users.length !== 1){
-                return makeResponse(res, 400, "Unauthorized", null, true);
+                return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
             }
 
             bcryptjs.compare(password, users[0].password, (error, result) => {
                 if(!result){
-                    return makeResponse(res, 400, "Unauthorized", null, true);
+                    return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                 }else if(result){
                     signJWT(users[0], (_error, token) => {
                         if(_error){
                             logging.error(NAMESPACE, 'Unable to sign token: ', _error);
-                            
-                            return makeResponse(res, 400, "Unauthorized", null, true);
-
+                            return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                         }else if(token){
                             return makeResponse(res, 200, "Authentication Successful", {user: users[0], token: token}, false);
                         }
