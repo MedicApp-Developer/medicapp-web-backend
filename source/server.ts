@@ -92,7 +92,7 @@ router.get('/', (req, res) => {
     res.setHeader("Content-Type", "text/html");
     res.write("<html>");
     res.write("<head><title>Welcome to Medicapp</title></head>");
-    res.write("<body><h4>Welcome to Medicappae Backend API's, Please use Postman Collection for respective API's ( 1st Demo )</h4></body>");
+    res.write("<body><h4>Welcome to Medicappae Backend API's, Please use Postman Collection for respective API's ( 2nd Demo )</h4></body>");
     res.write("</html>");
     return res.end(); 
 });

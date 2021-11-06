@@ -6,8 +6,8 @@ export default interface IPatient extends Document {
     email: string;
     birthday: string;
     gender: string;
-    emiratesId: string;
-    emiratesIdFile: string;
+    // emiratesId: string;
+    // emiratesIdFile: string;
     issueDate: string;
     expiryDate: string;
     location: string;

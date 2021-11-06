@@ -19,16 +19,16 @@ import { DUPLICATE_VALUE_CODE, PARAMETER_MISSING_CODE, SERVER_ERROR_CODE } from 
 
 const NAMESPACE = "Patient";
 
-const createPatient = (req: Request, res: Response, next: NextFunction) => {
-    uploadEmirateFileId(req, res, async (error: any) => {
-        if (error) {
-          return sendErrorResponse(res, 400, "Error in uploading Patient Emirate ID File", SERVER_ERROR_CODE);
-        } else {
-          // If File not found
-          // console.log("Ressss => ", req.files);
-          if (req.file === undefined) {
-            return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
-          } else {
+const createPatient = async (req: Request, res: Response, next: NextFunction) => {
+    // uploadEmirateFileId(req, res, async (error: any) => {
+    //     if (error) {
+    //       return sendErrorResponse(res, 400, "Error in uploading Patient Emirate ID File", SERVER_ERROR_CODE);
+    //     } else {
+    //       // If File not found
+    //       // console.log("Ressss => ", req.files);
+    //       if (req.file === undefined) {
+    //         return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
+    //       } else {
   
             const { firstName, lastName, email, emiratesId, birthday, gender, issueDate, expiryDate, location, phone, password } = req.body;
     
@@ -44,9 +44,9 @@ const createPatient = (req: Request, res: Response, next: NextFunction) => {
                     // @ts-ignore
                     const newPatient = new Patient({
                             _id: new mongoose.Types.ObjectId(),
-                            firstName, lastName, email, emiratesId, birthday, gender, issueDate, expiryDate, location, phone,
+                            firstName, lastName, email, birthday, gender, issueDate, expiryDate, location, phone,
                             // @ts-ignore
-                            emiratesIdFile: req.file.location
+                            // emiratesIdFile: req.file.location
                         }); 
     
                         const options = {
@@ -71,9 +71,9 @@ const createPatient = (req: Request, res: Response, next: NextFunction) => {
                 }
             }); 
            
-          }
-        }
-      });
+    //       }
+    //     }
+    //   });
 };
 
 const createPatientFromNurse = async (req: Request, res: Response, next: NextFunction) => {
