@@ -30,7 +30,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
     //         return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
     //       } else {
   
-            const { firstName, lastName, email, emiratesId, birthday, gender, issueDate, expiryDate, location, phone, password } = req.body;
+            const { firstName, lastName, email, birthday, gender, issueDate, expiryDate, location, phone, password } = req.body;
     
             const { errors, isValid } = validatePatientRegisteration(req.body);
             // Check validation

@@ -87,11 +87,11 @@ var patientRegisteration_1 = require("../validation/patientRegisteration");
 var statusCode_1 = require("../constants/statusCode");
 var NAMESPACE = "Patient";
 var createPatient = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, firstName, lastName, email, emiratesId, birthday, gender, issueDate, expiryDate, location, phone, password, _b, errors, isValid;
+    var _a, firstName, lastName, email, birthday, gender, issueDate, expiryDate, location, phone, password, _b, errors, isValid;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = req.body, firstName = _a.firstName, lastName = _a.lastName, email = _a.email, emiratesId = _a.emiratesId, birthday = _a.birthday, gender = _a.gender, issueDate = _a.issueDate, expiryDate = _a.expiryDate, location = _a.location, phone = _a.phone, password = _a.password;
+                _a = req.body, firstName = _a.firstName, lastName = _a.lastName, email = _a.email, birthday = _a.birthday, gender = _a.gender, issueDate = _a.issueDate, expiryDate = _a.expiryDate, location = _a.location, phone = _a.phone, password = _a.password;
                 _b = patientRegisteration_1.validatePatientRegisteration(req.body), errors = _b.errors, isValid = _b.isValid;
                 // Check validation
                 if (!isValid) {
