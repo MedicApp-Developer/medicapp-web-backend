@@ -9,3 +9,5 @@ var config_1 = __importDefault(require("./config"));
 // @ts-ignore
 var s3 = new aws_sdk_1.default.S3({ accessKeyId: config_1.default.bucket.accessKeyId, secretAccessKey: config_1.default.bucket.secretAccessKey, Bucket: config_1.default.bucket.name });
 exports.default = s3;
+// Ec2 Instance Node deployment tutorial ( https, domain setting and everything you need )
+// https://www.youtube.com/watch?v=ehITvx8VPFI&ab_channel=Red62%21

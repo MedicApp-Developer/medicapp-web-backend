@@ -83,68 +83,58 @@ var mailer_1 = require("../functions/mailer");
 var appointments_1 = require("./appointments");
 var hospital_1 = __importDefault(require("../models/hospital/hospital"));
 var pagination_1 = require("../constants/pagination");
-var uploadS3_1 = require("../functions/uploadS3");
 var patientRegisteration_1 = require("../validation/patientRegisteration");
 var statusCode_1 = require("../constants/statusCode");
 var NAMESPACE = "Patient";
-var createPatient = function (req, res, next) {
-    uploadS3_1.uploadEmirateFileId(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
-        var _a, firstName_1, lastName_1, email_1, emiratesId_1, birthday_1, gender_1, issueDate_1, expiryDate_1, location_1, phone_1, password_1, _b, errors, isValid;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    if (!error) return [3 /*break*/, 1];
-                    return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "Error in uploading Patient Emirate ID File", statusCode_1.SERVER_ERROR_CODE)];
-                case 1:
-                    if (!(req.file === undefined)) return [3 /*break*/, 2];
-                    return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "No File Selected", statusCode_1.PARAMETER_MISSING_CODE)];
-                case 2:
-                    _a = req.body, firstName_1 = _a.firstName, lastName_1 = _a.lastName, email_1 = _a.email, emiratesId_1 = _a.emiratesId, birthday_1 = _a.birthday, gender_1 = _a.gender, issueDate_1 = _a.issueDate, expiryDate_1 = _a.expiryDate, location_1 = _a.location, phone_1 = _a.phone, password_1 = _a.password;
-                    _b = patientRegisteration_1.validatePatientRegisteration(req.body), errors = _b.errors, isValid = _b.isValid;
-                    // Check validation
-                    if (!isValid) {
-                        // @ts-ignore
-                        return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, Object.values(errors)[0], statusCode_1.PARAMETER_MISSING_CODE)];
-                    }
-                    return [4 /*yield*/, user_2.default.find({ email: email_1 }).then(function (result) {
-                            if (result.length === 0) {
+var createPatient = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, firstName, lastName, email, emiratesId, birthday, gender, issueDate, expiryDate, location, phone, password, _b, errors, isValid;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _a = req.body, firstName = _a.firstName, lastName = _a.lastName, email = _a.email, emiratesId = _a.emiratesId, birthday = _a.birthday, gender = _a.gender, issueDate = _a.issueDate, expiryDate = _a.expiryDate, location = _a.location, phone = _a.phone, password = _a.password;
+                _b = patientRegisteration_1.validatePatientRegisteration(req.body), errors = _b.errors, isValid = _b.isValid;
+                // Check validation
+                if (!isValid) {
+                    // @ts-ignore
+                    return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, Object.values(errors)[0], statusCode_1.PARAMETER_MISSING_CODE)];
+                }
+                return [4 /*yield*/, user_2.default.find({ email: email }).then(function (result) {
+                        if (result.length === 0) {
+                            // @ts-ignore
+                            var newPatient = new patient_1.default({
+                                _id: new mongoose_1.default.Types.ObjectId(),
+                                firstName: firstName, lastName: lastName, email: email, birthday: birthday, gender: gender, issueDate: issueDate, expiryDate: expiryDate, location: location, phone: phone,
                                 // @ts-ignore
-                                var newPatient = new patient_1.default({
-                                    _id: new mongoose_1.default.Types.ObjectId(),
-                                    firstName: firstName_1, lastName: lastName_1, email: email_1, emiratesId: emiratesId_1, birthday: birthday_1, gender: gender_1, issueDate: issueDate_1, expiryDate: expiryDate_1, location: location_1, phone: phone_1,
-                                    // @ts-ignore
-                                    emiratesIdFile: req.file.location
+                                // emiratesIdFile: req.file.location
+                            });
+                            var options = {
+                                from: config_1.default.mailer.user,
+                                to: email,
+                                subject: "Welcome to Medicapp",
+                                text: "Your account account has been created as a patient, and your password is " + password
+                            };
+                            mailer_1.sendEmail(options);
+                            return newPatient.save()
+                                .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    user_1.default.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, roles_1.Roles.PATIENT, result._id);
+                                    return [2 /*return*/, makeResponse_1.default(res, 201, "Patient Created Successfully", result, false)];
                                 });
-                                var options = {
-                                    from: config_1.default.mailer.user,
-                                    to: email_1,
-                                    subject: "Welcome to Medicapp",
-                                    text: "Your account account has been created as a patient, and your password is " + password_1
-                                };
-                                mailer_1.sendEmail(options);
-                                return newPatient.save()
-                                    .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        user_1.default.createUserFromEmailAndPassword(req, res, email_1, password_1, firstName_1 + " " + lastName_1, roles_1.Roles.PATIENT, result._id);
-                                        return [2 /*return*/, makeResponse_1.default(res, 201, "Patient Created Successfully", result, false)];
-                                    });
-                                }); })
-                                    .catch(function (err) {
-                                    return makeResponse_1.sendErrorResponse(res, 400, err.message, statusCode_1.SERVER_ERROR_CODE);
-                                });
-                            }
-                            else {
-                                return makeResponse_1.sendErrorResponse(res, 400, "Email already exists", statusCode_1.DUPLICATE_VALUE_CODE);
-                            }
-                        })];
-                case 3:
-                    _c.sent();
-                    _c.label = 4;
-                case 4: return [2 /*return*/];
-            }
-        });
-    }); });
-};
+                            }); })
+                                .catch(function (err) {
+                                return makeResponse_1.sendErrorResponse(res, 400, err.message, statusCode_1.SERVER_ERROR_CODE);
+                            });
+                        }
+                        else {
+                            return makeResponse_1.sendErrorResponse(res, 400, "Email already exists", statusCode_1.DUPLICATE_VALUE_CODE);
+                        }
+                    })];
+            case 1:
+                _c.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
 var createPatientFromNurse = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, firstName, lastName, mobile, time, doctorId, referenceId, birthday, gender, location, password, nurse;
     return __generator(this, function (_b) {
