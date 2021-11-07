@@ -7,7 +7,6 @@ export function validatePatientRegisteration(data: any) {
   data.firstName = !isEmpty(data.firstName) ? data.firstName : "";
   data.lastName = !isEmpty(data.lastName) ? data.lastName : "";
   data.email = !isEmpty(data.email) ? data.email : "";
-  data.emiratesId = !isEmpty(data.emiratesId) ? data.emiratesId : "";
   data.birthday = !isEmpty(data.birthday) ? data.birthday : "";
   data.gender = !isEmpty(data.gender) ? data.gender : "";
   data.issueDate = !isEmpty(data.issueDate) ? data.issueDate : "";
@@ -33,11 +32,6 @@ export function validatePatientRegisteration(data: any) {
   } else if (!Validator.isEmail(data.email)) {
     // @ts-ignore
     errors.email = "Email is invalid";
-  }
-
-  if (Validator.isEmpty(data.emiratesId)) {
-    // @ts-ignore
-    errors.emiratesId = "Emirates ID field is required";
   }
 
   if (Validator.isEmpty(data.birthday)) {
