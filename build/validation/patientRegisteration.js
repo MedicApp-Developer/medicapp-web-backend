@@ -12,7 +12,6 @@ function validatePatientRegisteration(data) {
     data.firstName = !is_empty_1.default(data.firstName) ? data.firstName : "";
     data.lastName = !is_empty_1.default(data.lastName) ? data.lastName : "";
     data.email = !is_empty_1.default(data.email) ? data.email : "";
-    data.emiratesId = !is_empty_1.default(data.emiratesId) ? data.emiratesId : "";
     data.birthday = !is_empty_1.default(data.birthday) ? data.birthday : "";
     data.gender = !is_empty_1.default(data.gender) ? data.gender : "";
     data.issueDate = !is_empty_1.default(data.issueDate) ? data.issueDate : "";
@@ -36,10 +35,6 @@ function validatePatientRegisteration(data) {
     else if (!validator_1.default.isEmail(data.email)) {
         // @ts-ignore
         errors.email = "Email is invalid";
-    }
-    if (validator_1.default.isEmpty(data.emiratesId)) {
-        // @ts-ignore
-        errors.emiratesId = "Emirates ID field is required";
     }
     if (validator_1.default.isEmpty(data.birthday)) {
         // @ts-ignore
