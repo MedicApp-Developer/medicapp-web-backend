@@ -10,7 +10,7 @@ var isNurse_1 = __importDefault(require("../middleware/isNurse"));
 var router = express_1.default.Router();
 router.get('/', extractJWT_1.default, patient_1.default.getAllPatients);
 router.get('/:id', extractJWT_1.default, patient_1.default.getSinglePatient);
-router.post('/', isHospitalOrNurse_1.default, patient_1.default.createPatient);
+router.post('/', patient_1.default.createPatient);
 // router.post('/', [ isHospitalOrNurse, upload.single("emiratesIdFile") ] ,controller.createPatient);
 router.put('/:id', isHospitalOrNurse_1.default, patient_1.default.updatePatient);
 router.delete('/:id', isHospitalOrNurse_1.default, patient_1.default.deletePatient);
