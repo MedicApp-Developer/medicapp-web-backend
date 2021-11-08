@@ -6,7 +6,7 @@ import User from '../models/user';
 import signJWT from '../functions/signJWT';
 import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import validateLoginInput from '../validation/login';
-import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE } from '../constants/statusCode';
+import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE, INVALID_VALUE_CODE } from '../constants/statusCode';
 
 const NAMESPACE = "User";
 
@@ -61,7 +61,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
     // Check validation
     if (!isValid) {
         // @ts-ignore
-        return sendErrorResponse(res, 400, Object.values(errors)[0], PARAMETER_MISSING_CODE);
+        return sendErrorResponse(res, 400, Object.values(errors)[0] , Object.values(errors)[0].includes("invalid") ? INVALID_VALUE_CODE : PARAMETER_MISSING_CODE);
     }
 
     let { email, password } = req.body;

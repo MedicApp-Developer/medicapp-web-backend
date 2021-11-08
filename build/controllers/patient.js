@@ -85,6 +85,8 @@ var hospital_1 = __importDefault(require("../models/hospital/hospital"));
 var pagination_1 = require("../constants/pagination");
 var patientRegisteration_1 = require("../validation/patientRegisteration");
 var statusCode_1 = require("../constants/statusCode");
+var signJWT_1 = __importDefault(require("../functions/signJWT"));
+var logging_1 = __importDefault(require("../config/logging"));
 var NAMESPACE = "Patient";
 var createPatient = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, firstName, lastName, email, birthday, gender, location, phone, password, _b, errors, isValid;
@@ -96,7 +98,7 @@ var createPatient = function (req, res, next) { return __awaiter(void 0, void 0,
                 // Check validation
                 if (!isValid) {
                     // @ts-ignore
-                    return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, Object.values(errors)[0], statusCode_1.PARAMETER_MISSING_CODE)];
+                    return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, Object.values(errors)[0], Object.values(errors)[0].includes("invalid") ? INVALID_VALUE_CODE : statusCode_1.PARAMETER_MISSING_CODE)];
                 }
                 return [4 /*yield*/, user_2.default.find({ email: email }).then(function (result) {
                         if (result.length === 0) {
@@ -118,7 +120,17 @@ var createPatient = function (req, res, next) { return __awaiter(void 0, void 0,
                                 .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     user_1.default.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, roles_1.Roles.PATIENT, result._id);
-                                    return [2 /*return*/, makeResponse_1.default(res, 201, "Patient Created Successfully", result, false)];
+                                    // @ts-ignore
+                                    signJWT_1.default(result, function (_error, token) {
+                                        if (_error) {
+                                            logging_1.default.error(NAMESPACE, 'Unable to sign token: ', _error);
+                                            return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
+                                        }
+                                        else if (token) {
+                                            return makeResponse_1.default(res, 200, "Patient registered successfully", { user: result, token: token }, false);
+                                        }
+                                    });
+                                    return [2 /*return*/];
                                 });
                             }); })
                                 .catch(function (err) {

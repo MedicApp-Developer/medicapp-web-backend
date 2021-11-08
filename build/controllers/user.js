@@ -120,7 +120,7 @@ var login = function (req, res, next) {
     // Check validation
     if (!isValid) {
         // @ts-ignore
-        return makeResponse_1.sendErrorResponse(res, 400, Object.values(errors)[0], statusCode_1.PARAMETER_MISSING_CODE);
+        return makeResponse_1.sendErrorResponse(res, 400, Object.values(errors)[0], Object.values(errors)[0].includes("invalid") ? statusCode_1.INVALID_VALUE_CODE : statusCode_1.PARAMETER_MISSING_CODE);
     }
     var _b = req.body, email = _b.email, password = _b.password;
     user_1.default.find({ email: email })

@@ -14,7 +14,9 @@ import { createAppointmentByNurse } from './appointments';
 import Hospital from '../models/hospital/hospital';
 import { Pagination } from '../constants/pagination';
 import { validatePatientRegisteration } from '../validation/patientRegisteration';
-import { DUPLICATE_VALUE_CODE, PARAMETER_MISSING_CODE, SERVER_ERROR_CODE } from '../constants/statusCode';
+import { DUPLICATE_VALUE_CODE, PARAMETER_MISSING_CODE, SERVER_ERROR_CODE, UNAUTHORIZED_CODE } from '../constants/statusCode';
+import signJWT from '../functions/signJWT';
+import logging from '../config/logging';
 
 const NAMESPACE = "Patient";
 
@@ -35,7 +37,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
             // Check validation
             if (!isValid) {
                 // @ts-ignore
-                return sendErrorResponse(res, 400, Object.values(errors)[0], PARAMETER_MISSING_CODE);
+                return sendErrorResponse(res, 400, Object.values(errors)[0], Object.values(errors)[0].includes("invalid") ? INVALID_VALUE_CODE : PARAMETER_MISSING_CODE);
             }
 
             await User.find({ email }).then((result: any) => {
@@ -60,7 +62,15 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                         return newPatient.save()
                             .then(async result => {
                                 UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.PATIENT, result._id);
-                                return makeResponse(res, 201, "Patient Created Successfully", result, false);
+                                // @ts-ignore
+                                signJWT(result, (_error, token) => {
+                                    if(_error){
+                                        logging.error(NAMESPACE, 'Unable to sign token: ', _error);
+                                        return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
+                                    }else if(token){
+                                        return makeResponse(res, 200, "Patient registered successfully", {user: result, token: token}, false);
+                                    }
+                                })
                             })
                             .catch(err => {
                                 return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
