@@ -49,14 +49,14 @@ var PatientSchema = new mongoose_1.Schema({
         type: String,
         required: false
     },
-    issueDate: {
-        type: String,
-        required: true
-    },
-    expiryDate: {
-        type: String,
-        required: true
-    },
+    // issueDate: {
+    //     type: String,
+    //     required: true
+    // },
+    // expiryDate: {
+    //     type: String,
+    //     required: true
+    // },
     location: {
         type: String,
         required: true

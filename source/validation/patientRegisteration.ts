@@ -9,8 +9,6 @@ export function validatePatientRegisteration(data: any) {
   data.email = !isEmpty(data.email) ? data.email : "";
   data.birthday = !isEmpty(data.birthday) ? data.birthday : "";
   data.gender = !isEmpty(data.gender) ? data.gender : "";
-  data.issueDate = !isEmpty(data.issueDate) ? data.issueDate : "";
-  data.expiryDate = !isEmpty(data.expiryDate) ? data.expiryDate : "";
   data.location = !isEmpty(data.location) ? data.location : "";
   data.phone = !isEmpty(data.phone) ? data.phone : "";
   data.password = !isEmpty(data.password) ? data.password : "";
@@ -42,16 +40,6 @@ export function validatePatientRegisteration(data: any) {
   if (Validator.isEmpty(data.gender)) {
     // @ts-ignore
     errors.gender = "Gender field is required";
-  }
-
-  if (Validator.isEmpty(data.issueDate)) {
-    // @ts-ignore
-    errors.issueDate = "Issue Date field is required";
-  }
-
-  if (Validator.isEmpty(data.expiryDate)) {
-    // @ts-ignore
-    errors.expiryDate = "Expiry Date field is required";
   }
 
   if (Validator.isEmpty(data.location)) {

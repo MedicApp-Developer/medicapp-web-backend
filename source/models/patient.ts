@@ -31,14 +31,14 @@ const PatientSchema: Schema = new Schema(
             type: String,
             required: false
         },
-        issueDate: {
-            type: String,
-            required: true
-        },
-        expiryDate: {
-            type: String,
-            required: true
-        },
+        // issueDate: {
+        //     type: String,
+        //     required: true
+        // },
+        // expiryDate: {
+        //     type: String,
+        //     required: true
+        // },
         location: {
             type: String,
             required: true

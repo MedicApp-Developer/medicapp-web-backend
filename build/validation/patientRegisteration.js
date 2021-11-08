@@ -14,8 +14,6 @@ function validatePatientRegisteration(data) {
     data.email = !is_empty_1.default(data.email) ? data.email : "";
     data.birthday = !is_empty_1.default(data.birthday) ? data.birthday : "";
     data.gender = !is_empty_1.default(data.gender) ? data.gender : "";
-    data.issueDate = !is_empty_1.default(data.issueDate) ? data.issueDate : "";
-    data.expiryDate = !is_empty_1.default(data.expiryDate) ? data.expiryDate : "";
     data.location = !is_empty_1.default(data.location) ? data.location : "";
     data.phone = !is_empty_1.default(data.phone) ? data.phone : "";
     data.password = !is_empty_1.default(data.password) ? data.password : "";
@@ -43,14 +41,6 @@ function validatePatientRegisteration(data) {
     if (validator_1.default.isEmpty(data.gender)) {
         // @ts-ignore
         errors.gender = "Gender field is required";
-    }
-    if (validator_1.default.isEmpty(data.issueDate)) {
-        // @ts-ignore
-        errors.issueDate = "Issue Date field is required";
-    }
-    if (validator_1.default.isEmpty(data.expiryDate)) {
-        // @ts-ignore
-        errors.expiryDate = "Expiry Date field is required";
     }
     if (validator_1.default.isEmpty(data.location)) {
         // @ts-ignore

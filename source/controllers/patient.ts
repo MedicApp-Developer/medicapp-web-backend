@@ -13,7 +13,6 @@ import { sendEmail } from '../functions/mailer';
 import { createAppointmentByNurse } from './appointments';
 import Hospital from '../models/hospital/hospital';
 import { Pagination } from '../constants/pagination';
-import { uploadEmirateFileId } from '../functions/uploadS3';
 import { validatePatientRegisteration } from '../validation/patientRegisteration';
 import { DUPLICATE_VALUE_CODE, PARAMETER_MISSING_CODE, SERVER_ERROR_CODE } from '../constants/statusCode';
 
@@ -30,7 +29,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
     //         return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
     //       } else {
   
-            const { firstName, lastName, email, birthday, gender, issueDate, expiryDate, location, phone, password } = req.body;
+            const { firstName, lastName, email, birthday, gender, location, phone, password } = req.body;
     
             const { errors, isValid } = validatePatientRegisteration(req.body);
             // Check validation
@@ -44,7 +43,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                     // @ts-ignore
                     const newPatient = new Patient({
                             _id: new mongoose.Types.ObjectId(),
-                            firstName, lastName, email, birthday, gender, issueDate, expiryDate, location, phone,
+                            firstName, lastName, email, birthday, gender, location, phone,
                             // @ts-ignore
                             // emiratesIdFile: req.file.location
                         }); 
