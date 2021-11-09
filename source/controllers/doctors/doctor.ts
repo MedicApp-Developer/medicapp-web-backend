@@ -10,6 +10,7 @@ import { getRandomPassword } from '../../functions/utilities';
 import config from '../../config/config';
 import { Pagination } from '../../constants/pagination';
 import Nurse from '../../models/nurse/nurse';
+import Hospital from '../../models/hospital/hospital';
 
 const NAMESPACE = "Doctor";
 
@@ -165,11 +166,37 @@ const searchDoctor = async (req: Request, res: Response, next: NextFunction) => 
     });
 };
 
+const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFunction) => {
+    const { searchedText } = req.params;
+    // Regex 
+    const searchedTextRegex = new RegExp(searchedText, 'i');
+
+    const hospitalSearchQuery = [
+        { name: searchedTextRegex }, 
+        { location: searchedTextRegex },
+        { email: searchedTextRegex },
+        { tradeLicenseNo: searchedTextRegex } 
+    ]
+
+    const doctorSearchQuery = [
+        { firstName: searchedTextRegex }, 
+        { lastName: searchedTextRegex },
+        { email: searchedTextRegex },
+        { mobile: searchedTextRegex } 
+    ]
+
+    const searchedHospitals = await Hospital.find({$or: hospitalSearchQuery});
+    const searchedDoctors = await Doctor.find({$or: doctorSearchQuery});
+
+    return makeResponse(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false);
+};
+
 export default { 
     createDoctor, 
     getAllDoctors,
     getSingleDoctor,
     updateDoctor,
     deleteDoctor,
-    searchDoctor
+    searchDoctor,
+    searchHospitalAndDoctor
 };

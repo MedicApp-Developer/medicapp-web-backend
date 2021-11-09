@@ -61,6 +61,7 @@ var utilities_1 = require("../../functions/utilities");
 var config_1 = __importDefault(require("../../config/config"));
 var pagination_1 = require("../../constants/pagination");
 var nurse_1 = __importDefault(require("../../models/nurse/nurse"));
+var hospital_1 = __importDefault(require("../../models/hospital/hospital"));
 var NAMESPACE = "Doctor";
 var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, firstName, lastName, mobile, speciality, experience, password;
@@ -226,11 +227,41 @@ var searchDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
         }
     });
 }); };
+var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var searchedText, searchedTextRegex, hospitalSearchQuery, doctorSearchQuery, searchedHospitals, searchedDoctors;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                searchedText = req.params.searchedText;
+                searchedTextRegex = new RegExp(searchedText, 'i');
+                hospitalSearchQuery = [
+                    { name: searchedTextRegex },
+                    { location: searchedTextRegex },
+                    { email: searchedTextRegex },
+                    { tradeLicenseNo: searchedTextRegex }
+                ];
+                doctorSearchQuery = [
+                    { firstName: searchedTextRegex },
+                    { lastName: searchedTextRegex },
+                    { email: searchedTextRegex },
+                    { mobile: searchedTextRegex }
+                ];
+                return [4 /*yield*/, hospital_1.default.find({ $or: hospitalSearchQuery })];
+            case 1:
+                searchedHospitals = _a.sent();
+                return [4 /*yield*/, doctor_1.default.find({ $or: doctorSearchQuery })];
+            case 2:
+                searchedDoctors = _a.sent();
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false)];
+        }
+    });
+}); };
 exports.default = {
     createDoctor: createDoctor,
     getAllDoctors: getAllDoctors,
     getSingleDoctor: getSingleDoctor,
     updateDoctor: updateDoctor,
     deleteDoctor: deleteDoctor,
-    searchDoctor: searchDoctor
+    searchDoctor: searchDoctor,
+    searchHospitalAndDoctor: searchHospitalAndDoctor
 };

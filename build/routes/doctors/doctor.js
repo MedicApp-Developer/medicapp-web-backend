@@ -14,4 +14,5 @@ router.post('/', isHospital_1.default, doctor_1.default.createDoctor);
 router.put('/:id', extractJWT_1.default, doctor_1.default.updateDoctor);
 router.delete('/:id', isHospital_1.default, doctor_1.default.deleteDoctor);
 router.get('/search/:searchedText', isHospital_1.default, doctor_1.default.searchDoctor);
+router.get('/searchHospitalAndDoctor/:searchedText', doctor_1.default.searchHospitalAndDoctor);
 module.exports = router;
