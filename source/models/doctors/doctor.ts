@@ -24,9 +24,10 @@ const DoctorSchema: Schema = new Schema(
             ref: "Hospital",
             index: false
         },
-        speciality: {
-            type: String,
-            required: false
+        specialityId: {
+            type: Schema.Types.ObjectId,
+            ref: "Speciality",
+            index: false
         },
         experience: {
             type: String,

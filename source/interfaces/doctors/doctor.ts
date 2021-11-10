@@ -6,7 +6,7 @@ export default interface IDoctor extends Document {
     email: string;
     mobile: string;
     hospitalId: string;
-    speciality: string;
+    specialityId: string;
     experience: string;
     description: string;
     about: string;

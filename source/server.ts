@@ -19,6 +19,7 @@ import pharmacyRoutes from './routes/pharmacy/pharmacy';
 import branchRoutes from './routes/pharmacy/branch';
 import labRequestRoutes from './routes/labortories/labRequest';
 import promoVideoRoutes from './routes/hospitals/promos';
+import specialityRoutes from './routes/doctors/speciality';
 import cors from 'cors'
 
 const NAMESPACE = 'Server';
@@ -86,6 +87,7 @@ router.use('/api/pharmacy', pharmacyRoutes);
 router.use('/api/pharmacy/branch', branchRoutes);
 router.use('/api/labRequests', labRequestRoutes);
 router.use('/api/promos', promoVideoRoutes);
+router.use('/api/speciality', specialityRoutes);
 
 // Simple Root Message
 router.get('/', (req, res) => {

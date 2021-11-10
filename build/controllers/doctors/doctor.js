@@ -64,18 +64,18 @@ var nurse_1 = __importDefault(require("../../models/nurse/nurse"));
 var hospital_1 = __importDefault(require("../../models/hospital/hospital"));
 var NAMESPACE = "Doctor";
 var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, firstName, lastName, mobile, speciality, experience, password;
+    var _a, email, firstName, lastName, mobile, specialityId, experience, password;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile, speciality = _a.speciality, experience = _a.experience;
+                _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile, specialityId = _a.specialityId, experience = _a.experience;
                 password = utilities_1.getRandomPassword();
                 return [4 /*yield*/, user_1.default.find({ email: email }).then(function (result) {
                         if (result.length === 0) {
                             if (email && firstName && lastName && mobile) {
                                 var newDoctor = new doctor_1.default({
                                     _id: new mongoose_1.default.Types.ObjectId(),
-                                    experience: experience, speciality: speciality,
+                                    experience: experience, specialityId: specialityId,
                                     email: email, password: password, firstName: firstName, lastName: lastName, mobile: mobile, hospitalId: res.locals.jwt.reference_id
                                 });
                                 var options = {
@@ -126,7 +126,7 @@ var getAllDoctors = function (req, res, next) { return __awaiter(void 0, void 0,
                 return [4 /*yield*/, doctor_1.default.find({ hospitalId: hospitalId }).countDocuments({})];
             case 1:
                 total_1 = _a.sent();
-                doctor_1.default.find({ hospitalId: hospitalId }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
+                doctor_1.default.find({ hospitalId: hospitalId }).populate("specialityId").limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
                     return makeResponse_1.default(res, 200, "All Doctors", { totalItems: total_1, totalPages: Math.ceil(total_1 / pagination_1.Pagination.PAGE_SIZE), doctors: result }, false);
                 })
@@ -141,7 +141,7 @@ var getAllDoctors = function (req, res, next) { return __awaiter(void 0, void 0,
             case 3:
                 nurse = _a.sent();
                 hospitalId = nurse === null || nurse === void 0 ? void 0 : nurse.hospitalId;
-                doctor_1.default.find({ hospitalId: hospitalId })
+                doctor_1.default.find({ hospitalId: hospitalId }).populate("specialityId")
                     .then(function (result) {
                     return makeResponse_1.default(res, 200, "All Doctors", { doctors: result }, false);
                 })
@@ -154,7 +154,7 @@ var getAllDoctors = function (req, res, next) { return __awaiter(void 0, void 0,
     });
 }); };
 var getSingleDoctor = function (req, res, next) {
-    doctor_1.default.findById({ _id: req.params.id }).populate('hospitalId')
+    doctor_1.default.findById({ _id: req.params.id }).populate('hospitalId').populate("specialityId")
         .then(function (data) {
         return makeResponse_1.default(res, 200, "Doctor", data, false);
     }).catch(function (err) {
@@ -256,6 +256,17 @@ var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 
         }
     });
 }); };
+var searchDoctorBySpeciality = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        doctor_1.default.find({ specialityId: req.params.specialityId }).populate("specialityId")
+            .then(function (data) {
+            return makeResponse_1.default(res, 200, "Searched Doctor", data, false);
+        }).catch(function (err) {
+            return makeResponse_1.default(res, 400, err.message, null, true);
+        });
+        return [2 /*return*/];
+    });
+}); };
 exports.default = {
     createDoctor: createDoctor,
     getAllDoctors: getAllDoctors,
@@ -263,5 +274,6 @@ exports.default = {
     updateDoctor: updateDoctor,
     deleteDoctor: deleteDoctor,
     searchDoctor: searchDoctor,
-    searchHospitalAndDoctor: searchHospitalAndDoctor
+    searchHospitalAndDoctor: searchHospitalAndDoctor,
+    searchDoctorBySpeciality: searchDoctorBySpeciality
 };

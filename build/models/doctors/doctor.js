@@ -42,9 +42,10 @@ var DoctorSchema = new mongoose_1.Schema({
         ref: "Hospital",
         index: false
     },
-    speciality: {
-        type: String,
-        required: false
+    specialityId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Speciality",
+        index: false
     },
     experience: {
         type: String,

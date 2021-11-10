@@ -15,7 +15,7 @@ import Hospital from '../../models/hospital/hospital';
 const NAMESPACE = "Doctor";
 
 const createDoctor = async (req: Request, res: Response, next: NextFunction) => {
-        const { email, firstName, lastName, mobile, speciality, experience } = req.body;
+        const { email, firstName, lastName, mobile, specialityId, experience } = req.body;
         const password = getRandomPassword();
 
         await User.find({email}).then(result => {
@@ -24,7 +24,7 @@ const createDoctor = async (req: Request, res: Response, next: NextFunction) => 
                 if(email && firstName && lastName && mobile){
                     const newDoctor = new Doctor({
                         _id: new mongoose.Types.ObjectId(),
-                        experience, speciality,
+                        experience, specialityId,
                         email, password, firstName, lastName, mobile, hospitalId: res.locals.jwt.reference_id
                     }); 
 
@@ -41,14 +41,6 @@ const createDoctor = async (req: Request, res: Response, next: NextFunction) => 
                         .then(async result => {
                             await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.DOCTOR, result._id)
                             return makeResponse(res, 201, "Doctor Created Successfully", result, false);
-                            
-                            // TODO: Need to be fixed
-                            
-                            // if(){
-                            //     return makeResponse(res, 201, "Doctor Created Successfully", result, false);
-                            // }else {
-                            //     return makeResponse(res, 201, "Something went wrong while creating Doctor", result, false);
-                            // };
                         })
                         .catch(err => {
                             return makeResponse(res, 400, err.message, null, true);
@@ -71,7 +63,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
         hospitalId = res.locals.jwt.reference_id;
         const total = await Doctor.find({ hospitalId }).countDocuments({});
 
-        Doctor.find({ hospitalId }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+        Doctor.find({ hospitalId }).populate("specialityId").limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
             .then(result => {
                 return makeResponse(res, 200, "All Doctors", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), doctors: result}, false);
             })
@@ -82,7 +74,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
         const { reference_id } = req.query;
         const nurse = await Nurse.findById(reference_id);
         hospitalId = nurse?.hospitalId;
-        Doctor.find({ hospitalId })
+        Doctor.find({ hospitalId }).populate("specialityId")
             .then(result => {
                 return makeResponse(res, 200, "All Doctors", { doctors: result }, false);
             })
@@ -94,7 +86,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 const getSingleDoctor = (req: Request, res: Response, next: NextFunction) => {
-    Doctor.findById({ _id: req.params.id }).populate('hospitalId')
+    Doctor.findById({ _id: req.params.id }).populate('hospitalId').populate("specialityId")
     .then(data => {
         return makeResponse(res, 200, "Doctor", data, false);
     }).catch(err => {
@@ -130,12 +122,6 @@ const deleteDoctor = async (req: Request, res: Response, next: NextFunction) => 
     if (!doctor) return res.sendStatus(404);
         await UserController.deleteUserWithEmail(doctor.email);
         return makeResponse(res, 200, "Deleted Successfully", doctor, false);
-        
-        // if(){
-        //     return makeResponse(res, 200, "Deleted Successfully", doctor, false);
-        // }else {
-        //     return makeResponse(res, 400, "Error while deleting Doctor", null, true);
-        // }
     } catch (e) {
         return res.sendStatus(400);
     }
@@ -191,6 +177,15 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
     return makeResponse(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false);
 };
 
+const searchDoctorBySpeciality = async (req: Request, res: Response, next: NextFunction) => {
+    Doctor.find({ specialityId: req.params.specialityId }).populate("specialityId")
+    .then(data => {
+        return makeResponse(res, 200, "Searched Doctor", data, false);
+    }).catch(err => {
+        return makeResponse(res, 400, err.message, null, true);
+    })
+};
+
 export default { 
     createDoctor, 
     getAllDoctors,
@@ -198,5 +193,6 @@ export default {
     updateDoctor,
     deleteDoctor,
     searchDoctor,
-    searchHospitalAndDoctor
+    searchHospitalAndDoctor,
+    searchDoctorBySpeciality
 };
