@@ -2,20 +2,42 @@ import { NextFunction, Request, Response } from 'express';
 import makeResponse from '../../functions/makeResponse';
 import Speciality from '../../models/doctors/speciality';
 import { sendErrorResponse } from '../../functions/makeResponse';
-import { RECORD_NOT_FOUND, SERVER_ERROR_CODE, UNAUTHORIZED_CODE } from '../../constants/statusCode';
+import { PARAMETER_MISSING_CODE, RECORD_NOT_FOUND, SERVER_ERROR_CODE, UNAUTHORIZED_CODE } from '../../constants/statusCode';
+import validateSpecialityInput from '../../validation/speciality';
+import { uploadImage } from '../../functions/uploadS3';
 
 const NAMESPACE = "Speciality";
 
 const createSpeciality = (req: Request, res: Response, next: NextFunction) => {
-     const { name } = req.body;
+    uploadImage(req, res, async (error: any) => {
+        if (error) {
+          return sendErrorResponse(res, 400, "Error in uploading image", SERVER_ERROR_CODE);
+        } else {
+          // If File not found
+          // console.log("Ressss => ", req.files);
+          if (req.file === undefined) {
+            return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
+          } else {
+  
+            const { errors, isValid } = validateSpecialityInput(req.body);
+            // Check validation
+            if (!isValid) {
+                return makeResponse(res, 400, "Validation Failed", errors, true);
+            }
+            
+            const { name } = req.body;
 
-     const newSpeciality = new Speciality({ name });
-     newSpeciality.save().then(speciality => {
-        return makeResponse(res, 201, "Speciality Created Successfully", speciality, false);
-     })
-     .catch(err => {
-        return sendErrorResponse(res, 400, "Unable to create speciality", SERVER_ERROR_CODE);
-     });
+            // @ts-ignore
+            const newSpeciality = new Speciality({ name, logo: req.file.location });
+            newSpeciality.save().then(speciality => {
+               return makeResponse(res, 201, "Speciality Created Successfully", speciality, false);
+            })
+            .catch(err => {
+               return sendErrorResponse(res, 400, "Unable to create speciality", SERVER_ERROR_CODE);
+            });  
+        }
+        }
+      });
 };
 
 const getAllSpeciality = (req: Request, res: Response, next: NextFunction) => {

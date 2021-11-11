@@ -40,3 +40,21 @@ export const uploadsOnlyVideo = multer({
     }),
     limits: { fileSize: 50000000 }, // In bytes: 2000000 bytes = 50 MB
   }).single("emirateIdFile");
+
+  export const uploadImage = multer({
+    storage: multerS3({
+      s3: s3,
+      bucket: config.bucket.name,
+      acl: "public-read",
+      key: function (req: Request, file: any, cb: any) {
+        cb(
+          null,
+          path.basename(file.originalname, path.extname(file.originalname)) +
+            "-" +
+            Date.now() +
+            path.extname(file.originalname)
+        );
+      },
+    }),
+    limits: { fileSize: 50000000 }, // In bytes: 2000000 bytes = 50 MB
+  }).single("image");

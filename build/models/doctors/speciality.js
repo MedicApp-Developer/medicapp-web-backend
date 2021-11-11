@@ -24,6 +24,10 @@ var SpecialitySchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true
+    },
+    logo: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: true

@@ -54,16 +54,41 @@ var makeResponse_1 = __importDefault(require("../../functions/makeResponse"));
 var speciality_1 = __importDefault(require("../../models/doctors/speciality"));
 var makeResponse_2 = require("../../functions/makeResponse");
 var statusCode_1 = require("../../constants/statusCode");
+var speciality_2 = __importDefault(require("../../validation/speciality"));
+var uploadS3_1 = require("../../functions/uploadS3");
 var NAMESPACE = "Speciality";
 var createSpeciality = function (req, res, next) {
-    var name = req.body.name;
-    var newSpeciality = new speciality_1.default({ name: name });
-    newSpeciality.save().then(function (speciality) {
-        return makeResponse_1.default(res, 201, "Speciality Created Successfully", speciality, false);
-    })
-        .catch(function (err) {
-        return makeResponse_2.sendErrorResponse(res, 400, "Unable to create speciality", statusCode_1.SERVER_ERROR_CODE);
-    });
+    uploadS3_1.uploadImage(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
+        var _a, errors, isValid, name_1, newSpeciality;
+        return __generator(this, function (_b) {
+            if (error) {
+                return [2 /*return*/, makeResponse_2.sendErrorResponse(res, 400, "Error in uploading image", statusCode_1.SERVER_ERROR_CODE)];
+            }
+            else {
+                // If File not found
+                // console.log("Ressss => ", req.files);
+                if (req.file === undefined) {
+                    return [2 /*return*/, makeResponse_2.sendErrorResponse(res, 400, "No File Selected", statusCode_1.PARAMETER_MISSING_CODE)];
+                }
+                else {
+                    _a = speciality_2.default(req.body), errors = _a.errors, isValid = _a.isValid;
+                    // Check validation
+                    if (!isValid) {
+                        return [2 /*return*/, makeResponse_1.default(res, 400, "Validation Failed", errors, true)];
+                    }
+                    name_1 = req.body.name;
+                    newSpeciality = new speciality_1.default({ name: name_1, logo: req.file.location });
+                    newSpeciality.save().then(function (speciality) {
+                        return makeResponse_1.default(res, 201, "Speciality Created Successfully", speciality, false);
+                    })
+                        .catch(function (err) {
+                        return makeResponse_2.sendErrorResponse(res, 400, "Unable to create speciality", statusCode_1.SERVER_ERROR_CODE);
+                    });
+                }
+            }
+            return [2 /*return*/];
+        });
+    }); });
 };
 var getAllSpeciality = function (req, res, next) {
     speciality_1.default.find({})
