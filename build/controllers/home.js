@@ -62,19 +62,21 @@ var makeResponse_1 = __importStar(require("../functions/makeResponse"));
 var appointment_1 = __importDefault(require("../models/appointment"));
 var statusCode_1 = require("../constants/statusCode");
 var speciality_1 = __importDefault(require("../models/doctors/speciality"));
+var hospital_1 = __importDefault(require("../models/hospital/hospital"));
 var NAMESPACE = "Home";
 var getHomeData = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var specialities;
+    var specialities, hospitals;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, speciality_1.default.find({})];
             case 1:
                 specialities = _a.sent();
+                hospitals = hospital_1.default.find({}).limit(10).skip(0);
                 appointment_1.default.find({ patientId: res.locals.jwt.reference_id })
                     .populate("patientId")
                     .populate("doctorId")
                     .then(function (appointments) {
-                    return makeResponse_1.default(res, 200, "Patient Appointments", { upcommingAppointments: appointments, specialities: specialities }, false);
+                    return makeResponse_1.default(res, 200, "Patient Appointments", { upcommingAppointments: appointments, specialities: specialities, hospitals: hospitals }, false);
                 }).catch(function (err) {
                     return makeResponse_1.sendErrorResponse(res, 400, err.message, statusCode_1.SERVER_ERROR_CODE);
                 });

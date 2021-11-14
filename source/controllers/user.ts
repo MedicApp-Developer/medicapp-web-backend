@@ -110,7 +110,7 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, name: string, role: string, referenceId: string) => {
+const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, role: string, referenceId: string) => {
     await User.find({ email }).exec().then(user => {
         if(user.length > 0){
             return false;
@@ -124,7 +124,8 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
 
             const _user = new User({
                 _id: new mongoose.Types.ObjectId(),
-                name,
+                firstName,
+                lastName,
                 email,
                 password: hash,
                 role,

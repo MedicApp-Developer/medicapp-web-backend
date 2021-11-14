@@ -39,7 +39,7 @@ const createDoctor = async (req: Request, res: Response, next: NextFunction) => 
                     
                     return newDoctor.save()
                         .then(async result => {
-                            await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.DOCTOR, result._id)
+                            await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, Roles.DOCTOR, result._id)
                             return makeResponse(res, 201, "Doctor Created Successfully", result, false);
                         })
                         .catch(err => {

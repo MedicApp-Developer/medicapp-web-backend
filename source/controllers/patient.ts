@@ -61,7 +61,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                         
                         return newPatient.save()
                             .then(async result => {
-                                UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.PATIENT, result._id);
+                                UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, Roles.PATIENT, result._id);
                                 // @ts-ignore
                                 signJWT(result, (_error, token) => {
                                     if(_error){
@@ -86,7 +86,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 const createPatientFromNurse = async (req: Request, res: Response, next: NextFunction) => {
-        const { email, firstName, lastName, mobile, time, doctorId, referenceId, birthday, gender, location } = req.body;
+        const { email, firstName, lastName, mobile, time, date, doctorId, referenceId, birthday, gender, location } = req.body;
         const password = getRandomPassword();
         
         const nurse: any = await Nurse.find({_id: referenceId});
@@ -110,7 +110,7 @@ const createPatientFromNurse = async (req: Request, res: Response, next: NextFun
                     
                     return newPatient.save()
                         .then(async result => {
-                            UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName, Roles.PATIENT, result._id);
+                            UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, Roles.PATIENT, result._id);
                             createAppointmentByNurse(req, res, next, time, doctorId, result._id, nurse[0].hospitalId);
                             return makeResponse(res, 201, "Patient Created Successfully", result, false);
                         })

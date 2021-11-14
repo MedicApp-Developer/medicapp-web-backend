@@ -165,7 +165,7 @@ var deleteUser = function (req, res, next) {
         return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
-var createUserFromEmailAndPassword = function (req, res, email, password, name, role, referenceId) { return __awaiter(void 0, void 0, void 0, function () {
+var createUserFromEmailAndPassword = function (req, res, email, password, firstName, lastName, role, referenceId) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, user_1.default.find({ email: email }).exec().then(function (user) {
@@ -183,7 +183,8 @@ var createUserFromEmailAndPassword = function (req, res, email, password, name, 
                                     }
                                     _user = new user_1.default({
                                         _id: new mongoose_1.default.Types.ObjectId(),
-                                        name: name,
+                                        firstName: firstName,
+                                        lastName: lastName,
                                         email: email,
                                         password: hash,
                                         role: role,

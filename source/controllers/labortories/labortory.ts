@@ -37,7 +37,7 @@ const createLabortory = async (req: Request, res: Response, next: NextFunction) 
 
                             return newLabortory.save()
                                 .then(async result => {
-                                    await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName + " " + lastName ,Roles.LABORTORY, result._id)
+                                    await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName ,Roles.LABORTORY, result._id)
                                     return makeResponse(res, 201, "Labortory Created Successfully", result, false);
                                     
                                     // if(){

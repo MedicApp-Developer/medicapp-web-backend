@@ -14,6 +14,8 @@ const signJWT = (user: IUser, callback: (error: Error | null, token: string | nu
 
     const payload = {
         _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role,
         reference_id: user.referenceId

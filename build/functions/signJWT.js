@@ -14,6 +14,8 @@ var signJWT = function (user, callback) {
     logging_1.default.info(NAMESPACE, "Attempting to sign token for " + user.email);
     var payload = {
         _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role,
         reference_id: user.referenceId
