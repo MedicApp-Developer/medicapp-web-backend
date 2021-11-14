@@ -5,5 +5,6 @@ export class Roles {
     public static DOCTOR: string = "DOCTOR";
     public static LABORTORY: string = "LABORTORY";
     public static PHARMACY: string = "PHARMACY";
+    public static ADMIN: string = "ADMIN";
 }
   

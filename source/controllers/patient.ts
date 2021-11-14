@@ -31,7 +31,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
     //         return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
     //       } else {
   
-            const { firstName, lastName, email, birthday, gender, location, phone, password } = req.body;
+            const { firstName, lastName, email, birthday, emiratesId, gender, location, phone, password } = req.body;
     
             const { errors, isValid } = validatePatientRegisteration(req.body);
             // Check validation
@@ -45,7 +45,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                     // @ts-ignore
                     const newPatient = new Patient({
                             _id: new mongoose.Types.ObjectId(),
-                            firstName, lastName, email, birthday, gender, location, phone,
+                            firstName, lastName, email, birthday, gender, location, phone, emiratesId
                             // @ts-ignore
                             // emiratesIdFile: req.file.location
                         }); 

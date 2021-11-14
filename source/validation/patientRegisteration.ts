@@ -12,6 +12,7 @@ export function validatePatientRegisteration(data: any) {
   data.location = !isEmpty(data.location) ? data.location : "";
   data.phone = !isEmpty(data.phone) ? data.phone : "";
   data.password = !isEmpty(data.password) ? data.password : "";
+  data.emiratesId = !isEmpty(data.emiratesId) ? data.emiratesId : "";
 
   if (Validator.isEmpty(data.firstName)) {
     // @ts-ignore
@@ -21,6 +22,11 @@ export function validatePatientRegisteration(data: any) {
   if (Validator.isEmpty(data.lastName)) {
     // @ts-ignore
     errors.lastName = "Last Name field is required";
+  }
+
+  if (Validator.isEmpty(data.emiratesId)) {
+    // @ts-ignore
+    errors.emiratesId = "Emirates Id field is required";
   }
 
   // Email checks

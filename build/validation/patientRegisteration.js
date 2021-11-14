@@ -17,6 +17,7 @@ function validatePatientRegisteration(data) {
     data.location = !is_empty_1.default(data.location) ? data.location : "";
     data.phone = !is_empty_1.default(data.phone) ? data.phone : "";
     data.password = !is_empty_1.default(data.password) ? data.password : "";
+    data.emiratesId = !is_empty_1.default(data.emiratesId) ? data.emiratesId : "";
     if (validator_1.default.isEmpty(data.firstName)) {
         // @ts-ignore
         errors.firstName = "First Name field is required";
@@ -24,6 +25,10 @@ function validatePatientRegisteration(data) {
     if (validator_1.default.isEmpty(data.lastName)) {
         // @ts-ignore
         errors.lastName = "Last Name field is required";
+    }
+    if (validator_1.default.isEmpty(data.emiratesId)) {
+        // @ts-ignore
+        errors.emiratesId = "Emirates Id field is required";
     }
     // Email checks
     if (validator_1.default.isEmpty(data.email)) {

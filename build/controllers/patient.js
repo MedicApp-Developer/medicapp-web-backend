@@ -89,11 +89,11 @@ var signJWT_1 = __importDefault(require("../functions/signJWT"));
 var logging_1 = __importDefault(require("../config/logging"));
 var NAMESPACE = "Patient";
 var createPatient = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, firstName, lastName, email, birthday, gender, location, phone, password, _b, errors, isValid;
+    var _a, firstName, lastName, email, birthday, emiratesId, gender, location, phone, password, _b, errors, isValid;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = req.body, firstName = _a.firstName, lastName = _a.lastName, email = _a.email, birthday = _a.birthday, gender = _a.gender, location = _a.location, phone = _a.phone, password = _a.password;
+                _a = req.body, firstName = _a.firstName, lastName = _a.lastName, email = _a.email, birthday = _a.birthday, emiratesId = _a.emiratesId, gender = _a.gender, location = _a.location, phone = _a.phone, password = _a.password;
                 _b = patientRegisteration_1.validatePatientRegisteration(req.body), errors = _b.errors, isValid = _b.isValid;
                 // Check validation
                 if (!isValid) {
@@ -105,7 +105,7 @@ var createPatient = function (req, res, next) { return __awaiter(void 0, void 0,
                             // @ts-ignore
                             var newPatient = new patient_1.default({
                                 _id: new mongoose_1.default.Types.ObjectId(),
-                                firstName: firstName, lastName: lastName, email: email, birthday: birthday, gender: gender, location: location, phone: phone,
+                                firstName: firstName, lastName: lastName, email: email, birthday: birthday, gender: gender, location: location, phone: phone, emiratesId: emiratesId
                                 // @ts-ignore
                                 // emiratesIdFile: req.file.location
                             });

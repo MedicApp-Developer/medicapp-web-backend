@@ -10,6 +10,7 @@ var Roles = /** @class */ (function () {
     Roles.DOCTOR = "DOCTOR";
     Roles.LABORTORY = "LABORTORY";
     Roles.PHARMACY = "PHARMACY";
+    Roles.ADMIN = "ADMIN";
     return Roles;
 }());
 exports.Roles = Roles;

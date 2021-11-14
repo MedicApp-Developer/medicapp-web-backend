@@ -33,10 +33,10 @@ var PatientSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    // emiratesId: {
-    //     type: String,
-    //     required: true
-    // },
+    emiratesId: {
+        type: String,
+        required: false
+    },
     // emiratesIdFile: {
     //     type: String,
     //     required: false

@@ -77,6 +77,7 @@ var signJWT_1 = __importDefault(require("../functions/signJWT"));
 var makeResponse_1 = __importStar(require("../functions/makeResponse"));
 var login_1 = __importDefault(require("../validation/login"));
 var statusCode_1 = require("../constants/statusCode");
+var roles_1 = require("../constants/roles");
 var NAMESPACE = "User";
 var validateToken = function (req, res, next) {
     logging_1.default.info(NAMESPACE, "Token validated, user authenticated");
@@ -84,36 +85,50 @@ var validateToken = function (req, res, next) {
         message: "Authorized"
     });
 };
-var register = function (req, res, next) {
-    // // Form validation
-    // const { errors, isValid } = validateRegisterInput(req.body);
-    // // Check validation
-    // if (!isValid) {
-    //     return makeResponse(res, 400, "Validation Failed", errors, true);
-    // }
-    var _a = req.body, email = _a.email, password = _a.password;
-    user_1.default.find({ email: email }).exec().then(function (user) {
-        if (user.length > 0) {
-            return makeResponse_1.default(res, 400, "Email already exists", null, true);
+var register = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, firstName, lastName, email, password;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = req.body, firstName = _a.firstName, lastName = _a.lastName, email = _a.email, password = _a.password;
+                if (!firstName || !lastName || !email || !password) {
+                    return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "Parameter missing", statusCode_1.PARAMETER_MISSING_CODE)];
+                }
+                console.log("Success");
+                return [4 /*yield*/, user_1.default.find({ email: email }).exec().then(function (user) {
+                        if (user.length > 0) {
+                            return makeResponse_1.sendErrorResponse(res, 400, "User with this email already exists", statusCode_1.DUPLICATE_VALUE_CODE);
+                        }
+                        // If email is valid
+                        bcryptjs_1.default.hash(password, 10, function (hashError, hash) { return __awaiter(void 0, void 0, void 0, function () {
+                            var _user;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        if (hashError) {
+                                            return [2 /*return*/, false];
+                                        }
+                                        _user = new user_1.default({
+                                            _id: new mongoose_1.default.Types.ObjectId(),
+                                            firstName: firstName,
+                                            lastName: lastName,
+                                            email: email,
+                                            password: hash,
+                                            role: roles_1.Roles.ADMIN,
+                                            referenceId: null
+                                        });
+                                        return [4 /*yield*/, _user.save().then(function (res) { }).catch(function (err) { return console.log(err); })];
+                                    case 1: return [2 /*return*/, _a.sent()];
+                                }
+                            });
+                        }); });
+                    })];
+            case 1:
+                _b.sent();
+                return [2 /*return*/];
         }
-        // If email is valid
-        bcryptjs_1.default.hash(password, 10, function (hashError, hash) {
-            if (hashError) {
-                return makeResponse_1.default(res, 400, hashError.message, null, true);
-            }
-            var _user = new user_1.default({
-                _id: new mongoose_1.default.Types.ObjectId(),
-                email: email,
-                password: hash
-            });
-            return _user.save().then(function (user) {
-                return makeResponse_1.default(res, 201, "User Registered Successfully", user, false);
-            }).catch(function (error) {
-                return makeResponse_1.default(res, 400, error.message, null, true);
-            });
-        });
     });
-};
+}); };
 var login = function (req, res, next) {
     // Form validation
     var _a = login_1.default(req.body), errors = _a.errors, isValid = _a.isValid;

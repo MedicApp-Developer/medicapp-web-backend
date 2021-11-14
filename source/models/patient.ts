@@ -15,10 +15,10 @@ const PatientSchema: Schema = new Schema(
             type: String,
             required: true
         },
-        // emiratesId: {
-        //     type: String,
-        //     required: true
-        // },
+        emiratesId: {
+            type: String,
+            required: false
+        },
         // emiratesIdFile: {
         //     type: String,
         //     required: false

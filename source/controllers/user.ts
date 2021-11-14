@@ -6,7 +6,8 @@ import User from '../models/user';
 import signJWT from '../functions/signJWT';
 import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import validateLoginInput from '../validation/login';
-import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE, INVALID_VALUE_CODE } from '../constants/statusCode';
+import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE, INVALID_VALUE_CODE, DUPLICATE_VALUE_CODE } from '../constants/statusCode';
+import { Roles } from '../constants/roles';
 
 const NAMESPACE = "User";
 
@@ -17,39 +18,37 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-const register = (req: Request, res: Response, next: NextFunction) => {
-    // // Form validation
-    // const { errors, isValid } = validateRegisterInput(req.body);
-    // // Check validation
-    // if (!isValid) {
-    //     return makeResponse(res, 400, "Validation Failed", errors, true);
-    // }
-    
-    let { email, password } = req.body;
+const register = async (req: Request, res: Response, next: NextFunction) => {
+    const { firstName, lastName, email, password } = req.body;
 
-    User.find({ email }).exec().then(user => {
+    if(!firstName || !lastName || !email || !password){
+        return sendErrorResponse(res, 400, "Parameter missing", PARAMETER_MISSING_CODE);
+    }
+
+    console.log("Success");
+
+    await User.find({ email }).exec().then(user => {
         if(user.length > 0){
-            return makeResponse(res, 400, "Email already exists", null, true);
+            return sendErrorResponse(res, 400, "User with this email already exists", DUPLICATE_VALUE_CODE);
         }
 
         // If email is valid
-        bcryptjs.hash(password, 10, (hashError, hash) => {
+        bcryptjs.hash(password, 10, async (hashError, hash) => {
             if(hashError){
-                return makeResponse(res, 400, hashError.message, null, true);
+                return false;
             }
 
             const _user = new User({
                 _id: new mongoose.Types.ObjectId(),
+                firstName,
+                lastName,
                 email,
-                password: hash
+                password: hash,
+                role: Roles.ADMIN,
+                referenceId: null
             });
 
-            return _user.save().then(user => {
-                return makeResponse(res, 201, "User Registered Successfully", user, false);
-
-            }).catch(error => {
-                return makeResponse(res, 400, error.message, null, true);
-            });
+            return await _user.save().then(res => {}).catch(err => console.log(err));
         });
     });
 };
