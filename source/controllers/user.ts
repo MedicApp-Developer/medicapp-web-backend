@@ -25,8 +25,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         return sendErrorResponse(res, 400, "Parameter missing", PARAMETER_MISSING_CODE);
     }
 
-    console.log("Success");
-
     await User.find({ email }).exec().then(user => {
         if(user.length > 0){
             return sendErrorResponse(res, 400, "User with this email already exists", DUPLICATE_VALUE_CODE);

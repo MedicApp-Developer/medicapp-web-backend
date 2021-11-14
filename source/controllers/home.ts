@@ -10,7 +10,7 @@ const NAMESPACE = "Home";
 const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
 
     const specialities = await Speciality.find({});
-    const hospitals = Hospital.find({}).limit(10).skip(0);
+    const hospitals = await Hospital.find({}).limit(10).skip(0);
 
     Appointment.find({patientId: res.locals.jwt.reference_id})
         .populate("patientId")

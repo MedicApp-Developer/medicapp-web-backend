@@ -71,7 +71,9 @@ var getHomeData = function (req, res, next) { return __awaiter(void 0, void 0, v
             case 0: return [4 /*yield*/, speciality_1.default.find({})];
             case 1:
                 specialities = _a.sent();
-                hospitals = hospital_1.default.find({}).limit(10).skip(0);
+                return [4 /*yield*/, hospital_1.default.find({}).limit(10).skip(0)];
+            case 2:
+                hospitals = _a.sent();
                 appointment_1.default.find({ patientId: res.locals.jwt.reference_id })
                     .populate("patientId")
                     .populate("doctorId")

@@ -94,7 +94,6 @@ var register = function (req, res, next) { return __awaiter(void 0, void 0, void
                 if (!firstName || !lastName || !email || !password) {
                     return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "Parameter missing", statusCode_1.PARAMETER_MISSING_CODE)];
                 }
-                console.log("Success");
                 return [4 /*yield*/, user_1.default.find({ email: email }).exec().then(function (user) {
                         if (user.length > 0) {
                             return makeResponse_1.sendErrorResponse(res, 400, "User with this email already exists", statusCode_1.DUPLICATE_VALUE_CODE);
