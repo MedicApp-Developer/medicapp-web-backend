@@ -8,6 +8,7 @@ import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import validateLoginInput from '../validation/login';
 import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE, INVALID_VALUE_CODE, DUPLICATE_VALUE_CODE } from '../constants/statusCode';
 import { Roles } from '../constants/roles';
+import Patient from '../models/patient';
 
 const NAMESPACE = "User";
 
@@ -65,9 +66,17 @@ const login = (req: Request, res: Response, next: NextFunction) => {
 
     User.find({ email })
         .exec()
-        .then(users => {
+        .then(async users => {
             if(users.length !== 1){
                 return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
+            }
+
+            const additionalInfo = {};
+
+            if(users[0].role === Roles.PATIENT) {
+                const patient = await Patient.findById(users[0].referenceId);
+                // @ts-ignore
+                additionalInfo.emiratesId = patient.emiratesId;
             }
 
             bcryptjs.compare(password, users[0].password, (error, result) => {
@@ -79,7 +88,12 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                             logging.error(NAMESPACE, 'Unable to sign token: ', _error);
                             return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                         }else if(token){
-                            return makeResponse(res, 200, "Authentication Successful", {user: users[0], token: token}, false);
+                            const userData = JSON.parse(JSON.stringify(users[0]));
+                            if(users[0].role === Roles.PATIENT){
+                                // @ts-ignore
+                                userData.emiratesId = additionalInfo.emiratesId;
+                            } 
+                            return makeResponse(res, 200, "Authentication Successful", {user: userData, token: token}, false);
                         }
                     })
                 }
