@@ -36,7 +36,7 @@ const createNurse = async (req: Request, res: Response, next: NextFunction) => {
 
                     return newNurse.save()
                         .then(async result => {
-                            await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, Roles.NURSE, result._id)
+                            await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, "",Roles.NURSE, result._id)
                             return makeResponse(res, 201, "Nurse Created Successfully", result, false);
                             
                             // if(){

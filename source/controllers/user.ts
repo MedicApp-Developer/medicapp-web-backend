@@ -71,14 +71,6 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                 return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
             }
 
-            const additionalInfo = {};
-
-            if(users[0].role === Roles.PATIENT) {
-                const patient = await Patient.findById(users[0].referenceId);
-                // @ts-ignore
-                additionalInfo.emiratesId = patient.emiratesId;
-            }
-
             bcryptjs.compare(password, users[0].password, (error, result) => {
                 if(!result){
                     return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
@@ -87,13 +79,8 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                         if(_error){
                             logging.error(NAMESPACE, 'Unable to sign token: ', _error);
                             return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
-                        }else if(token){
-                            const userData = JSON.parse(JSON.stringify(users[0]));
-                            if(users[0].role === Roles.PATIENT){
-                                // @ts-ignore
-                                userData.emiratesId = additionalInfo.emiratesId;
-                            } 
-                            return makeResponse(res, 200, "Authentication Successful", {user: userData, token: token}, false);
+                        }else if(token){ 
+                            return makeResponse(res, 200, "Authentication Successful", {user: users[0], token: token}, false);
                         }
                     })
                 }
@@ -121,7 +108,7 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, role: string, referenceId: string) => {
+const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, emiratesId: string, role: string, referenceId: string) => {
     await User.find({ email }).exec().then(user => {
         if(user.length > 0){
             return false;
@@ -140,6 +127,7 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
                 email,
                 password: hash,
                 role,
+                emiratesId,
                 referenceId
             });
 

@@ -62,6 +62,7 @@ var createSpeciality = function (req, res, next) {
         var _a, errors, isValid, name_1, newSpeciality;
         return __generator(this, function (_b) {
             if (error) {
+                console.log(error);
                 return [2 /*return*/, makeResponse_2.sendErrorResponse(res, 400, "Error in uploading image", statusCode_1.SERVER_ERROR_CODE)];
             }
             else {

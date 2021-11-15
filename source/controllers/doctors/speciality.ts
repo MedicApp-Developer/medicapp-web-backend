@@ -11,6 +11,7 @@ const NAMESPACE = "Speciality";
 const createSpeciality = (req: Request, res: Response, next: NextFunction) => {
     uploadImage(req, res, async (error: any) => {
         if (error) {
+            console.log(error);
           return sendErrorResponse(res, 400, "Error in uploading image", SERVER_ERROR_CODE);
         } else {
           // If File not found

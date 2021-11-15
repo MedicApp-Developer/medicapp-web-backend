@@ -50,8 +50,8 @@ const MEDICAPP_EMAIL = "collaborations@medicappae.com";
 
 
 // AWS S3 Bucket
-const ACCESSKEYID = "AKIA3KPUHOWAESQCDKVA";
-const SECRETACCESSKEY = "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";
+const ACCESSKEYID = "AKIA3KPUHOWAHZI57N3P";
+const SECRETACCESSKEY = "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";
 const BUCKET_NAME = "medicapp-bucket";
 
 const MONGO = {

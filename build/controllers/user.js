@@ -78,7 +78,6 @@ var makeResponse_1 = __importStar(require("../functions/makeResponse"));
 var login_1 = __importDefault(require("../validation/login"));
 var statusCode_1 = require("../constants/statusCode");
 var roles_1 = require("../constants/roles");
-var patient_1 = __importDefault(require("../models/patient"));
 var NAMESPACE = "User";
 var validateToken = function (req, res, next) {
     logging_1.default.info(NAMESPACE, "Token validated, user authenticated");
@@ -141,45 +140,27 @@ var login = function (req, res, next) {
     user_1.default.find({ email: email })
         .exec()
         .then(function (users) { return __awaiter(void 0, void 0, void 0, function () {
-        var additionalInfo, patient;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (users.length !== 1) {
-                        return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE)];
-                    }
-                    additionalInfo = {};
-                    if (!(users[0].role === roles_1.Roles.PATIENT)) return [3 /*break*/, 2];
-                    return [4 /*yield*/, patient_1.default.findById(users[0].referenceId)];
-                case 1:
-                    patient = _a.sent();
-                    // @ts-ignore
-                    additionalInfo.emiratesId = patient.emiratesId;
-                    _a.label = 2;
-                case 2:
-                    bcryptjs_1.default.compare(password, users[0].password, function (error, result) {
-                        if (!result) {
+            if (users.length !== 1) {
+                return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE)];
+            }
+            bcryptjs_1.default.compare(password, users[0].password, function (error, result) {
+                if (!result) {
+                    return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
+                }
+                else if (result) {
+                    signJWT_1.default(users[0], function (_error, token) {
+                        if (_error) {
+                            logging_1.default.error(NAMESPACE, 'Unable to sign token: ', _error);
                             return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
                         }
-                        else if (result) {
-                            signJWT_1.default(users[0], function (_error, token) {
-                                if (_error) {
-                                    logging_1.default.error(NAMESPACE, 'Unable to sign token: ', _error);
-                                    return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
-                                }
-                                else if (token) {
-                                    var userData = JSON.parse(JSON.stringify(users[0]));
-                                    if (users[0].role === roles_1.Roles.PATIENT) {
-                                        // @ts-ignore
-                                        userData.emiratesId = additionalInfo.emiratesId;
-                                    }
-                                    return makeResponse_1.default(res, 200, "Authentication Successful", { user: userData, token: token }, false);
-                                }
-                            });
+                        else if (token) {
+                            return makeResponse_1.default(res, 200, "Authentication Successful", { user: users[0], token: token }, false);
                         }
                     });
-                    return [2 /*return*/];
-            }
+                }
+            });
+            return [2 /*return*/];
         });
     }); }).catch(function (error) {
         return makeResponse_1.default(res, 400, error.message, null, true);
@@ -201,7 +182,7 @@ var deleteUser = function (req, res, next) {
         return makeResponse_1.default(res, 400, err.message, null, true);
     });
 };
-var createUserFromEmailAndPassword = function (req, res, email, password, firstName, lastName, role, referenceId) { return __awaiter(void 0, void 0, void 0, function () {
+var createUserFromEmailAndPassword = function (req, res, email, password, firstName, lastName, emiratesId, role, referenceId) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, user_1.default.find({ email: email }).exec().then(function (user) {
@@ -224,6 +205,7 @@ var createUserFromEmailAndPassword = function (req, res, email, password, firstN
                                         email: email,
                                         password: hash,
                                         role: role,
+                                        emiratesId: emiratesId,
                                         referenceId: referenceId
                                     });
                                     return [4 /*yield*/, _user.save()];

@@ -19,6 +19,10 @@ const UserSchema: Schema = new Schema(
             type: String,
             required: true
         },
+        emiratesId: {
+            type: String,
+            required: false
+        },
         role: {
             type: String,
             required: true

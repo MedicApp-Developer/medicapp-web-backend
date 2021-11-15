@@ -65,24 +65,27 @@ var speciality_1 = __importDefault(require("../models/doctors/speciality"));
 var hospital_1 = __importDefault(require("../models/hospital/hospital"));
 var NAMESPACE = "Home";
 var getHomeData = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var specialities, hospitals;
+    var specialities, hospitals, upcommingAppointments, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, speciality_1.default.find({})];
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, speciality_1.default.find({})];
             case 1:
                 specialities = _a.sent();
                 return [4 /*yield*/, hospital_1.default.find({}).limit(10).skip(0)];
             case 2:
                 hospitals = _a.sent();
-                appointment_1.default.find({ patientId: res.locals.jwt.reference_id })
-                    .populate("patientId")
-                    .populate("doctorId")
-                    .then(function (appointments) {
-                    return makeResponse_1.default(res, 200, "Patient Appointments", { upcommingAppointments: appointments, specialities: specialities, hospitals: hospitals }, false);
-                }).catch(function (err) {
-                    return makeResponse_1.sendErrorResponse(res, 400, err.message, statusCode_1.SERVER_ERROR_CODE);
-                });
-                return [2 /*return*/];
+                return [4 /*yield*/, appointment_1.default.find({ patientId: res.locals.jwt.reference_id })
+                        .populate("patientId")
+                        .populate("doctorId")];
+            case 3:
+                upcommingAppointments = _a.sent();
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Patient Appointments", { upcommingAppointments: upcommingAppointments, specialities: specialities, hospitals: hospitals }, false)];
+            case 4:
+                err_1 = _a.sent();
+                return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, err_1.message, statusCode_1.SERVER_ERROR_CODE)];
+            case 5: return [2 /*return*/];
         }
     });
 }); };

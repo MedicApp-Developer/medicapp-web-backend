@@ -23,7 +23,7 @@ const createPharmacy = async (req: Request, res: Response, next: NextFunction) =
                 
                 return newPharmacy.save()
                     .then(async result => {
-                        await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", Roles.PHARMACY, result._id)
+                        await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", "", Roles.PHARMACY, result._id)
                         return makeResponse(res, 201, "Pharmacy Created Successfully", result, false);
 
                         // if(){

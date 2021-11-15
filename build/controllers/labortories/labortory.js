@@ -86,7 +86,7 @@ var createLabortory = function (req, res, next) { return __awaiter(void 0, void 
                                     .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
-                                            case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, roles_1.Roles.LABORTORY, result._id)];
+                                            case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, "", roles_1.Roles.LABORTORY, result._id)];
                                             case 1:
                                                 _a.sent();
                                                 return [2 /*return*/, makeResponse_1.default(res, 201, "Labortory Created Successfully", result, false)];

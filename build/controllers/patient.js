@@ -119,7 +119,7 @@ var createPatient = function (req, res, next) { return __awaiter(void 0, void 0,
                             return newPatient.save()
                                 .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
-                                    user_1.default.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, roles_1.Roles.PATIENT, result._id);
+                                    user_1.default.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, emiratesId, roles_1.Roles.PATIENT, result._id);
                                     // @ts-ignore
                                     signJWT_1.default(result, function (_error, token) {
                                         if (_error) {
@@ -148,11 +148,11 @@ var createPatient = function (req, res, next) { return __awaiter(void 0, void 0,
     });
 }); };
 var createPatientFromNurse = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, firstName, lastName, mobile, time, date, doctorId, referenceId, birthday, gender, location, password, nurse;
+    var _a, email, firstName, lastName, mobile, time, doctorId, referenceId, birthday, gender, location, password, nurse;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile, time = _a.time, date = _a.date, doctorId = _a.doctorId, referenceId = _a.referenceId, birthday = _a.birthday, gender = _a.gender, location = _a.location;
+                _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile, time = _a.time, doctorId = _a.doctorId, referenceId = _a.referenceId, birthday = _a.birthday, gender = _a.gender, location = _a.location;
                 password = utilities_1.getRandomPassword();
                 return [4 /*yield*/, nurse_1.default.find({ _id: referenceId })];
             case 1:
@@ -174,7 +174,8 @@ var createPatientFromNurse = function (req, res, next) { return __awaiter(void 0
                                 return newPatient.save()
                                     .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
-                                        user_1.default.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, roles_1.Roles.PATIENT, result._id);
+                                        // TODO: Frontend se Nurse dashboard se jb patient create hota hai tb b patient ki emiratesId store krani hai lazmi werna issue ayega
+                                        user_1.default.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, "", roles_1.Roles.PATIENT, result._id);
                                         appointments_1.createAppointmentByNurse(req, res, next, time, doctorId, result._id, nurse[0].hospitalId);
                                         return [2 /*return*/, makeResponse_1.default(res, 201, "Patient Created Successfully", result, false)];
                                     });

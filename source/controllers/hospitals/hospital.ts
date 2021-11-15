@@ -45,7 +45,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                         
                         return newHospital.save()
                             .then(async (result: any) => {
-                                await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", Roles.HOSPITAL, result._id);
+                                await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", "", Roles.HOSPITAL, result._id);
                                 return makeResponse(res, 201, "Hospital Created Successfully", result, false);
                                 
                                 // if(){

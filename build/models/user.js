@@ -37,6 +37,10 @@ var UserSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    emiratesId: {
+        type: String,
+        required: false
+    },
     role: {
         type: String,
         required: true
