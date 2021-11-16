@@ -24,6 +24,7 @@ const signJWT = (user: IUser, callback: (error: Error | null, token: string | nu
     try {
         jwt.sign(
             payload,
+            // @ts-ignore
             config.server.token.secret,
             {
                 issuer: config.server.token.issuer,

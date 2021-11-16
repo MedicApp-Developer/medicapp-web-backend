@@ -8,6 +8,7 @@ import s3 from '../config/aws';
 export const uploadsOnlyVideo = multer({
     storage: multerS3({
       s3: s3,
+      // @ts-ignore
       bucket: config.bucket.name,
       acl: "public-read",
       key: function (req: Request, file: any, cb: any) {
@@ -26,6 +27,7 @@ export const uploadsOnlyVideo = multer({
   export const uploadEmirateFileId = multer({
     storage: multerS3({
       s3: s3,
+      // @ts-ignore
       bucket: config.bucket.name,
       acl: "public-read",
       key: function (req: Request, file: any, cb: any) {
@@ -44,6 +46,7 @@ export const uploadsOnlyVideo = multer({
   export const uploadImage = multer({
     storage: multerS3({
       s3: s3,
+      // @ts-ignore
       bucket: config.bucket.name,
       acl: "public-read",
       key: function (req: Request, file: any, cb: any) {

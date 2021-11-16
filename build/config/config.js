@@ -6,13 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 /*** Server ***/
-var SERVER_HOSTNAME = process.env.SERVER_HOSTNAME || 'localhost';
-var SERVER_PORT = process.env.PORT || 8080;
-var SERVER_TOKEN_EXPIRETIME = process.env.SERVER_TOKEN_EXPIRETIME || 3600;
-var SERVER_TOKEN_ISSUER = process.env.SERVER_TOKEN_ISSUER || "coolIssuer";
-var SERVER_TOKEN_SECRET = process.env.SERVER_TOKEN_SECRET || "superencryptedsecret";
-// const SERVER_HOST_URL = "https://secret-cove-54253.herokuapp.com";
-var SERVER_HOST_URL = "http://localhost:1337";
+var SERVER_HOSTNAME = process.env.SERVER_HOSTNAME;
+var SERVER_PORT = process.env.PORT;
+var SERVER_TOKEN_EXPIRETIME = process.env.SERVER_TOKEN_EXPIRETIME;
+var SERVER_TOKEN_ISSUER = process.env.SERVER_TOKEN_ISSUER;
+var SERVER_TOKEN_SECRET = process.env.SERVER_TOKEN_SECRET;
+// const SERVER_HOST_URL = "https://medicappae.com";
+var SERVER_HOST_URL = process.env.SERVER_HOST_URL;
 var SERVER = {
     hostname: SERVER_HOSTNAME,
     port: SERVER_PORT,
@@ -33,21 +33,21 @@ var MONGO_OPTIONS = {
     autoIndex: false,
     retryWrites: false
 };
-var MONGO_USERNAME = process.env.MONGO_USERNAME || "superuser";
-var MONGO_PASSWORD = process.env.MONGO_PASSWORD || "supersecretpasswords";
-var MONGO_HOST = process.env.MONGO_URL || 'mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority';
+var MONGO_USERNAME = process.env.MONGO_USERNAME;
+var MONGO_PASSWORD = process.env.MONGO_PASSWORD;
+var MONGO_HOST = process.env.MONGO_URL;
 // mongodb://127.0.0.1:27017/medicapp
 // mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority
 // NODEMAILER OPTIONS
-var CLIENT_ID = "389397570591-nosb4jnm4i3p13sm9mlpl4j10pkkujeo.apps.googleusercontent.com";
-var CLIENT_SECRET = "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";
-var REDIRECT_URI = "https://developers.google.com/oauthplayground";
-var REFRESH_TOKEN = "1//04OpKKM7k0ZW2CgYIARAAGAQSNwF-L9Irr-y9gOsFwaupz60hPg54C439xsVd-Vpx6scTi53pTaTOLD-1zTRUQIXYXCa2jt5QP8o";
-var MEDICAPP_EMAIL = "collaborations@medicappae.com";
+var CLIENT_ID = process.env.CLIENT_ID;
+var CLIENT_SECRET = process.env.CLIENT_SECRET;
+var REDIRECT_URI = process.env.REDIRECT_URI;
+var REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+var MEDICAPP_EMAIL = process.env.MEDICAPP_EMAIL;
 // AWS S3 Bucket
-var ACCESSKEYID = "AKIA3KPUHOWAHZI57N3P";
-var SECRETACCESSKEY = "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";
-var BUCKET_NAME = "medicapp-bucket";
+var ACCESSKEYID = process.env.ACCESSKEYID;
+var SECRETACCESSKEY = process.env.SECRETACCESSKEY;
+var BUCKET_NAME = process.env.BUCKET_NAME;
 var MONGO = {
     host: MONGO_HOST,
     username: MONGO_USERNAME,

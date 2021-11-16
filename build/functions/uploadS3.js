@@ -12,6 +12,7 @@ var aws_1 = __importDefault(require("../config/aws"));
 exports.uploadsOnlyVideo = multer_1.default({
     storage: multer_s3_1.default({
         s3: aws_1.default,
+        // @ts-ignore
         bucket: config_1.default.bucket.name,
         acl: "public-read",
         key: function (req, file, cb) {
@@ -26,6 +27,7 @@ exports.uploadsOnlyVideo = multer_1.default({
 exports.uploadEmirateFileId = multer_1.default({
     storage: multer_s3_1.default({
         s3: aws_1.default,
+        // @ts-ignore
         bucket: config_1.default.bucket.name,
         acl: "public-read",
         key: function (req, file, cb) {
@@ -40,6 +42,7 @@ exports.uploadEmirateFileId = multer_1.default({
 exports.uploadImage = multer_1.default({
     storage: multer_s3_1.default({
         s3: aws_1.default,
+        // @ts-ignore
         bucket: config_1.default.bucket.name,
         acl: "public-read",
         key: function (req, file, cb) {

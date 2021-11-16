@@ -12,6 +12,7 @@ const isHospitalOrNurse = (req: Request, res: Response, next: NextFunction) => {
     
     let token = req.headers.authorization?.split(" ")[1];
     if(token){
+        // @ts-ignore
         jwt.verify(token, config.server.token.secret, (error, decoded: any) => {
             if(error){
                 return makeResponse(res, 404, error.message, error, true);

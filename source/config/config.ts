@@ -3,13 +3,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /*** Server ***/ 
-const SERVER_HOSTNAME = process.env.SERVER_HOSTNAME || 'localhost';
-const SERVER_PORT = process.env.PORT || 8080;
-const SERVER_TOKEN_EXPIRETIME = process.env.SERVER_TOKEN_EXPIRETIME || 3600;
-const SERVER_TOKEN_ISSUER = process.env.SERVER_TOKEN_ISSUER || "coolIssuer";
-const SERVER_TOKEN_SECRET = process.env.SERVER_TOKEN_SECRET || "superencryptedsecret";
-// const SERVER_HOST_URL = "https://secret-cove-54253.herokuapp.com";
-const SERVER_HOST_URL = "http://localhost:1337";
+const SERVER_HOSTNAME = process.env.SERVER_HOSTNAME;
+const SERVER_PORT = process.env.PORT;
+const SERVER_TOKEN_EXPIRETIME = process.env.SERVER_TOKEN_EXPIRETIME;
+const SERVER_TOKEN_ISSUER = process.env.SERVER_TOKEN_ISSUER;
+const SERVER_TOKEN_SECRET = process.env.SERVER_TOKEN_SECRET;
+// const SERVER_HOST_URL = "https://medicappae.com";
+const SERVER_HOST_URL = process.env.SERVER_HOST_URL;
 
 const SERVER = {
     hostname: SERVER_HOSTNAME,
@@ -34,25 +34,25 @@ const MONGO_OPTIONS = {
     retryWrites: false
 };
 
-const MONGO_USERNAME = process.env.MONGO_USERNAME || "superuser";
-const MONGO_PASSWORD = process.env.MONGO_PASSWORD || "supersecretpasswords";
-const MONGO_HOST = process.env.MONGO_URL || 'mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority';
+const MONGO_USERNAME = process.env.MONGO_USERNAME;
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
+const MONGO_HOST = process.env.MONGO_URL;
 
 // mongodb://127.0.0.1:27017/medicapp
 // mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority
 
 // NODEMAILER OPTIONS
-const CLIENT_ID = "389397570591-nosb4jnm4i3p13sm9mlpl4j10pkkujeo.apps.googleusercontent.com";
-const CLIENT_SECRET = "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";
-const REDIRECT_URI = "https://developers.google.com/oauthplayground";
-const REFRESH_TOKEN = "1//04OpKKM7k0ZW2CgYIARAAGAQSNwF-L9Irr-y9gOsFwaupz60hPg54C439xsVd-Vpx6scTi53pTaTOLD-1zTRUQIXYXCa2jt5QP8o";
-const MEDICAPP_EMAIL = "collaborations@medicappae.com";
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+const MEDICAPP_EMAIL = process.env.MEDICAPP_EMAIL;
 
 
 // AWS S3 Bucket
-const ACCESSKEYID = "AKIA3KPUHOWAHZI57N3P";
-const SECRETACCESSKEY = "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";
-const BUCKET_NAME = "medicapp-bucket";
+const ACCESSKEYID = process.env.ACCESSKEYID;
+const SECRETACCESSKEY = process.env.SECRETACCESSKEY;
+const BUCKET_NAME = process.env.BUCKET_NAME;
 
 const MONGO = {
     host: MONGO_HOST,

@@ -14,6 +14,7 @@ var isHospitalOrDoctor = function (req, res, next) {
     logging_1.default.info(NAMESPACE, 'Validating Token');
     var token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
     if (token) {
+        // @ts-ignore
         jsonwebtoken_1.default.verify(token, config_1.default.server.token.secret, function (error, decoded) {
             if (error) {
                 return makeResponse_1.default(res, 404, error.message, error, true);

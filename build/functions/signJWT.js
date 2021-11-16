@@ -21,7 +21,9 @@ var signJWT = function (user, callback) {
         reference_id: user.referenceId
     };
     try {
-        jsonwebtoken_1.default.sign(payload, config_1.default.server.token.secret, {
+        jsonwebtoken_1.default.sign(payload, 
+        // @ts-ignore
+        config_1.default.server.token.secret, {
             issuer: config_1.default.server.token.issuer,
             algorithm: "HS256",
             expiresIn: expirationTimeInSeconds
