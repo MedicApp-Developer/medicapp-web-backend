@@ -61,16 +61,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                         
                         return newPatient.save()
                             .then(async result => {
-                                UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, emiratesId, Roles.PATIENT, result._id);
-                                // @ts-ignore
-                                signJWT(result, (_error, token) => {
-                                    if(_error){
-                                        logging.error(NAMESPACE, 'Unable to sign token: ', _error);
-                                        return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
-                                    }else if(token){
-                                        return makeResponse(res, 200, "Patient registered successfully", {user: result, token: token}, false);
-                                    }
-                                })
+                                UserController.createPatientUserFromEmailAndPassword(req, res, email, password, firstName, lastName, emiratesId, Roles.PATIENT, result._id);
                             })
                             .catch(err => {
                                 return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
@@ -79,10 +70,6 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                     return sendErrorResponse(res, 400, "Email already exists", DUPLICATE_VALUE_CODE);
                 }
             }); 
-           
-    //       }
-    //     }
-    //   });
 };
 
 const createPatientFromNurse = async (req: Request, res: Response, next: NextFunction) => {

@@ -102,23 +102,23 @@ var register = function (req, res, next) { return __awaiter(void 0, void 0, void
                         bcryptjs_1.default.hash(password, 10, function (hashError, hash) { return __awaiter(void 0, void 0, void 0, function () {
                             var _user;
                             return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        if (hashError) {
-                                            return [2 /*return*/, false];
-                                        }
-                                        _user = new user_1.default({
-                                            _id: new mongoose_1.default.Types.ObjectId(),
-                                            firstName: firstName,
-                                            lastName: lastName,
-                                            email: email,
-                                            password: hash,
-                                            role: roles_1.Roles.ADMIN,
-                                            referenceId: null
-                                        });
-                                        return [4 /*yield*/, _user.save().then(function (res) { }).catch(function (err) { return console.log(err); })];
-                                    case 1: return [2 /*return*/, _a.sent()];
+                                if (hashError) {
+                                    return [2 /*return*/, false];
                                 }
+                                _user = new user_1.default({
+                                    _id: new mongoose_1.default.Types.ObjectId(),
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    email: email,
+                                    password: hash,
+                                    role: roles_1.Roles.ADMIN,
+                                    emiratesId: "",
+                                    referenceId: null
+                                });
+                                _user.save().then(function (user) {
+                                    return makeResponse_1.default(res, 200, "Authentication Successful", { user: user }, false);
+                                }).catch(function (err) { return console.log(err); });
+                                return [2 /*return*/];
                             });
                         }); });
                     })];
@@ -208,9 +208,59 @@ var createUserFromEmailAndPassword = function (req, res, email, password, firstN
                                         emiratesId: emiratesId,
                                         referenceId: referenceId
                                     });
-                                    return [4 /*yield*/, _user.save()];
-                                case 1: return [2 /*return*/, _a.sent()];
+                                    return [4 /*yield*/, _user.save().then(function (createdUser) {
+                                            return createdUser;
+                                        })];
+                                case 1:
+                                    _a.sent();
+                                    return [2 /*return*/];
                             }
+                        });
+                    }); });
+                })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
+var createPatientUserFromEmailAndPassword = function (req, res, email, password, firstName, lastName, emiratesId, role, referenceId) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, user_1.default.find({ email: email }).exec().then(function (user) {
+                    if (user.length > 0) {
+                        return false;
+                    }
+                    // If email is valid
+                    bcryptjs_1.default.hash(password, 10, function (hashError, hash) { return __awaiter(void 0, void 0, void 0, function () {
+                        var _user;
+                        return __generator(this, function (_a) {
+                            if (hashError) {
+                                return [2 /*return*/, false];
+                            }
+                            _user = new user_1.default({
+                                _id: new mongoose_1.default.Types.ObjectId(),
+                                firstName: firstName,
+                                lastName: lastName,
+                                email: email,
+                                password: hash,
+                                role: role,
+                                emiratesId: emiratesId,
+                                referenceId: referenceId
+                            });
+                            _user.save().then(function (createdUser) {
+                                // @ts-ignore
+                                signJWT_1.default(createdUser, function (_error, token) {
+                                    if (_error) {
+                                        logging_1.default.error(NAMESPACE, 'Unable to sign token: ', _error);
+                                        return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
+                                    }
+                                    else if (token) {
+                                        return makeResponse_1.default(res, 200, "Patient registered successfully", { user: createdUser, token: token }, false);
+                                    }
+                                });
+                            });
+                            return [2 /*return*/];
                         });
                     }); });
                 })];
@@ -262,6 +312,7 @@ exports.default = {
     getAllUsers: getAllUsers,
     deleteUser: deleteUser,
     createUserFromEmailAndPassword: createUserFromEmailAndPassword,
+    createPatientUserFromEmailAndPassword: createPatientUserFromEmailAndPassword,
     deleteUserWithEmail: deleteUserWithEmail,
     updateUser: updateUser
 };

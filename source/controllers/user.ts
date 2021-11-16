@@ -44,10 +44,13 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
                 email,
                 password: hash,
                 role: Roles.ADMIN,
+                emiratesId: "",
                 referenceId: null
             });
 
-            return await _user.save().then(res => {}).catch(err => console.log(err));
+            _user.save().then(user => {
+                return makeResponse(res, 200, "Authentication Successful", {user: user}, false);
+            }).catch(err => console.log(err));
         });
     });
 };
@@ -131,11 +134,51 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
                 referenceId
             });
 
-            return await _user.save();
+            await _user.save().then(createdUser => {
+                return createdUser;
+            });
         });
     });
 }
 
+const createPatientUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, emiratesId: string, role: string, referenceId: string) => {
+    await User.find({ email }).exec().then(user => {
+        if(user.length > 0){
+            return false;
+        }
+
+        // If email is valid
+        bcryptjs.hash(password, 10, async (hashError, hash) => {
+            if(hashError){
+                return false;
+            }
+
+            const _user = new User({
+                _id: new mongoose.Types.ObjectId(),
+                firstName,
+                lastName,
+                email,
+                password: hash,
+                role,
+                emiratesId,
+                referenceId
+            });
+
+            _user.save().then(createdUser => {
+                // @ts-ignore
+                signJWT(createdUser, (_error, token) => {
+                    if(_error){
+                        logging.error(NAMESPACE, 'Unable to sign token: ', _error);
+                        return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
+                    }else if(token){
+                        return makeResponse(res, 200, "Patient registered successfully", {user: createdUser, token: token}, false);
+                    }
+                })            
+            });
+        });
+    });
+}
+    
 const deleteUserWithEmail = async (email: string) => {
      User.deleteOne({ email }).then(user => {
         return true;
@@ -169,6 +212,7 @@ export default {
     getAllUsers,
     deleteUser,
     createUserFromEmailAndPassword,
+    createPatientUserFromEmailAndPassword,
     deleteUserWithEmail,
     updateUser
 };

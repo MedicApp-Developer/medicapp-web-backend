@@ -85,8 +85,6 @@ var hospital_1 = __importDefault(require("../models/hospital/hospital"));
 var pagination_1 = require("../constants/pagination");
 var patientRegisteration_1 = require("../validation/patientRegisteration");
 var statusCode_1 = require("../constants/statusCode");
-var signJWT_1 = __importDefault(require("../functions/signJWT"));
-var logging_1 = __importDefault(require("../config/logging"));
 var NAMESPACE = "Patient";
 var createPatient = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, firstName, lastName, email, birthday, emiratesId, gender, location, phone, password, _b, errors, isValid;
@@ -119,17 +117,7 @@ var createPatient = function (req, res, next) { return __awaiter(void 0, void 0,
                             return newPatient.save()
                                 .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
-                                    user_1.default.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, emiratesId, roles_1.Roles.PATIENT, result._id);
-                                    // @ts-ignore
-                                    signJWT_1.default(result, function (_error, token) {
-                                        if (_error) {
-                                            logging_1.default.error(NAMESPACE, 'Unable to sign token: ', _error);
-                                            return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
-                                        }
-                                        else if (token) {
-                                            return makeResponse_1.default(res, 200, "Patient registered successfully", { user: result, token: token }, false);
-                                        }
-                                    });
+                                    user_1.default.createPatientUserFromEmailAndPassword(req, res, email, password, firstName, lastName, emiratesId, roles_1.Roles.PATIENT, result._id);
                                     return [2 /*return*/];
                                 });
                             }); })
