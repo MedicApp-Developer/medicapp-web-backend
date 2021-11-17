@@ -15,7 +15,12 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
 
         const upcommingAppointments = await Appointment.find({patientId: res.locals.jwt.reference_id})
             .populate("patientId")
-            .populate("doctorId")
+            .populate({
+                path : 'doctorId',
+                populate : {
+                  path : 'specialityId'
+                }
+              })
             .populate("hospitalId");
 
         return makeResponse(res, 200, "Patient Appointments", { upcommingAppointments, specialities, hospitals }, false);
