@@ -134,9 +134,7 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
                 referenceId
             });
 
-            await _user.save().then(createdUser => {
-                return createdUser;
-            });
+            return _user.save();
         });
     });
 }

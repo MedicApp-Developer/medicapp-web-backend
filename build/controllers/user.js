@@ -193,28 +193,20 @@ var createUserFromEmailAndPassword = function (req, res, email, password, firstN
                     bcryptjs_1.default.hash(password, 10, function (hashError, hash) { return __awaiter(void 0, void 0, void 0, function () {
                         var _user;
                         return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    if (hashError) {
-                                        return [2 /*return*/, false];
-                                    }
-                                    _user = new user_1.default({
-                                        _id: new mongoose_1.default.Types.ObjectId(),
-                                        firstName: firstName,
-                                        lastName: lastName,
-                                        email: email,
-                                        password: hash,
-                                        role: role,
-                                        emiratesId: emiratesId,
-                                        referenceId: referenceId
-                                    });
-                                    return [4 /*yield*/, _user.save().then(function (createdUser) {
-                                            return createdUser;
-                                        })];
-                                case 1:
-                                    _a.sent();
-                                    return [2 /*return*/];
+                            if (hashError) {
+                                return [2 /*return*/, false];
                             }
+                            _user = new user_1.default({
+                                _id: new mongoose_1.default.Types.ObjectId(),
+                                firstName: firstName,
+                                lastName: lastName,
+                                email: email,
+                                password: hash,
+                                role: role,
+                                emiratesId: emiratesId,
+                                referenceId: referenceId
+                            });
+                            return [2 /*return*/, _user.save()];
                         });
                     }); });
                 })];
