@@ -9,7 +9,7 @@ export const uploadsOnlyVideo = multer({
     storage: multerS3({
       s3: s3,
       // @ts-ignore
-      bucket: "medicapp-bucket",
+      bucket: config.bucket.name,
       acl: "public-read",
       key: function (req: Request, file: any, cb: any) {
         cb(
@@ -28,7 +28,7 @@ export const uploadsOnlyVideo = multer({
     storage: multerS3({
       s3: s3,
       // @ts-ignore
-      bucket: "medicapp-bucket",
+      bucket: config.bucket.name,
       acl: "public-read",
       key: function (req: Request, file: any, cb: any) {
         cb(
@@ -47,7 +47,7 @@ export const uploadsOnlyVideo = multer({
     storage: multerS3({
       s3: s3,
       // @ts-ignore
-      bucket: "medicapp-bucket",
+      bucket: config.bucket.name,
       acl: "public-read",
       key: function (req: Request, file: any, cb: any) {
         cb(
