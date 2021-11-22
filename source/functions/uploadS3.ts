@@ -28,7 +28,7 @@ export const uploadsOnlyVideo = multer({
     storage: multerS3({
       s3: s3,
       // @ts-ignore
-      bucket: config.bucket.name,
+      bucket: "medicapp-bucket",
       acl: "public-read",
       key: function (req: Request, file: any, cb: any) {
         cb(

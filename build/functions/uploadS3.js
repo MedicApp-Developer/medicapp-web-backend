@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadImage = exports.uploadEmirateFileId = exports.uploadsOnlyVideo = void 0;
-var config_1 = __importDefault(require("../config/config"));
 var multer_1 = __importDefault(require("multer"));
 var multer_s3_1 = __importDefault(require("multer-s3"));
 var path_1 = __importDefault(require("path"));
@@ -28,7 +27,7 @@ exports.uploadEmirateFileId = multer_1.default({
     storage: multer_s3_1.default({
         s3: aws_1.default,
         // @ts-ignore
-        bucket: config_1.default.bucket.name,
+        bucket: "medicapp-bucket",
         acl: "public-read",
         key: function (req, file, cb) {
             cb(null, path_1.default.basename(file.originalname, path_1.default.extname(file.originalname)) +
