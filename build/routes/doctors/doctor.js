@@ -16,4 +16,5 @@ router.delete('/:id', isHospital_1.default, doctor_1.default.deleteDoctor);
 router.get('/search/:searchedText', extractJWT_1.default, doctor_1.default.searchDoctor);
 router.get('/searchHospitalAndDoctor/:searchedText', extractJWT_1.default, doctor_1.default.searchHospitalAndDoctor);
 router.get('/searchDoctorBySpeciality/:specialityId', doctor_1.default.searchDoctorBySpeciality);
+router.put('/uploadProfilePicture/:id', doctor_1.default.uploadProfilePic);
 module.exports = router;

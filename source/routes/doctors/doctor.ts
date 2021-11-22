@@ -14,5 +14,6 @@ router.delete('/:id',isHospital, controller.deleteDoctor);
 router.get('/search/:searchedText', extractJWT, controller.searchDoctor);
 router.get('/searchHospitalAndDoctor/:searchedText', extractJWT, controller.searchHospitalAndDoctor);
 router.get('/searchDoctorBySpeciality/:specialityId', controller.searchDoctorBySpeciality);
+router.put('/uploadProfilePicture/:id', controller.uploadProfilePic);
 
 export = router;

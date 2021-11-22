@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Doctor from '../../models/doctors/doctor';
 import User from '../../models/user';
-import makeResponse from '../../functions/makeResponse';
+import makeResponse, { sendErrorResponse } from '../../functions/makeResponse';
 import UserController from '../user';
 import { Roles } from '../../constants/roles';
 import { sendEmail } from '../../functions/mailer';
@@ -11,6 +11,8 @@ import config from '../../config/config';
 import { Pagination } from '../../constants/pagination';
 import Nurse from '../../models/nurse/nurse';
 import Hospital from '../../models/hospital/hospital';
+import { uploadImage } from '../../functions/uploadS3';
+import { PARAMETER_MISSING_CODE, SERVER_ERROR_CODE } from '../../constants/statusCode';
 
 const NAMESPACE = "Doctor";
 
@@ -53,6 +55,34 @@ const createDoctor = async (req: Request, res: Response, next: NextFunction) => 
             }
         })
 };
+
+const uploadProfilePic = async (req: Request, res: Response, next: NextFunction) => {
+    uploadImage(req, res, async (error: any) => {
+        if (error) {
+            console.log(error);
+          return sendErrorResponse(res, 400, "Error in uploading image", SERVER_ERROR_CODE);
+        } else {
+          // If File not found
+          // console.log("Ressss => ", req.files);
+          if (req.file === undefined) {
+            return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
+          } else {
+
+            // This id is updated hospital itself id 
+            const { id } = req.params;
+
+            const filter = { _id: id };
+            
+            // @ts-ignore
+            Doctor.findOneAndUpdate(filter, {image: req.file.location}).then(updatedDoctor => {
+                return makeResponse(res, 200, "Doctor profile picture uploaded Successfully", updatedDoctor, false);
+            }).catch(err => {
+                return makeResponse(res, 400, err.message, null, true);
+            });
+          }
+        }
+      });
+}
 
 const getAllDoctors = async (req: Request, res: Response, next: NextFunction) => {
     // @ts-ignore
@@ -97,7 +127,7 @@ const getSingleDoctor = (req: Request, res: Response, next: NextFunction) => {
 const updateDoctor = (req: Request, res: Response, next: NextFunction) => {
     const { _id } = res.locals.jwt;
 
-    // This id is updated hospital itself id 
+    // This id is updated doctor itself id 
     const { id } = req.params;
 
     const update = JSON.parse(JSON.stringify({...req.body}));
@@ -194,5 +224,6 @@ export default {
     deleteDoctor,
     searchDoctor,
     searchHospitalAndDoctor,
-    searchDoctorBySpeciality
+    searchDoctorBySpeciality,
+    uploadProfilePic
 };

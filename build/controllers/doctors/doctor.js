@@ -10,6 +10,25 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -53,7 +72,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = __importDefault(require("mongoose"));
 var doctor_1 = __importDefault(require("../../models/doctors/doctor"));
 var user_1 = __importDefault(require("../../models/user"));
-var makeResponse_1 = __importDefault(require("../../functions/makeResponse"));
+var makeResponse_1 = __importStar(require("../../functions/makeResponse"));
 var user_2 = __importDefault(require("../user"));
 var roles_1 = require("../../constants/roles");
 var mailer_1 = require("../../functions/mailer");
@@ -62,6 +81,8 @@ var config_1 = __importDefault(require("../../config/config"));
 var pagination_1 = require("../../constants/pagination");
 var nurse_1 = __importDefault(require("../../models/nurse/nurse"));
 var hospital_1 = __importDefault(require("../../models/hospital/hospital"));
+var uploadS3_1 = require("../../functions/uploadS3");
+var statusCode_1 = require("../../constants/statusCode");
 var NAMESPACE = "Doctor";
 var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, firstName, lastName, mobile, specialityId, experience, password;
@@ -114,6 +135,38 @@ var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
         }
     });
 }); };
+var uploadProfilePic = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        uploadS3_1.uploadImage(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
+            var id, filter;
+            return __generator(this, function (_a) {
+                if (error) {
+                    console.log(error);
+                    return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "Error in uploading image", statusCode_1.SERVER_ERROR_CODE)];
+                }
+                else {
+                    // If File not found
+                    // console.log("Ressss => ", req.files);
+                    if (req.file === undefined) {
+                        return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "No File Selected", statusCode_1.PARAMETER_MISSING_CODE)];
+                    }
+                    else {
+                        id = req.params.id;
+                        filter = { _id: id };
+                        // @ts-ignore
+                        doctor_1.default.findOneAndUpdate(filter, { image: req.file.location }).then(function (updatedDoctor) {
+                            return makeResponse_1.default(res, 200, "Doctor profile picture uploaded Successfully", updatedDoctor, false);
+                        }).catch(function (err) {
+                            return makeResponse_1.default(res, 400, err.message, null, true);
+                        });
+                    }
+                }
+                return [2 /*return*/];
+            });
+        }); });
+        return [2 /*return*/];
+    });
+}); };
 var getAllDoctors = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var page, hospitalId, total_1, reference_id, nurse;
     return __generator(this, function (_a) {
@@ -163,7 +216,7 @@ var getSingleDoctor = function (req, res, next) {
 };
 var updateDoctor = function (req, res, next) {
     var _id = res.locals.jwt._id;
-    // This id is updated hospital itself id 
+    // This id is updated doctor itself id 
     var id = req.params.id;
     var update = JSON.parse(JSON.stringify(__assign({}, req.body)));
     update.password && delete update.password;
@@ -275,5 +328,6 @@ exports.default = {
     deleteDoctor: deleteDoctor,
     searchDoctor: searchDoctor,
     searchHospitalAndDoctor: searchHospitalAndDoctor,
-    searchDoctorBySpeciality: searchDoctorBySpeciality
+    searchDoctorBySpeciality: searchDoctorBySpeciality,
+    uploadProfilePic: uploadProfilePic
 };

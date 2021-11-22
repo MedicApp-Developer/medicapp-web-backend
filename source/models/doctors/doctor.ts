@@ -41,6 +41,10 @@ const DoctorSchema: Schema = new Schema(
             type: String,
             required: false
         },
+        image: {
+            type: String,
+            required: false
+        },
         schedule: {
             monday: {
                 startTime: {

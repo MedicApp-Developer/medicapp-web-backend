@@ -59,6 +59,10 @@ var DoctorSchema = new mongoose_1.Schema({
         type: String,
         required: false
     },
+    image: {
+        type: String,
+        required: false
+    },
     schedule: {
         monday: {
             startTime: {
