@@ -91,18 +91,36 @@ var createSpeciality = function (req, res, next) {
         });
     }); });
 };
-var getAllSpeciality = function (req, res, next) {
-    // if(req.query.page){
-    //     const page = parseInt(req.query.page);
-    // }
-    speciality_1.default.find({})
-        .then(function (specialities) {
-        return makeResponse_1.default(res, 200, "All Specialities", specialities, false);
-    })
-        .catch(function (err) {
-        return makeResponse_2.sendErrorResponse(res, 400, "No Record Found", statusCode_1.RECORD_NOT_FOUND);
+var getAllSpeciality = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var page, total_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!req.query.page) return [3 /*break*/, 2];
+                page = parseInt(req.query.page || "0");
+                return [4 /*yield*/, speciality_1.default.find({}).countDocuments({})];
+            case 1:
+                total_1 = _a.sent();
+                speciality_1.default.find({}).limit(6).skip(6 * page).then(function (specialities) {
+                    return makeResponse_1.default(res, 200, "All Specialities", { totalItems: total_1, totalPages: Math.ceil(total_1 / 6), specialities: specialities }, false);
+                })
+                    .catch(function (err) {
+                    return makeResponse_2.sendErrorResponse(res, 400, "No Record Found", statusCode_1.RECORD_NOT_FOUND);
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                speciality_1.default.find({})
+                    .then(function (specialities) {
+                    return makeResponse_1.default(res, 200, "All Specialities", specialities, false);
+                })
+                    .catch(function (err) {
+                    return makeResponse_2.sendErrorResponse(res, 400, "No Record Found", statusCode_1.RECORD_NOT_FOUND);
+                });
+                _a.label = 3;
+            case 3: return [2 /*return*/];
+        }
     });
-};
+}); };
 var getSingleSpeciality = function (req, res, next) {
     speciality_1.default.findById({ _id: req.params.id })
         .then(function (data) {
