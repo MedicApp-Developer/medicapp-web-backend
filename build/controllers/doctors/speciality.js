@@ -92,6 +92,9 @@ var createSpeciality = function (req, res, next) {
     }); });
 };
 var getAllSpeciality = function (req, res, next) {
+    // if(req.query.page){
+    //     const page = parseInt(req.query.page);
+    // }
     speciality_1.default.find({})
         .then(function (specialities) {
         return makeResponse_1.default(res, 200, "All Specialities", specialities, false);

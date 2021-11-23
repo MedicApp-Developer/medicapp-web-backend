@@ -42,6 +42,12 @@ const createSpeciality = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getAllSpeciality = (req: Request, res: Response, next: NextFunction) => {
+
+    // if(req.query.page){
+    //     const page = parseInt(req.query.page);
+    // }
+
+
     Speciality.find({})
         .then(specialities => {
             return makeResponse(res, 200, "All Specialities", specialities, false);

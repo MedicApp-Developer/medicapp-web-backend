@@ -13,15 +13,15 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
         const specialities = await Speciality.find({});
         const hospitals = await Hospital.find({}).limit(10).skip(0);
 
-        const upcommingAppointments = await Appointment.find({patientId: res.locals.jwt.reference_id})
+        const upcommingAppointments = await Appointment.find({patientId: res.locals.jwt.reference_id}).select(['-hospitalId'])
             .populate("patientId")
             .populate({
                 path : 'doctorId',
-                populate : {
-                  path : ['specialityId', 'hospitalId']
-                }
+                populate: [
+                  { path: 'specialityId' },
+                  { path: 'hospitalId' }
+                ]
               })
-            .populate("hospitalId");
 
         return makeResponse(res, 200, "Patient Appointments", { upcommingAppointments, specialities, hospitals }, false);
         
