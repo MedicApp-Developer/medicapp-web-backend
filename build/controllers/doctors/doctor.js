@@ -311,7 +311,7 @@ var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 
 }); };
 var searchDoctorBySpeciality = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        doctor_1.default.find({ specialityId: req.params.specialityId }).populate("specialityId")
+        doctor_1.default.find({ specialityId: req.params.specialityId }).populate("specialityId").populate("hospitalId")
             .then(function (data) {
             return makeResponse_1.default(res, 200, "Searched Doctor", data, false);
         }).catch(function (err) {

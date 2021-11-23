@@ -208,7 +208,7 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
 };
 
 const searchDoctorBySpeciality = async (req: Request, res: Response, next: NextFunction) => {
-    Doctor.find({ specialityId: req.params.specialityId }).populate("specialityId")
+    Doctor.find({ specialityId: req.params.specialityId }).populate("specialityId").populate("hospitalId")
     .then(data => {
         return makeResponse(res, 200, "Searched Doctor", data, false);
     }).catch(err => {
