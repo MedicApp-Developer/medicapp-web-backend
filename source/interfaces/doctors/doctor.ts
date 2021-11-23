@@ -11,6 +11,9 @@ export default interface IDoctor extends Document {
     description: string;
     about: string;
     image: string;
+    gender: string;
+    country: string;
+    language: string;
     schedule: {
         monday: {
             startTime: string;

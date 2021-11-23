@@ -85,12 +85,13 @@ var uploadS3_1 = require("../../functions/uploadS3");
 var statusCode_1 = require("../../constants/statusCode");
 var NAMESPACE = "Doctor";
 var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, firstName, lastName, mobile, specialityId, experience, password;
+    var _a, email, firstName, lastName, mobile, specialityId, experience, gender, country, language, password;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile, specialityId = _a.specialityId, experience = _a.experience;
+                _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile, specialityId = _a.specialityId, experience = _a.experience, gender = _a.gender, country = _a.country, language = _a.language;
                 password = utilities_1.getRandomPassword();
+                if (!(email && firstName && lastName && mobile && specialityId && experience && gender && country && language)) return [3 /*break*/, 2];
                 return [4 /*yield*/, user_1.default.find({ email: email }).then(function (result) {
                         if (result.length === 0) {
                             if (email && firstName && lastName && mobile) {
@@ -131,7 +132,9 @@ var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
                     })];
             case 1:
                 _b.sent();
-                return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 2: return [2 /*return*/, makeResponse_1.default(res, 400, "Validation Failed", null, true)];
+            case 3: return [2 /*return*/];
         }
     });
 }); };

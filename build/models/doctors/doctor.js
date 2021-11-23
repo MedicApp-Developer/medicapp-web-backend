@@ -63,6 +63,18 @@ var DoctorSchema = new mongoose_1.Schema({
         type: String,
         required: false
     },
+    gender: {
+        type: String,
+        required: false
+    },
+    country: {
+        type: String,
+        required: false
+    },
+    language: {
+        type: String,
+        required: false
+    },
     schedule: {
         monday: {
             startTime: {

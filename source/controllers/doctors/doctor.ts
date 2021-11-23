@@ -17,43 +17,47 @@ import { PARAMETER_MISSING_CODE, SERVER_ERROR_CODE } from '../../constants/statu
 const NAMESPACE = "Doctor";
 
 const createDoctor = async (req: Request, res: Response, next: NextFunction) => {
-        const { email, firstName, lastName, mobile, specialityId, experience } = req.body;
+        const { email, firstName, lastName, mobile, specialityId, experience, gender, country, language } = req.body;
         const password = getRandomPassword();
 
-        await User.find({email}).then(result => {
-            if(result.length === 0){
-                
-                if(email && firstName && lastName && mobile){
-                    const newDoctor = new Doctor({
-                        _id: new mongoose.Types.ObjectId(),
-                        experience, specialityId,
-                        email, password, firstName, lastName, mobile, hospitalId: res.locals.jwt.reference_id
-                    }); 
-
-                    const options = {
-                        from: config.mailer.user,
-                        to: email,
-                        subject: "Welcome to Medicapp",
-                        text: `Your account account has been created as a doctor, and your password is ${password}`
-                    }
-
-                    sendEmail(options);
+        if(email && firstName && lastName && mobile && specialityId && experience && gender && country && language) {
+            await User.find({email}).then(result => {
+                if(result.length === 0){
                     
-                    return newDoctor.save()
-                        .then(async result => {
-                            await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, "",Roles.DOCTOR, result._id)
-                            return makeResponse(res, 201, "Doctor Created Successfully", result, false);
-                        })
-                        .catch(err => {
-                            return makeResponse(res, 400, err.message, null, true);
-                        });
+                    if(email && firstName && lastName && mobile){
+                        const newDoctor = new Doctor({
+                            _id: new mongoose.Types.ObjectId(),
+                            experience, specialityId,
+                            email, password, firstName, lastName, mobile, hospitalId: res.locals.jwt.reference_id
+                        }); 
+    
+                        const options = {
+                            from: config.mailer.user,
+                            to: email,
+                            subject: "Welcome to Medicapp",
+                            text: `Your account account has been created as a doctor, and your password is ${password}`
+                        }
+    
+                        sendEmail(options);
+                        
+                        return newDoctor.save()
+                            .then(async result => {
+                                await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, "",Roles.DOCTOR, result._id)
+                                return makeResponse(res, 201, "Doctor Created Successfully", result, false);
+                            })
+                            .catch(err => {
+                                return makeResponse(res, 400, err.message, null, true);
+                            });
+                    }else {
+                        return makeResponse(res, 400, "Validation Failed", null, true);
+                    }
                 }else {
-                    return makeResponse(res, 400, "Validation Failed", null, true);
+                    return makeResponse(res, 400, "Email Already in use", null, true);
                 }
-            }else {
-                return makeResponse(res, 400, "Email Already in use", null, true);
-            }
-        })
+            })
+        } else {
+            return makeResponse(res, 400, "Validation Failed", null, true);
+        }
 };
 
 const uploadProfilePic = async (req: Request, res: Response, next: NextFunction) => {
