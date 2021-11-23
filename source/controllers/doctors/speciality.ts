@@ -41,20 +41,30 @@ const createSpeciality = (req: Request, res: Response, next: NextFunction) => {
       });
 };
 
-const getAllSpeciality = (req: Request, res: Response, next: NextFunction) => {
+const getAllSpeciality = async (req: Request, res: Response, next: NextFunction) => {
 
-    // if(req.query.page){
-    //     const page = parseInt(req.query.page);
-    // }
-
-
-    Speciality.find({})
+    if(req.query.page){
+        // @ts-ignore
+        const page = parseInt(req.query.page || "0");
+        const total = await Speciality.find({}).countDocuments({});
+        
+        Speciality.find({}).limit(6).skip(6 * page).then(specialities => {
+            return makeResponse(res, 200, "All Specialities", {totalItems: total, totalPages: Math.ceil(total / 6), specialities }, false);
+        })
+        .catch(err => {
+            return sendErrorResponse(res, 400, "No Record Found", RECORD_NOT_FOUND);
+        })
+    } else {
+        Speciality.find({})
         .then(specialities => {
             return makeResponse(res, 200, "All Specialities", specialities, false);
         })
         .catch(err => {
             return sendErrorResponse(res, 400, "No Record Found", RECORD_NOT_FOUND);
         })
+    }
+
+    
 };
 
 const getSingleSpeciality = (req: Request, res: Response, next: NextFunction) => {
