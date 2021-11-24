@@ -85,6 +85,8 @@ var hospital_1 = __importDefault(require("../models/hospital/hospital"));
 var pagination_1 = require("../constants/pagination");
 var patientRegisteration_1 = require("../validation/patientRegisteration");
 var statusCode_1 = require("../constants/statusCode");
+var labRequest_1 = __importDefault(require("../models/labortories/labRequest"));
+var QrPrescription_1 = __importDefault(require("../models/labortories/QrPrescription"));
 var NAMESPACE = "Patient";
 var createPatient = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, firstName, lastName, email, birthday, emiratesId, gender, location, phone, password, _b, errors, isValid;
@@ -303,11 +305,45 @@ var deletePatient = function (req, res, next) { return __awaiter(void 0, void 0,
         }
     });
 }); };
+var getPatientProfile = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var patient, labResults, qrPrescriptions, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                console.log("IN PATIENT");
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 5, , 6]);
+                console.log("IN PATIENT");
+                return [4 /*yield*/, patient_1.default.findById({ _id: res.locals.jwt.reference_id })];
+            case 2:
+                patient = _a.sent();
+                return [4 /*yield*/, labRequest_1.default.find({ patientId: res.locals.jwt.reference_id })];
+            case 3:
+                labResults = _a.sent();
+                return [4 /*yield*/, QrPrescription_1.default.find({ patientId: res.locals.jwt.reference_id })];
+            case 4:
+                qrPrescriptions = _a.sent();
+                return [2 /*return*/, makeResponse_1.default(res, 200, "Patient profile data", {
+                        patient: patient,
+                        // upcommingAppointments,
+                        labResults: labResults,
+                        qrPrescriptions: qrPrescriptions
+                    }, false)];
+            case 5:
+                err_2 = _a.sent();
+                console.log("OUT PATIENT");
+                return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, err_2.message, statusCode_1.SERVER_ERROR_CODE)];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); };
 exports.default = {
     createPatient: createPatient,
     getAllPatients: getAllPatients,
     getSinglePatient: getSinglePatient,
     updatePatient: updatePatient,
     deletePatient: deletePatient,
-    createPatientFromNurse: createPatientFromNurse
+    createPatientFromNurse: createPatientFromNurse,
+    getPatientProfile: getPatientProfile
 };

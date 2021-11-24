@@ -96,7 +96,9 @@ var getAllSpeciality = function (req, res, next) { return __awaiter(void 0, void
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (!req.query.page) return [3 /*break*/, 2];
+                // @ts-ignore
+                console.log("page => ", req.query.page);
+                if (!(req.query.page !== "undefined")) return [3 /*break*/, 2];
                 page = parseInt(req.query.page || "0");
                 return [4 /*yield*/, speciality_1.default.find({}).countDocuments({})];
             case 1:

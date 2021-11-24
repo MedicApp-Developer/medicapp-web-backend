@@ -66,9 +66,16 @@ var createAppointment = function (req, res, next) {
     });
 };
 var getAllAppointments = function (req, res, next) {
-    appointment_1.default.find({})
-        .populate("doctorId")
+    appointment_1.default.find({ patientId: res.locals.jwt.reference_id })
+        .select(['-hospitalId'])
         .populate("patientId")
+        .populate({
+        path: 'doctorId',
+        populate: [
+            { path: 'specialityId' },
+            { path: 'hospitalId' }
+        ]
+    })
         .then(function (result) {
         return makeResponse_1.default(res, 200, "All Appointments", result, false);
     })

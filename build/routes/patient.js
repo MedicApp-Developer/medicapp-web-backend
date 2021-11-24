@@ -12,6 +12,7 @@ router.get('/', extractJWT_1.default, patient_1.default.getAllPatients);
 router.get('/:id', extractJWT_1.default, patient_1.default.getSinglePatient);
 router.post('/', patient_1.default.createPatient);
 // router.post('/', [ isHospitalOrNurse, upload.single("emiratesIdFile") ] ,controller.createPatient);
+router.get('/profile', patient_1.default.getPatientProfile);
 router.put('/:id', isHospitalOrNurse_1.default, patient_1.default.updatePatient);
 router.delete('/:id', isHospitalOrNurse_1.default, patient_1.default.deletePatient);
 router.post('/createNursePatient', isNurse_1.default, patient_1.default.createPatientFromNurse);

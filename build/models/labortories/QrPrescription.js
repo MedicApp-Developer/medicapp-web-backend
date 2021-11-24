@@ -20,36 +20,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = __importStar(require("mongoose"));
-var PharmacySchema = new mongoose_1.Schema({
-    name: {
+var QrPrescriptionSchema = new mongoose_1.Schema({
+    data: {
         type: String,
         required: true
     },
-    email: {
-        type: String,
-        required: true
-    },
-    tradeLicenseNo: {
-        type: String,
-        required: true
-    },
-    issueDate: {
-        type: String,
-        required: true
-    },
-    expiryDate: {
-        type: String,
-        required: true
-    },
-    tradeLicenseFile: {
-        type: String,
-        required: false
-    },
-    noOfBranches: {
-        type: Number,
-        required: true
+    patientId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Patient",
+        index: false
     }
 }, {
     timestamps: true
 });
-exports.default = mongoose_1.default.model('Pharmacy', PharmacySchema);
+exports.default = mongoose_1.default.model('QrPrescription', QrPrescriptionSchema);

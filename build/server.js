@@ -25,6 +25,7 @@ var branch_1 = __importDefault(require("./routes/pharmacy/branch"));
 var labRequest_1 = __importDefault(require("./routes/labortories/labRequest"));
 var promos_1 = __importDefault(require("./routes/hospitals/promos"));
 var speciality_1 = __importDefault(require("./routes/doctors/speciality"));
+var QrPrescription_1 = __importDefault(require("./routes/labortories/QrPrescription"));
 var home_1 = __importDefault(require("./routes/home"));
 var cors_1 = __importDefault(require("cors"));
 var NAMESPACE = 'Server';
@@ -82,6 +83,7 @@ router.use('/api/labRequests', labRequest_1.default);
 router.use('/api/promos', promos_1.default);
 router.use('/api/speciality', speciality_1.default);
 router.use('/api/home', home_1.default);
+router.use('/api/qrprescription', QrPrescription_1.default);
 // Simple Root Message
 router.get('/', function (req, res) {
     res.setHeader("Content-Type", "text/html");

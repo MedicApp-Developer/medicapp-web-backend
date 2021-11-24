@@ -56,7 +56,6 @@ var user_1 = __importDefault(require("../../models/user"));
 var makeResponse_1 = __importDefault(require("../../functions/makeResponse"));
 var user_2 = __importDefault(require("../user"));
 var roles_1 = require("../../constants/roles");
-var config_1 = __importDefault(require("../../config/config"));
 var NAMESPACE = "Hospital";
 var createPharmacy = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, password, name, tradeLicenseNo, issueDate, expiryDate, noOfBranches;
@@ -66,11 +65,11 @@ var createPharmacy = function (req, res, next) { return __awaiter(void 0, void 0
                 _a = req.body, email = _a.email, password = _a.password, name = _a.name, tradeLicenseNo = _a.tradeLicenseNo, issueDate = _a.issueDate, expiryDate = _a.expiryDate, noOfBranches = _a.noOfBranches;
                 return [4 /*yield*/, user_1.default.find({ email: email }).then(function (result) {
                         if (result.length === 0) {
-                            if (req && req.file && req.file.filename && email && password && name && tradeLicenseNo && issueDate && expiryDate && noOfBranches) {
+                            if (email && password && name && tradeLicenseNo && issueDate && expiryDate && noOfBranches) {
                                 var newPharmacy = new pharmacy_1.default({
                                     _id: new mongoose_1.default.Types.ObjectId(),
                                     email: email, name: name, tradeLicenseNo: tradeLicenseNo, issueDate: issueDate, expiryDate: expiryDate, noOfBranches: noOfBranches,
-                                    tradeLicenseFile: config_1.default.server.APP_URL + "/" + ((req && req.file && req.file.filename) ? req.file.filename : "")
+                                    // tradeLicenseFile: config.server.APP_URL + "/" + (( req && req.file && req.file.filename ) ? req.file.filename : "")
                                 });
                                 return newPharmacy.save()
                                     .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
