@@ -19,9 +19,16 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getAllAppointments = (req: Request, res: Response, next: NextFunction) => {
-    Appointment.find({})
-        .populate("doctorId")
+    Appointment.find({patientId: res.locals.jwt.reference_id })
+        .select(['-hospitalId'])
         .populate("patientId")
+        .populate({
+            path : 'doctorId',
+            populate: [
+            { path: 'specialityId' },
+            { path: 'hospitalId' }
+            ]
+        })
         .then(result => {
             return makeResponse(res, 200, "All Appointments", result, false);
         })

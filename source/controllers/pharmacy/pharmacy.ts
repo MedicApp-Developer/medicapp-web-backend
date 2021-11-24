@@ -14,11 +14,11 @@ const createPharmacy = async (req: Request, res: Response, next: NextFunction) =
     
     await User.find({ email }).then(result => {
         if(result.length === 0){
-            if(req && req.file && req.file.filename && email && password && name && tradeLicenseNo && issueDate && expiryDate && noOfBranches ){
+            if(email && password && name && tradeLicenseNo && issueDate && expiryDate && noOfBranches ){
                 const newPharmacy = new Pharmacy({
                     _id: new mongoose.Types.ObjectId(),
                     email, name, tradeLicenseNo, issueDate, expiryDate, noOfBranches,
-                    tradeLicenseFile: config.server.APP_URL + "/" + (( req && req.file && req.file.filename ) ? req.file.filename : "")
+                    // tradeLicenseFile: config.server.APP_URL + "/" + (( req && req.file && req.file.filename ) ? req.file.filename : "")
                 });
                 
                 return newPharmacy.save()

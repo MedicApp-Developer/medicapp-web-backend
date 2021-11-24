@@ -42,8 +42,9 @@ const createSpeciality = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getAllSpeciality = async (req: Request, res: Response, next: NextFunction) => {
-
-    if(req.query.page){
+    // @ts-ignore
+    console.log("page => ", req.query.page);
+    if(req.query.page !== "undefined"){
         // @ts-ignore
         const page = parseInt(req.query.page || "0");
         const total = await Speciality.find({}).countDocuments({});

@@ -25,7 +25,7 @@ const PharmacySchema: Schema = new Schema(
         },
         tradeLicenseFile: {
             type: String,
-            required: true
+            required: false
         },
         noOfBranches: {
             type: Number,

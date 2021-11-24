@@ -15,8 +15,8 @@ import Hospital from '../models/hospital/hospital';
 import { Pagination } from '../constants/pagination';
 import { validatePatientRegisteration } from '../validation/patientRegisteration';
 import { DUPLICATE_VALUE_CODE, PARAMETER_MISSING_CODE, SERVER_ERROR_CODE, UNAUTHORIZED_CODE } from '../constants/statusCode';
-import signJWT from '../functions/signJWT';
-import logging from '../config/logging';
+import LaboratoryRequest from '../models/labortories/labRequest';
+import QrPrescription from '../models/labortories/QrPrescription';
 
 const NAMESPACE = "Patient";
 
@@ -206,11 +206,52 @@ const deletePatient = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
+const getPatientProfile = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("IN PATIENT");
+
+    try {
+        console.log("IN PATIENT");
+        // Get all information of patient
+        const patient = await Patient.findById({ _id: res.locals.jwt.reference_id });
+
+        // Get Upcomming Appointments
+        // const upcommingAppointments = await Appointment.find({patientId: res.locals.jwt.reference_id}).select(['-hospitalId'])
+        //     .populate("patientId")
+        //     .populate({
+        //         path : 'doctorId',
+        //         populate: [
+        //           { path: 'specialityId' },
+        //           { path: 'hospitalId' }
+        //         ]
+        //       })
+
+        // Get Lab Results
+        const labResults = await LaboratoryRequest.find({ patientId: res.locals.jwt.reference_id });
+
+        // Get QR Prescriptions
+        const qrPrescriptions = await QrPrescription.find({ patientId: res.locals.jwt.reference_id });
+        
+        return makeResponse(res, 200, "Patient profile data", {
+            patient,
+            // upcommingAppointments,
+            labResults,
+            qrPrescriptions
+        }, false);
+
+        
+    } catch(err: any) {
+        console.log("OUT PATIENT");
+        
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+    }
+};
+
 export default { 
     createPatient, 
     getAllPatients,
     getSinglePatient,
     updatePatient,
     deletePatient,
-    createPatientFromNurse
+    createPatientFromNurse,
+    getPatientProfile
 };
