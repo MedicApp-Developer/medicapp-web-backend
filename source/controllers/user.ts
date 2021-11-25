@@ -139,7 +139,7 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
     });
 }
 
-const createPatientUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, emiratesId: string, role: string, referenceId: string) => {
+const createPatientUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, phoneNo: string, emiratesId: string, role: string, referenceId: string) => {
     await User.find({ email }).exec().then(user => {
         if(user.length > 0){
             return false;
@@ -156,6 +156,7 @@ const createPatientUserFromEmailAndPassword = async (req: Request, res: Response
                 firstName,
                 lastName,
                 email,
+                phoneNo,
                 password: hash,
                 role,
                 emiratesId,

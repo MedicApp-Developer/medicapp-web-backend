@@ -216,7 +216,7 @@ var createUserFromEmailAndPassword = function (req, res, email, password, firstN
         }
     });
 }); };
-var createPatientUserFromEmailAndPassword = function (req, res, email, password, firstName, lastName, emiratesId, role, referenceId) { return __awaiter(void 0, void 0, void 0, function () {
+var createPatientUserFromEmailAndPassword = function (req, res, email, password, firstName, lastName, phoneNo, emiratesId, role, referenceId) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, user_1.default.find({ email: email }).exec().then(function (user) {
@@ -235,6 +235,7 @@ var createPatientUserFromEmailAndPassword = function (req, res, email, password,
                                 firstName: firstName,
                                 lastName: lastName,
                                 email: email,
+                                phoneNo: phoneNo,
                                 password: hash,
                                 role: role,
                                 emiratesId: emiratesId,

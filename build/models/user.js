@@ -33,6 +33,10 @@ var UserSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    phoneNo: {
+        type: String,
+        required: false
+    },
     password: {
         type: String,
         required: true

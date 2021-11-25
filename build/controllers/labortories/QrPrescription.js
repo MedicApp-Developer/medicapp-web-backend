@@ -43,10 +43,10 @@ var makeResponse_1 = __importDefault(require("../../functions/makeResponse"));
 var QrPrescription_1 = __importDefault(require("../../models/labortories/QrPrescription"));
 var NAMESPACE = "QR Prescription";
 var createQrPrescription = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, patientId, data, qrPrescription;
+    var _a, patientId, doctorId, data, date, qrPrescription;
     return __generator(this, function (_b) {
-        _a = req.body, patientId = _a.patientId, data = _a.data;
-        qrPrescription = new QrPrescription_1.default({ patientId: patientId, data: data });
+        _a = req.body, patientId = _a.patientId, doctorId = _a.doctorId, data = _a.data, date = _a.date;
+        qrPrescription = new QrPrescription_1.default({ patientId: patientId, doctorId: doctorId, date: date, data: data });
         return [2 /*return*/, qrPrescription.save()
                 .then(function (result) {
                 return makeResponse_1.default(res, 201, "QR Prescription Created Successfully", result, false);
@@ -58,7 +58,7 @@ var createQrPrescription = function (req, res, next) { return __awaiter(void 0, 
 }); };
 var getQrPrescription = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        QrPrescription_1.default.find({ patientId: res.locals.jwt.reference_id }).then(function (prescriptions) {
+        QrPrescription_1.default.find({ patientId: res.locals.jwt.reference_id }).populate("doctorId").then(function (prescriptions) {
             return makeResponse_1.default(res, 201, "QR Prescription Created Successfully", prescriptions, false);
         }).catch(function (err) {
             return makeResponse_1.default(res, 400, err.message, null, true);

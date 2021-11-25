@@ -25,9 +25,18 @@ var QrPrescriptionSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    date: {
+        type: String,
+        required: true
+    },
     patientId: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "Patient",
+        index: false
+    },
+    doctorId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Doctor",
         index: false
     }
 }, {

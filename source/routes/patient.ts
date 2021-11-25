@@ -10,9 +10,8 @@ const router = express.Router();
 
 router.get('/', extractJWT,controller.getAllPatients);
 router.get('/:id', extractJWT,controller.getSinglePatient);
+router.get('/profile/:id', extractJWT,controller.getPatientAccountInfo);
 router.post('/', controller.createPatient);
-// router.post('/', [ isHospitalOrNurse, upload.single("emiratesIdFile") ] ,controller.createPatient);
-router.get('/profile', controller.getPatientProfile);
 router.put('/:id',isHospitalOrNurse, controller.updatePatient);
 router.delete('/:id',isHospitalOrNurse, controller.deletePatient);
 router.post('/createNursePatient', isNurse, controller.createPatientFromNurse);

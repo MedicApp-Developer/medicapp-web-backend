@@ -61,7 +61,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                         
                         return newPatient.save()
                             .then(async result => {
-                                UserController.createPatientUserFromEmailAndPassword(req, res, email, password, firstName, lastName, emiratesId, Roles.PATIENT, result._id);
+                                UserController.createPatientUserFromEmailAndPassword(req, res, email, password, firstName, lastName, phone, emiratesId, Roles.PATIENT, result._id);
                             })
                             .catch(err => {
                                 return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
@@ -206,34 +206,31 @@ const deletePatient = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
-const getPatientProfile = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("IN PATIENT");
-
+const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("IN PATIENT");
         // Get all information of patient
-        const patient = await Patient.findById({ _id: res.locals.jwt.reference_id });
+        const patient = await Patient.findById({ _id: req.params.id });
 
         // Get Upcomming Appointments
-        // const upcommingAppointments = await Appointment.find({patientId: res.locals.jwt.reference_id}).select(['-hospitalId'])
-        //     .populate("patientId")
-        //     .populate({
-        //         path : 'doctorId',
-        //         populate: [
-        //           { path: 'specialityId' },
-        //           { path: 'hospitalId' }
-        //         ]
-        //       })
+        const upcommingAppointments = await Appointment.find({patientId: req.params.id}).select(['-hospitalId'])
+            .populate("patientId")
+            .populate({
+                path : 'doctorId',
+                populate: [
+                  { path: 'specialityId' },
+                  { path: 'hospitalId' }
+                ]
+              })
 
         // Get Lab Results
-        const labResults = await LaboratoryRequest.find({ patientId: res.locals.jwt.reference_id });
+        const labResults = await LaboratoryRequest.find({ patientId: req.params.id });
 
         // Get QR Prescriptions
-        const qrPrescriptions = await QrPrescription.find({ patientId: res.locals.jwt.reference_id });
+        const qrPrescriptions = await QrPrescription.find({ patientId: req.params.id }).populate("doctorId");
         
         return makeResponse(res, 200, "Patient profile data", {
             patient,
-            // upcommingAppointments,
+            upcommingAppointments,
             labResults,
             qrPrescriptions
         }, false);
@@ -253,5 +250,5 @@ export default {
     updatePatient,
     deletePatient,
     createPatientFromNurse,
-    getPatientProfile
+    getPatientAccountInfo
 };

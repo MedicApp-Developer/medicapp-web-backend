@@ -7,10 +7,10 @@ import QrPrescription from '../../models/labortories/QrPrescription';
 const NAMESPACE = "QR Prescription";
 
 const createQrPrescription = async (req: Request, res: Response, next: NextFunction) => {
-    const { patientId, data } = req.body;
+    const { patientId, doctorId, data, date } = req.body;
     
     const qrPrescription = new QrPrescription(
-        { patientId, data }
+        { patientId, doctorId, date, data }
     );
 
     return qrPrescription.save()
@@ -23,7 +23,7 @@ const createQrPrescription = async (req: Request, res: Response, next: NextFunct
 };
 
 const getQrPrescription = async (req: Request, res: Response, next: NextFunction) => {
-    QrPrescription.find({ patientId: res.locals.jwt.reference_id }).then(prescriptions => {
+    QrPrescription.find({ patientId: res.locals.jwt.reference_id }).populate("doctorId").then(prescriptions => {
         return makeResponse(res, 201, "QR Prescription Created Successfully", prescriptions, false);
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true);

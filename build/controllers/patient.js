@@ -119,7 +119,7 @@ var createPatient = function (req, res, next) { return __awaiter(void 0, void 0,
                             return newPatient.save()
                                 .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
-                                    user_1.default.createPatientUserFromEmailAndPassword(req, res, email, password, firstName, lastName, emiratesId, roles_1.Roles.PATIENT, result._id);
+                                    user_1.default.createPatientUserFromEmailAndPassword(req, res, email, password, firstName, lastName, phone, emiratesId, roles_1.Roles.PATIENT, result._id);
                                     return [2 /*return*/];
                                 });
                             }); })
@@ -305,28 +305,37 @@ var deletePatient = function (req, res, next) { return __awaiter(void 0, void 0,
         }
     });
 }); };
-var getPatientProfile = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var patient, labResults, qrPrescriptions, err_2;
+var getPatientAccountInfo = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var patient, upcommingAppointments, labResults, qrPrescriptions, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log("IN PATIENT");
-                _a.label = 1;
+                _a.trys.push([0, 5, , 6]);
+                return [4 /*yield*/, patient_1.default.findById({ _id: req.params.id })];
             case 1:
-                _a.trys.push([1, 5, , 6]);
-                console.log("IN PATIENT");
-                return [4 /*yield*/, patient_1.default.findById({ _id: res.locals.jwt.reference_id })];
-            case 2:
                 patient = _a.sent();
-                return [4 /*yield*/, labRequest_1.default.find({ patientId: res.locals.jwt.reference_id })];
+                return [4 /*yield*/, appointment_1.default.find({ patientId: req.params.id }).select(['-hospitalId'])
+                        .populate("patientId")
+                        .populate({
+                        path: 'doctorId',
+                        populate: [
+                            { path: 'specialityId' },
+                            { path: 'hospitalId' }
+                        ]
+                    })
+                    // Get Lab Results
+                ];
+            case 2:
+                upcommingAppointments = _a.sent();
+                return [4 /*yield*/, labRequest_1.default.find({ patientId: req.params.id })];
             case 3:
                 labResults = _a.sent();
-                return [4 /*yield*/, QrPrescription_1.default.find({ patientId: res.locals.jwt.reference_id })];
+                return [4 /*yield*/, QrPrescription_1.default.find({ patientId: req.params.id }).populate("doctorId")];
             case 4:
                 qrPrescriptions = _a.sent();
                 return [2 /*return*/, makeResponse_1.default(res, 200, "Patient profile data", {
                         patient: patient,
-                        // upcommingAppointments,
+                        upcommingAppointments: upcommingAppointments,
                         labResults: labResults,
                         qrPrescriptions: qrPrescriptions
                     }, false)];
@@ -345,5 +354,5 @@ exports.default = {
     updatePatient: updatePatient,
     deletePatient: deletePatient,
     createPatientFromNurse: createPatientFromNurse,
-    getPatientProfile: getPatientProfile
+    getPatientAccountInfo: getPatientAccountInfo
 };

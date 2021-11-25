@@ -7,9 +7,18 @@ const QrPrescriptionSchema: Schema = new Schema(
             type: String,
             required: true
         },
+        date: {
+            type: String,
+            required: true
+        },
         patientId: {
             type: Schema.Types.ObjectId,
             ref: "Patient",
+            index: false
+        },
+        doctorId: {
+            type: Schema.Types.ObjectId,
+            ref: "Doctor",
             index: false
         }
     },
