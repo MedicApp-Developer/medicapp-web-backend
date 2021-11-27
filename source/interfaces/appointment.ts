@@ -5,4 +5,5 @@ export default interface IAppointment extends Document {
     doctorId: string;
     patientId: string;
     hospitalId: string;
+    date: string;
 }

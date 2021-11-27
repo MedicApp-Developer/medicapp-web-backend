@@ -11,6 +11,7 @@ router.get('/:id', extractJWT,controller.getSingleAppointment);
 router.post('/', controller.createAppointment);
 router.put('/:id',extractJWT, controller.updateAppointment);
 router.delete('/:id',extractJWT, controller.deleteAppointment);
+router.delete('/:id/:patientId',extractJWT, controller.deletePatientAppointment);
 router.get('/hospitalAppointments/:hospitalId', isHospital, controller.getHospitalAppointments)
 router.get('/doctorAppointments/:doctorId', isHospitalOrDoctor, controller.getDoctorAppointments);
 // Get todays appointments

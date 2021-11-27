@@ -72,6 +72,29 @@ const deleteAppointment = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+const deletePatientAppointment = async (req: Request, res: Response, next: NextFunction) => {
+    const _id = req.params.id;
+    const patientId = req.params.patientId;
+    try {
+        Appointment.findByIdAndDelete(_id).then(response => {
+            Appointment.find({ patientId }).select(['-hospitalId'])
+            .populate("patientId")
+            .populate({
+                path : 'doctorId',
+                populate: [
+                  { path: 'specialityId' },
+                  { path: 'hospitalId' }
+                ]
+              }).then(upcommingAppointments => {
+                return makeResponse(res, 200, "Patient Appointments", upcommingAppointments, false);  
+              })
+        });
+    } catch(err) {
+        return res.sendStatus(400);
+    }
+};
+
+
 export const createAppointmentByNurse = (req: Request, res: Response, next: NextFunction, time: string, doctorId: string, patientId: string, hospitalId: string) => {
     
     const newAppointment = new Appointment({ time, doctorId, patientId, hospitalId });
@@ -122,5 +145,6 @@ export default {
     updateAppointment,
     deleteAppointment,
     getHospitalAppointments,
-    getDoctorAppointments
+    getDoctorAppointments,
+    deletePatientAppointment
 };
