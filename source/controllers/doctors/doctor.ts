@@ -94,7 +94,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
     const page = parseInt(req.query.page || "0");
     let hospitalId = null;
     // TODO: Multiple timings in a single day for a doctor
-    if(req.query.getAll) {
+    if(req.query.getAll !== "undefined") {
         Doctor.find({}).then(doctors => {
             return makeResponse(res, 200, "All Doctors", { doctors }, false);
         }).catch(err => {

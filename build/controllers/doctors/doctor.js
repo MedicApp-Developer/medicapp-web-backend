@@ -186,7 +186,7 @@ var getAllDoctors = function (req, res, next) { return __awaiter(void 0, void 0,
             case 0:
                 page = parseInt(req.query.page || "0");
                 hospitalId = null;
-                if (!req.query.getAll) return [3 /*break*/, 1];
+                if (!(req.query.getAll !== "undefined")) return [3 /*break*/, 1];
                 doctor_1.default.find({}).then(function (doctors) {
                     return (0, makeResponse_1.default)(res, 200, "All Doctors", { doctors: doctors }, false);
                 }).catch(function (err) {

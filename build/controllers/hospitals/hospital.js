@@ -56,14 +56,13 @@ var user_1 = __importDefault(require("../../models/user"));
 var makeResponse_1 = __importDefault(require("../../functions/makeResponse"));
 var user_2 = __importDefault(require("../user"));
 var roles_1 = require("../../constants/roles");
-var hospital_2 = require("../../constants/hospital");
 var uploadS3_1 = require("../../functions/uploadS3");
 var hospitalRegisteration_1 = require("../../validation/hospitalRegisteration");
 var NAMESPACE = "Hospital";
 var createHospital = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         (0, uploadS3_1.uploadsOnlyVideo)(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
-            var _a, errors, isValid, _b, email_1, phoneNo_1, password_1, name_1, tradeLicenseNo_1, issueDate_1, expiryDate_1, location_1;
+            var _a, errors, isValid, _b, email_1, phoneNo_1, password_1, name_1, tradeLicenseNo_1, issueDate_1, expiryDate_1, location_1, type_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -79,13 +78,14 @@ var createHospital = function (req, res, next) { return __awaiter(void 0, void 0
                         if (!isValid) {
                             return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "Validation Failed", errors, true)];
                         }
-                        _b = req.body, email_1 = _b.email, phoneNo_1 = _b.phoneNo, password_1 = _b.password, name_1 = _b.name, tradeLicenseNo_1 = _b.tradeLicenseNo, issueDate_1 = _b.issueDate, expiryDate_1 = _b.expiryDate, location_1 = _b.location;
+                        _b = req.body, email_1 = _b.email, phoneNo_1 = _b.phoneNo, password_1 = _b.password, name_1 = _b.name, tradeLicenseNo_1 = _b.tradeLicenseNo, issueDate_1 = _b.issueDate, expiryDate_1 = _b.expiryDate, location_1 = _b.location, type_1 = _b.type;
                         return [4 /*yield*/, user_1.default.find({ email: email_1 }).then(function (result) {
                                 if (result.length === 0) {
                                     // @ts-ignore
                                     var newHospital = new hospital_1.default({
                                         _id: new mongoose_1.default.Types.ObjectId(),
-                                        type: hospital_2.HospitalType.HOSPITAL, category: null, addons: [],
+                                        type: type_1,
+                                        category: null, addons: [],
                                         phoneNo: phoneNo_1,
                                         email: email_1,
                                         name: name_1,

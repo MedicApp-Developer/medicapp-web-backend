@@ -30,14 +30,14 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                 return makeResponse(res, 400, "Validation Failed", errors, true);
             }
             
-            const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location } = req.body;
+            const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location, type } = req.body;
     
             await User.find({ email }).then((result: any) => {
                 if(result.length === 0){
                     // @ts-ignore
                         const newHospital = new Hospital({
                             _id: new mongoose.Types.ObjectId(),
-                            type: HospitalType.HOSPITAL, category: null, addons: [], phoneNo,
+                            type, category: null, addons: [], phoneNo,
                             email, name, tradeLicenseNo, issueDate, expiryDate, location,
                             // @ts-ignore
                             tradeLicenseFile: req.file.location
