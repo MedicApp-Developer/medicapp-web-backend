@@ -231,6 +231,25 @@ var uploadHospitalImages = function (req, res, next) { return __awaiter(void 0, 
         return [2 /*return*/];
     });
 }); };
+var filterHospital = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, checkedCategories, hospitalTypes, checkedAddons, filterQuery;
+    return __generator(this, function (_b) {
+        _a = req.body, checkedCategories = _a.checkedCategories, hospitalTypes = _a.hospitalTypes, checkedAddons = _a.checkedAddons;
+        filterQuery = {
+            $and: [
+                checkedCategories.length > 0 ? { 'category': { $in: checkedCategories } } : {},
+                hospitalTypes.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
+                checkedAddons.length > 0 ? { 'services': { $in: checkedAddons } } : {}
+            ]
+        };
+        hospital_1.default.find(filterQuery).then(function (result) {
+            return (0, makeResponse_1.default)(res, 200, "Filtered Hospital", result, false);
+        }).catch(function (err) {
+            return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        });
+        return [2 /*return*/];
+    });
+}); };
 exports.default = {
     createHospital: createHospital,
     getAllHospitals: getAllHospitals,
@@ -238,5 +257,6 @@ exports.default = {
     updateHospital: updateHospital,
     deleteHospital: deleteHospital,
     searchHospital: searchHospital,
-    uploadHospitalImages: uploadHospitalImages
+    uploadHospitalImages: uploadHospitalImages,
+    filterHospital: filterHospital
 };

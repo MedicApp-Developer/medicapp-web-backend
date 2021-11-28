@@ -12,5 +12,6 @@ router.put('/:id',extractJWT, controller.updateHospital);
 router.delete('/:id',extractJWT, controller.deleteHospital);
 router.get('/search/:searchedText', extractJWT, controller.searchHospital);
 router.put('/uploadImage/:id', extractJWT, controller.uploadHospitalImages);
+router.post('/filter', extractJWT, controller.filterHospital);
 
 export = router;

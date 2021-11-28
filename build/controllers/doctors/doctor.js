@@ -347,10 +347,10 @@ var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 
                     { email: searchedTextRegex },
                     { mobile: searchedTextRegex }
                 ];
-                return [4 /*yield*/, hospital_1.default.find({ $or: hospitalSearchQuery })];
+                return [4 /*yield*/, hospital_1.default.find({ $or: hospitalSearchQuery }).populate("category")];
             case 1:
                 searchedHospitals = _a.sent();
-                return [4 /*yield*/, doctor_1.default.find({ $or: doctorSearchQuery })];
+                return [4 /*yield*/, doctor_1.default.find({ $or: doctorSearchQuery }).populate("specialityId").populate("hospitalId")];
             case 2:
                 searchedDoctors = _a.sent();
                 return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false)];

@@ -240,8 +240,8 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
         { mobile: searchedTextRegex } 
     ]
 
-    const searchedHospitals = await Hospital.find({$or: hospitalSearchQuery});
-    const searchedDoctors = await Doctor.find({$or: doctorSearchQuery});
+    const searchedHospitals = await Hospital.find({$or: hospitalSearchQuery}).populate("category");
+    const searchedDoctors = await Doctor.find({$or: doctorSearchQuery}).populate("specialityId").populate("hospitalId");
 
     return makeResponse(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false);
 };

@@ -13,4 +13,5 @@ router.put('/:id', extractJWT_1.default, hospital_1.default.updateHospital);
 router.delete('/:id', extractJWT_1.default, hospital_1.default.deleteHospital);
 router.get('/search/:searchedText', extractJWT_1.default, hospital_1.default.searchHospital);
 router.put('/uploadImage/:id', extractJWT_1.default, hospital_1.default.uploadHospitalImages);
+router.post('/filter', extractJWT_1.default, hospital_1.default.filterHospital);
 module.exports = router;

@@ -173,6 +173,24 @@ const uploadHospitalImages = async (req: Request, res: Response, next: NextFunct
       });
 }
 
+const filterHospital = async (req: Request, res: Response, next: NextFunction) => {
+    const { checkedCategories, hospitalTypes, checkedAddons } = req.body;
+
+    const filterQuery = {
+        $and: [
+            checkedCategories.length > 0 ? { 'category': { $in: checkedCategories } } : {},
+            hospitalTypes.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
+            checkedAddons.length > 0 ? { 'services': { $in: checkedAddons } } : {}
+        ]
+    }
+
+    Hospital.find(filterQuery).then(result => {
+        return makeResponse(res, 200, "Filtered Hospital", result, false);
+    }).catch(err => {
+        return makeResponse(res, 400, err.message, null, true);
+    });
+}
+
 export default { 
     createHospital, 
     getAllHospitals,
@@ -180,5 +198,6 @@ export default {
     updateHospital,
     deleteHospital,
     searchHospital,
-    uploadHospitalImages
+    uploadHospitalImages,
+    filterHospital
 };
