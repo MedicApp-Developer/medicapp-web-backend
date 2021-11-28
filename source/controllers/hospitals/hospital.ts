@@ -9,6 +9,7 @@ import { HospitalType } from '../../constants/hospital';
 import config from '../../config/config';
 import { uploadsOnlyVideo } from '../../functions/uploadS3';
 import { validateHospitalRegisteration } from '../../validation/hospitalRegisteration';
+import Doctor from '../../models/doctors/doctor';
 
 const NAMESPACE = "Hospital";
 
@@ -77,10 +78,11 @@ const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
         })
 };
 
-const getSingleHospital = (req: Request, res: Response, next: NextFunction) => {
-    Hospital.findById({ _id: req.params.id })
+const getSingleHospital = async (req: Request, res: Response, next: NextFunction) => {
+    const doctors = await Doctor.find({hospitalId: req.params.id}).populate('hospitalId');
+    Hospital.findById({ _id: req.params.id }).populate("services")
     .then((data: any) => {
-        return makeResponse(res, 200, "Hospital", data, false);
+        return makeResponse(res, 200, "Hospital", { hospital: data, doctors }, false);
     }).catch((err: any) => {
         return makeResponse(res, 400, err.message, null, true);
     })

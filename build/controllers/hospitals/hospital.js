@@ -58,6 +58,7 @@ var user_2 = __importDefault(require("../user"));
 var roles_1 = require("../../constants/roles");
 var uploadS3_1 = require("../../functions/uploadS3");
 var hospitalRegisteration_1 = require("../../validation/hospitalRegisteration");
+var doctor_1 = __importDefault(require("../../models/doctors/doctor"));
 var NAMESPACE = "Hospital";
 var createHospital = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -134,14 +135,23 @@ var getAllHospitals = function (req, res, next) {
         return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
-var getSingleHospital = function (req, res, next) {
-    hospital_1.default.findById({ _id: req.params.id })
-        .then(function (data) {
-        return (0, makeResponse_1.default)(res, 200, "Hospital", data, false);
-    }).catch(function (err) {
-        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+var getSingleHospital = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var doctors;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, doctor_1.default.find({ hospitalId: req.params.id }).populate('hospitalId')];
+            case 1:
+                doctors = _a.sent();
+                hospital_1.default.findById({ _id: req.params.id }).populate("services")
+                    .then(function (data) {
+                    return (0, makeResponse_1.default)(res, 200, "Hospital", { hospital: data, doctors: doctors }, false);
+                }).catch(function (err) {
+                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                });
+                return [2 /*return*/];
+        }
     });
-};
+}); };
 var updateHospital = function (req, res, next) {
     // This _id is Hospital User ID
     var _id = res.locals.jwt._id;
