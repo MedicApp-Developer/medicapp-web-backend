@@ -80,6 +80,7 @@ const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
 
 const getSingleHospital = async (req: Request, res: Response, next: NextFunction) => {
     const doctors = await Doctor.find({hospitalId: req.params.id}).populate('hospitalId');
+    
     Hospital.findById({ _id: req.params.id }).populate("services")
     .then((data: any) => {
         return makeResponse(res, 200, "Hospital", { hospital: data, doctors }, false);
