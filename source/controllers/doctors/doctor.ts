@@ -28,6 +28,7 @@ const createDoctor = async (req: Request, res: Response, next: NextFunction) => 
                         const newDoctor = new Doctor({
                             _id: new mongoose.Types.ObjectId(),
                             experience, specialityId,
+                            language, country, gender,
                             email, password, firstName, lastName, mobile, hospitalId: res.locals.jwt.reference_id
                         }); 
     
@@ -93,7 +94,13 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
     const page = parseInt(req.query.page || "0");
     let hospitalId = null;
     // TODO: Multiple timings in a single day for a doctor
-    if(res.locals.jwt.role === Roles.HOSPITAL){
+    if(req.query.getAll) {
+        Doctor.find({}).then(doctors => {
+            return makeResponse(res, 200, "All Doctors", { doctors }, false);
+        }).catch(err => {
+            return makeResponse(res, 400, err.message, null, true);
+        }); 
+    }else  if(res.locals.jwt.role === Roles.HOSPITAL){
         hospitalId = res.locals.jwt.reference_id;
         const total = await Doctor.find({ hospitalId }).countDocuments({});
 
@@ -173,7 +180,11 @@ const searchDoctor = async (req: Request, res: Response, next: NextFunction) => 
         { firstName: searchedTextRegex }, 
         { lastName: searchedTextRegex },
         { email: searchedTextRegex },
-        { mobile: searchedTextRegex } 
+        { mobile: searchedTextRegex },
+        { experience: searchedTextRegex },
+        { language: searchedTextRegex },
+        { country: searchedTextRegex },
+        { gender: searchedTextRegex } 
     ]
 
     const total = await Doctor.find({$and: [{$or: searchQuery}, {hospitalId :  res.locals.jwt.reference_id }]}).countDocuments({});
@@ -181,6 +192,30 @@ const searchDoctor = async (req: Request, res: Response, next: NextFunction) => 
     Doctor.find({$and: [{$or: searchQuery}, {hospitalId:  res.locals.jwt.reference_id }]}).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
     .then(result => {
         return makeResponse(res, 200, "Search Results", {searchedText, totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), doctors: result}, false);
+    }).catch(err => {
+        return makeResponse(res, 400, "No doctor found", null, true);
+    });
+};
+
+const searchDoctorsOfAllHospitals = async (req: Request, res: Response, next: NextFunction) => {
+    const { searchedText } = req.params;
+    // Regex 
+    const searchedTextRegex = new RegExp(searchedText, 'i');
+    
+    const searchQuery = [
+        { firstName: searchedTextRegex }, 
+        { lastName: searchedTextRegex },
+        { email: searchedTextRegex },
+        { mobile: searchedTextRegex },
+        { experience: searchedTextRegex },
+        { language: searchedTextRegex },
+        { country: searchedTextRegex },
+        { gender: searchedTextRegex } 
+    ]
+
+    Doctor.find({$or: searchQuery})
+    .then(result => {
+        return makeResponse(res, 200, "Search Results", result, false);
     }).catch(err => {
         return makeResponse(res, 400, "No doctor found", null, true);
     });
@@ -220,6 +255,27 @@ const searchDoctorBySpeciality = async (req: Request, res: Response, next: NextF
     })
 };
 
+const filterDoctors = async (req: Request, res: Response, next: NextFunction) => {
+    const { checkedSpecialities, hospitalTypes, checkedLanguages, checkedNationalities, checkedGenders } = req.body;
+
+    // TODO: Search By Hospital Types
+
+    const filterQuery = {
+        $and: [
+            checkedSpecialities.length > 0 ? { 'specialityId': { $in: checkedSpecialities } } : {},
+            checkedLanguages.length > 0 ? { 'language': { $in: checkedLanguages } } : {},
+            checkedNationalities.length > 0 ? { 'country': { $in: checkedNationalities } } : {},
+            checkedGenders.length > 0 ? { 'gender': { $in: checkedGenders } } : {}
+        ]
+    }
+
+    Doctor.find(filterQuery).then(result => {
+        return makeResponse(res, 200, "Filtered Doctors", result, false);
+    }).catch(err => {
+        return makeResponse(res, 400, err.message, null, true);
+    });
+};
+
 export default { 
     createDoctor, 
     getAllDoctors,
@@ -229,5 +285,7 @@ export default {
     searchDoctor,
     searchHospitalAndDoctor,
     searchDoctorBySpeciality,
-    uploadProfilePic
+    uploadProfilePic,
+    filterDoctors,
+    searchDoctorsOfAllHospitals
 };

@@ -68,7 +68,12 @@ var createPharmacy = function (req, res, next) { return __awaiter(void 0, void 0
                             if (email && password && name && tradeLicenseNo && issueDate && expiryDate && noOfBranches) {
                                 var newPharmacy = new pharmacy_1.default({
                                     _id: new mongoose_1.default.Types.ObjectId(),
-                                    email: email, name: name, tradeLicenseNo: tradeLicenseNo, issueDate: issueDate, expiryDate: expiryDate, noOfBranches: noOfBranches,
+                                    email: email,
+                                    name: name,
+                                    tradeLicenseNo: tradeLicenseNo,
+                                    issueDate: issueDate,
+                                    expiryDate: expiryDate,
+                                    noOfBranches: noOfBranches,
                                     // tradeLicenseFile: config.server.APP_URL + "/" + (( req && req.file && req.file.filename ) ? req.file.filename : "")
                                 });
                                 return newPharmacy.save()
@@ -78,20 +83,20 @@ var createPharmacy = function (req, res, next) { return __awaiter(void 0, void 0
                                             case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email, password, name, "", "", roles_1.Roles.PHARMACY, result._id)];
                                             case 1:
                                                 _a.sent();
-                                                return [2 /*return*/, makeResponse_1.default(res, 201, "Pharmacy Created Successfully", result, false)];
+                                                return [2 /*return*/, (0, makeResponse_1.default)(res, 201, "Pharmacy Created Successfully", result, false)];
                                         }
                                     });
                                 }); })
                                     .catch(function (err) {
-                                    return makeResponse_1.default(res, 400, err.message, null, true);
+                                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
                                 });
                             }
                             else {
-                                return makeResponse_1.default(res, 400, "Validation Failed", null, true);
+                                return (0, makeResponse_1.default)(res, 400, "Validation Failed", null, true);
                             }
                         }
                         else {
-                            return makeResponse_1.default(res, 400, "Email already exists", null, true);
+                            return (0, makeResponse_1.default)(res, 400, "Email already exists", null, true);
                         }
                     })];
             case 1:
@@ -103,18 +108,18 @@ var createPharmacy = function (req, res, next) { return __awaiter(void 0, void 0
 var getAllPharmacies = function (req, res, next) {
     pharmacy_1.default.find({})
         .then(function (result) {
-        return makeResponse_1.default(res, 200, "All Pharmacies", result, false);
+        return (0, makeResponse_1.default)(res, 200, "All Pharmacies", result, false);
     })
         .catch(function (err) {
-        return makeResponse_1.default(res, 400, err.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
 var getSinglePharmacy = function (req, res, next) {
     pharmacy_1.default.findById({ _id: req.params.id })
         .then(function (data) {
-        return makeResponse_1.default(res, 200, "Pharmacy", data, false);
+        return (0, makeResponse_1.default)(res, 200, "Pharmacy", data, false);
     }).catch(function (err) {
-        return makeResponse_1.default(res, 400, err.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
 var updatePharmacy = function (req, res, next) {
@@ -122,9 +127,9 @@ var updatePharmacy = function (req, res, next) {
     var filter = { _id: id };
     var update = __assign({}, req.body);
     pharmacy_1.default.findOneAndUpdate(filter, update).then(function (updatedPharmacy) {
-        return makeResponse_1.default(res, 200, "Pharmacy updated Successfully", updatedPharmacy, false);
+        return (0, makeResponse_1.default)(res, 200, "Pharmacy updated Successfully", updatedPharmacy, false);
     }).catch(function (err) {
-        return makeResponse_1.default(res, 400, err.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
 var deletePharmacy = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -144,7 +149,7 @@ var deletePharmacy = function (req, res, next) { return __awaiter(void 0, void 0
                 return [4 /*yield*/, user_2.default.deleteUserWithEmail(pharmacy.email)];
             case 3:
                 _a.sent();
-                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", pharmacy, false)];
+                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", pharmacy, false)];
             case 4:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];
@@ -163,9 +168,9 @@ var searchPharmacy = function (req, res, next) { return __awaiter(void 0, void 0
             { tradeLicenseNo: searchedTextRegex }
         ];
         pharmacy_1.default.find({ $or: searchQuery }).then(function (result) {
-            return makeResponse_1.default(res, 200, "Search Results", result, false);
+            return (0, makeResponse_1.default)(res, 200, "Search Results", result, false);
         }).catch(function (err) {
-            return makeResponse_1.default(res, 400, "Error while searching Pharmacy", null, true);
+            return (0, makeResponse_1.default)(res, 400, "Error while searching Pharmacy", null, true);
         });
         return [2 /*return*/];
     });

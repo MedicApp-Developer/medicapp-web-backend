@@ -11,7 +11,7 @@ var signJWT = function (user, callback) {
     var timeSinceEpoch = new Date().getTime();
     var expirationTime = timeSinceEpoch + Number(config_1.default.server.token.expireTime) * 100000;
     var expirationTimeInSeconds = Math.floor(expirationTime / 1000);
-    logging_1.default.info(NAMESPACE, "Attempting to sign token for " + user.email);
+    logging_1.default.info(NAMESPACE, "Attempting to sign token for ".concat(user.email));
     var payload = {
         _id: user._id,
         firstName: user.firstName,

@@ -6,9 +6,8 @@ var express_1 = __importDefault(require("express"));
 var doctor_1 = __importDefault(require("../../controllers/doctors/doctor"));
 var extractJWT_1 = __importDefault(require("../../middleware/extractJWT"));
 var isHospital_1 = __importDefault(require("../../middleware/isHospital"));
-var isHospitalOrNurse_1 = __importDefault(require("../../middleware/isHospitalOrNurse"));
 var router = express_1.default.Router();
-router.get('/', isHospitalOrNurse_1.default, doctor_1.default.getAllDoctors);
+router.get('/', extractJWT_1.default, doctor_1.default.getAllDoctors);
 router.get('/:id', extractJWT_1.default, doctor_1.default.getSingleDoctor);
 router.post('/', isHospital_1.default, doctor_1.default.createDoctor);
 router.put('/:id', extractJWT_1.default, doctor_1.default.updateDoctor);
@@ -17,4 +16,6 @@ router.get('/search/:searchedText', extractJWT_1.default, doctor_1.default.searc
 router.get('/searchHospitalAndDoctor/:searchedText', extractJWT_1.default, doctor_1.default.searchHospitalAndDoctor);
 router.get('/searchDoctorBySpeciality/:specialityId', doctor_1.default.searchDoctorBySpeciality);
 router.put('/uploadProfilePicture/:id', doctor_1.default.uploadProfilePic);
+router.post('/filter', extractJWT_1.default, doctor_1.default.filterDoctors);
+router.get('/searchAll/:searchedText', extractJWT_1.default, doctor_1.default.searchDoctorsOfAllHospitals);
 module.exports = router;

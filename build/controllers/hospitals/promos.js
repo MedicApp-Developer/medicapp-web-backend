@@ -45,16 +45,16 @@ var pagination_1 = require("../../constants/pagination");
 var uploadS3_1 = require("../../functions/uploadS3");
 var NAMESPACE = "Promos";
 var createPromo = function (req, res, next) {
-    uploadS3_1.uploadsOnlyVideo(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
+    (0, uploadS3_1.uploadsOnlyVideo)(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
         var newPromo;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!error) return [3 /*break*/, 1];
-                    return [2 /*return*/, makeResponse_1.default(res, 400, "Error in uploading Promo Video to S3 Bucket", null, true)];
+                    return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "Error in uploading Promo Video to S3 Bucket", null, true)];
                 case 1:
                     if (!(req.file === undefined)) return [3 /*break*/, 2];
-                    return [2 /*return*/, makeResponse_1.default(res, 400, "No File Selected", null, true)];
+                    return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "No File Selected", null, true)];
                 case 2:
                     newPromo = new promo_1.default({
                         // @ts-ignore
@@ -67,7 +67,7 @@ var createPromo = function (req, res, next) {
                     });
                     return [4 /*yield*/, newPromo.save()
                             .then(function (video) {
-                            return makeResponse_1.default(res, 201, "Promo video uploaded successfully", video, false);
+                            return (0, makeResponse_1.default)(res, 201, "Promo video uploaded successfully", video, false);
                         })
                             .catch(function (err) {
                             res.status(400).json({
@@ -95,10 +95,10 @@ var getAllPromos = function (req, res, next) { return __awaiter(void 0, void 0, 
                 total = _a.sent();
                 promo_1.default.find({ hospitalId: res.locals.jwt.reference_id }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
-                    return makeResponse_1.default(res, 200, "All Promo Videos", { totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), videos: result }, false);
+                    return (0, makeResponse_1.default)(res, 200, "All Promo Videos", { totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), videos: result }, false);
                 })
                     .catch(function (err) {
-                    return makeResponse_1.default(res, 400, err.message, null, true);
+                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
                 });
                 return [2 /*return*/];
         }
@@ -118,7 +118,7 @@ var deletePromo = function (req, res, next) { return __awaiter(void 0, void 0, v
                 promos = _a.sent();
                 if (!promos)
                     return [2 /*return*/, res.sendStatus(404)];
-                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", promos, false)];
+                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", promos, false)];
             case 3:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];

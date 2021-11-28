@@ -92,11 +92,11 @@ var register = function (req, res, next) { return __awaiter(void 0, void 0, void
             case 0:
                 _a = req.body, firstName = _a.firstName, lastName = _a.lastName, email = _a.email, password = _a.password;
                 if (!firstName || !lastName || !email || !password) {
-                    return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "Parameter missing", statusCode_1.PARAMETER_MISSING_CODE)];
+                    return [2 /*return*/, (0, makeResponse_1.sendErrorResponse)(res, 400, "Parameter missing", statusCode_1.PARAMETER_MISSING_CODE)];
                 }
                 return [4 /*yield*/, user_1.default.find({ email: email }).exec().then(function (user) {
                         if (user.length > 0) {
-                            return makeResponse_1.sendErrorResponse(res, 400, "User with this email already exists", statusCode_1.DUPLICATE_VALUE_CODE);
+                            return (0, makeResponse_1.sendErrorResponse)(res, 400, "User with this email already exists", statusCode_1.DUPLICATE_VALUE_CODE);
                         }
                         // If email is valid
                         bcryptjs_1.default.hash(password, 10, function (hashError, hash) { return __awaiter(void 0, void 0, void 0, function () {
@@ -116,7 +116,7 @@ var register = function (req, res, next) { return __awaiter(void 0, void 0, void
                                     referenceId: null
                                 });
                                 _user.save().then(function (user) {
-                                    return makeResponse_1.default(res, 200, "Authentication Successful", { user: user }, false);
+                                    return (0, makeResponse_1.default)(res, 200, "Authentication Successful", { user: user }, false);
                                 }).catch(function (err) { return console.log(err); });
                                 return [2 /*return*/];
                             });
@@ -130,11 +130,11 @@ var register = function (req, res, next) { return __awaiter(void 0, void 0, void
 }); };
 var login = function (req, res, next) {
     // Form validation
-    var _a = login_1.default(req.body), errors = _a.errors, isValid = _a.isValid;
+    var _a = (0, login_1.default)(req.body), errors = _a.errors, isValid = _a.isValid;
     // Check validation
     if (!isValid) {
         // @ts-ignore
-        return makeResponse_1.sendErrorResponse(res, 400, Object.values(errors)[0], Object.values(errors)[0].includes("invalid") ? statusCode_1.INVALID_VALUE_CODE : statusCode_1.PARAMETER_MISSING_CODE);
+        return (0, makeResponse_1.sendErrorResponse)(res, 400, Object.values(errors)[0], Object.values(errors)[0].includes("invalid") ? statusCode_1.INVALID_VALUE_CODE : statusCode_1.PARAMETER_MISSING_CODE);
     }
     var _b = req.body, email = _b.email, password = _b.password;
     user_1.default.find({ email: email })
@@ -142,20 +142,20 @@ var login = function (req, res, next) {
         .then(function (users) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             if (users.length !== 1) {
-                return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE)];
+                return [2 /*return*/, (0, makeResponse_1.sendErrorResponse)(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE)];
             }
             bcryptjs_1.default.compare(password, users[0].password, function (error, result) {
                 if (!result) {
-                    return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
+                    return (0, makeResponse_1.sendErrorResponse)(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
                 }
                 else if (result) {
-                    signJWT_1.default(users[0], function (_error, token) {
+                    (0, signJWT_1.default)(users[0], function (_error, token) {
                         if (_error) {
                             logging_1.default.error(NAMESPACE, 'Unable to sign token: ', _error);
-                            return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
+                            return (0, makeResponse_1.sendErrorResponse)(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
                         }
                         else if (token) {
-                            return makeResponse_1.default(res, 200, "Authentication Successful", { user: users[0], token: token }, false);
+                            return (0, makeResponse_1.default)(res, 200, "Authentication Successful", { user: users[0], token: token }, false);
                         }
                     });
                 }
@@ -163,23 +163,23 @@ var login = function (req, res, next) {
             return [2 /*return*/];
         });
     }); }).catch(function (error) {
-        return makeResponse_1.default(res, 400, error.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, error.message, null, true);
     });
 };
 var getAllUsers = function (req, res, next) {
     user_1.default.find().select("-password").exec()
         .then(function (users) {
-        return makeResponse_1.default(res, 200, "Users List", users, false);
+        return (0, makeResponse_1.default)(res, 200, "Users List", users, false);
     })
         .catch(function (error) {
-        return makeResponse_1.default(res, 400, error.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, error.message, null, true);
     });
 };
 var deleteUser = function (req, res, next) {
     user_1.default.deleteOne({ _id: req.params.id }).then(function (user) {
-        return makeResponse_1.default(res, 200, "User Deleted Successfully", null, false);
+        return (0, makeResponse_1.default)(res, 200, "User Deleted Successfully", null, false);
     }).catch(function (err) {
-        return makeResponse_1.default(res, 400, err.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
 var createUserFromEmailAndPassword = function (req, res, email, password, firstName, lastName, emiratesId, role, referenceId) { return __awaiter(void 0, void 0, void 0, function () {
@@ -243,13 +243,13 @@ var createPatientUserFromEmailAndPassword = function (req, res, email, password,
                             });
                             _user.save().then(function (createdUser) {
                                 // @ts-ignore
-                                signJWT_1.default(createdUser, function (_error, token) {
+                                (0, signJWT_1.default)(createdUser, function (_error, token) {
                                     if (_error) {
                                         logging_1.default.error(NAMESPACE, 'Unable to sign token: ', _error);
-                                        return makeResponse_1.sendErrorResponse(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
+                                        return (0, makeResponse_1.sendErrorResponse)(res, 400, "Unauthorized", statusCode_1.UNAUTHORIZED_CODE);
                                     }
                                     else if (token) {
-                                        return makeResponse_1.default(res, 200, "Patient registered successfully", { user: createdUser, token: token }, false);
+                                        return (0, makeResponse_1.default)(res, 200, "Patient registered successfully", { user: createdUser, token: token }, false);
                                     }
                                 });
                             });

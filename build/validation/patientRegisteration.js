@@ -9,15 +9,15 @@ var is_empty_1 = __importDefault(require("is-empty"));
 function validatePatientRegisteration(data) {
     var errors = {};
     // Convert empty fields to an empty string so we can use validator functions
-    data.firstName = !is_empty_1.default(data.firstName) ? data.firstName : "";
-    data.lastName = !is_empty_1.default(data.lastName) ? data.lastName : "";
-    data.email = !is_empty_1.default(data.email) ? data.email : "";
-    data.birthday = !is_empty_1.default(data.birthday) ? data.birthday : "";
-    data.gender = !is_empty_1.default(data.gender) ? data.gender : "";
-    data.location = !is_empty_1.default(data.location) ? data.location : "";
-    data.phone = !is_empty_1.default(data.phone) ? data.phone : "";
-    data.password = !is_empty_1.default(data.password) ? data.password : "";
-    data.emiratesId = !is_empty_1.default(data.emiratesId) ? data.emiratesId : "";
+    data.firstName = !(0, is_empty_1.default)(data.firstName) ? data.firstName : "";
+    data.lastName = !(0, is_empty_1.default)(data.lastName) ? data.lastName : "";
+    data.email = !(0, is_empty_1.default)(data.email) ? data.email : "";
+    data.birthday = !(0, is_empty_1.default)(data.birthday) ? data.birthday : "";
+    data.gender = !(0, is_empty_1.default)(data.gender) ? data.gender : "";
+    data.location = !(0, is_empty_1.default)(data.location) ? data.location : "";
+    data.phone = !(0, is_empty_1.default)(data.phone) ? data.phone : "";
+    data.password = !(0, is_empty_1.default)(data.password) ? data.password : "";
+    data.emiratesId = !(0, is_empty_1.default)(data.emiratesId) ? data.emiratesId : "";
     if (validator_1.default.isEmpty(data.firstName)) {
         // @ts-ignore
         errors.firstName = "First Name field is required";
@@ -62,7 +62,7 @@ function validatePatientRegisteration(data) {
     }
     return {
         errors: errors,
-        isValid: is_empty_1.default(errors)
+        isValid: (0, is_empty_1.default)(errors)
     };
 }
 exports.validatePatientRegisteration = validatePatientRegisteration;

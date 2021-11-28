@@ -13,6 +13,7 @@ router.get('/:id', extractJWT_1.default, appointments_1.default.getSingleAppoint
 router.post('/', appointments_1.default.createAppointment);
 router.put('/:id', extractJWT_1.default, appointments_1.default.updateAppointment);
 router.delete('/:id', extractJWT_1.default, appointments_1.default.deleteAppointment);
+router.delete('/:id/:patientId', extractJWT_1.default, appointments_1.default.deletePatientAppointment);
 router.get('/hospitalAppointments/:hospitalId', isHospital_1.default, appointments_1.default.getHospitalAppointments);
 router.get('/doctorAppointments/:doctorId', isHospitalOrDoctor_1.default, appointments_1.default.getDoctorAppointments);
 module.exports = router;

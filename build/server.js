@@ -29,8 +29,8 @@ var QrPrescription_1 = __importDefault(require("./routes/labortories/QrPrescript
 var home_1 = __importDefault(require("./routes/home"));
 var cors_1 = __importDefault(require("cors"));
 var NAMESPACE = 'Server';
-var router = express_1.default();
-router.use(cors_1.default());
+var router = (0, express_1.default)();
+router.use((0, cors_1.default)());
 /** Connect to MONGO **/
 mongoose_1.default.connect(config_1.default.mongo.url, config_1.default.mongo.options)
     .then(function (result) {
@@ -41,10 +41,10 @@ mongoose_1.default.connect(config_1.default.mongo.url, config_1.default.mongo.op
 /** Log the request */
 router.use(function (req, res, next) {
     /** Log the req */
-    logging_1.default.info(NAMESPACE, "METHOD: [" + req.method + "] - URL: [" + req.url + "] - IP: [" + req.socket.remoteAddress + "]");
+    logging_1.default.info(NAMESPACE, "METHOD: [".concat(req.method, "] - URL: [").concat(req.url, "] - IP: [").concat(req.socket.remoteAddress, "]"));
     res.on('finish', function () {
         /** Log the res */
-        logging_1.default.info(NAMESPACE, "METHOD: [" + req.method + "] - URL: [" + req.url + "] - STATUS: [" + res.statusCode + "] - IP: [" + req.socket.remoteAddress + "]");
+        logging_1.default.info(NAMESPACE, "METHOD: [".concat(req.method, "] - URL: [").concat(req.url, "] - STATUS: [").concat(res.statusCode, "] - IP: [").concat(req.socket.remoteAddress, "]"));
     });
     next();
 });
@@ -101,4 +101,4 @@ router.use(function (req, res, next) {
     });
 });
 var httpServer = http_1.default.createServer(router);
-httpServer.listen(config_1.default.server.port, function () { return logging_1.default.info(NAMESPACE, "Server is running " + config_1.default.server.hostname + ":" + config_1.default.server.port); });
+httpServer.listen(config_1.default.server.port, function () { return logging_1.default.info(NAMESPACE, "Server is running ".concat(config_1.default.server.hostname, ":").concat(config_1.default.server.port)); });

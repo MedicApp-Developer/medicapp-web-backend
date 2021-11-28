@@ -58,32 +58,32 @@ var speciality_2 = __importDefault(require("../../validation/speciality"));
 var uploadS3_1 = require("../../functions/uploadS3");
 var NAMESPACE = "Speciality";
 var createSpeciality = function (req, res, next) {
-    uploadS3_1.uploadImage(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
+    (0, uploadS3_1.uploadImage)(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
         var _a, errors, isValid, name_1, newSpeciality;
         return __generator(this, function (_b) {
             if (error) {
                 console.log(error);
-                return [2 /*return*/, makeResponse_2.sendErrorResponse(res, 400, "Error in uploading image", statusCode_1.SERVER_ERROR_CODE)];
+                return [2 /*return*/, (0, makeResponse_2.sendErrorResponse)(res, 400, "Error in uploading image", statusCode_1.SERVER_ERROR_CODE)];
             }
             else {
                 // If File not found
                 // console.log("Ressss => ", req.files);
                 if (req.file === undefined) {
-                    return [2 /*return*/, makeResponse_2.sendErrorResponse(res, 400, "No File Selected", statusCode_1.PARAMETER_MISSING_CODE)];
+                    return [2 /*return*/, (0, makeResponse_2.sendErrorResponse)(res, 400, "No File Selected", statusCode_1.PARAMETER_MISSING_CODE)];
                 }
                 else {
-                    _a = speciality_2.default(req.body), errors = _a.errors, isValid = _a.isValid;
+                    _a = (0, speciality_2.default)(req.body), errors = _a.errors, isValid = _a.isValid;
                     // Check validation
                     if (!isValid) {
-                        return [2 /*return*/, makeResponse_1.default(res, 400, "Validation Failed", errors, true)];
+                        return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "Validation Failed", errors, true)];
                     }
                     name_1 = req.body.name;
                     newSpeciality = new speciality_1.default({ name: name_1, logo: req.file.location });
                     newSpeciality.save().then(function (speciality) {
-                        return makeResponse_1.default(res, 201, "Speciality Created Successfully", speciality, false);
+                        return (0, makeResponse_1.default)(res, 201, "Speciality Created Successfully", speciality, false);
                     })
                         .catch(function (err) {
-                        return makeResponse_2.sendErrorResponse(res, 400, "Unable to create speciality", statusCode_1.SERVER_ERROR_CODE);
+                        return (0, makeResponse_2.sendErrorResponse)(res, 400, "Unable to create speciality", statusCode_1.SERVER_ERROR_CODE);
                     });
                 }
             }
@@ -104,19 +104,19 @@ var getAllSpeciality = function (req, res, next) { return __awaiter(void 0, void
             case 1:
                 total_1 = _a.sent();
                 speciality_1.default.find({}).limit(6).skip(6 * page).then(function (specialities) {
-                    return makeResponse_1.default(res, 200, "All Specialities", { totalItems: total_1, totalPages: Math.ceil(total_1 / 6), specialities: specialities }, false);
+                    return (0, makeResponse_1.default)(res, 200, "All Specialities", { totalItems: total_1, totalPages: Math.ceil(total_1 / 6), specialities: specialities }, false);
                 })
                     .catch(function (err) {
-                    return makeResponse_2.sendErrorResponse(res, 400, "No Record Found", statusCode_1.RECORD_NOT_FOUND);
+                    return (0, makeResponse_2.sendErrorResponse)(res, 400, "No Record Found", statusCode_1.RECORD_NOT_FOUND);
                 });
                 return [3 /*break*/, 3];
             case 2:
                 speciality_1.default.find({})
                     .then(function (specialities) {
-                    return makeResponse_1.default(res, 200, "All Specialities", specialities, false);
+                    return (0, makeResponse_1.default)(res, 200, "All Specialities", specialities, false);
                 })
                     .catch(function (err) {
-                    return makeResponse_2.sendErrorResponse(res, 400, "No Record Found", statusCode_1.RECORD_NOT_FOUND);
+                    return (0, makeResponse_2.sendErrorResponse)(res, 400, "No Record Found", statusCode_1.RECORD_NOT_FOUND);
                 });
                 _a.label = 3;
             case 3: return [2 /*return*/];
@@ -126,9 +126,9 @@ var getAllSpeciality = function (req, res, next) { return __awaiter(void 0, void
 var getSingleSpeciality = function (req, res, next) {
     speciality_1.default.findById({ _id: req.params.id })
         .then(function (data) {
-        return makeResponse_1.default(res, 200, "Speciality", data, false);
+        return (0, makeResponse_1.default)(res, 200, "Speciality", data, false);
     }).catch(function (err) {
-        return makeResponse_2.sendErrorResponse(res, 400, "No Record Found", statusCode_1.RECORD_NOT_FOUND);
+        return (0, makeResponse_2.sendErrorResponse)(res, 400, "No Record Found", statusCode_1.RECORD_NOT_FOUND);
     });
 };
 var updateSpeciality = function (req, res, next) {
@@ -136,9 +136,9 @@ var updateSpeciality = function (req, res, next) {
     var filter = { _id: id };
     var update = __assign({}, req.body);
     speciality_1.default.findOneAndUpdate(filter, update).then(function (updatedSpeciality) {
-        return makeResponse_1.default(res, 200, "Speciality updated Successfully", updatedSpeciality, false);
+        return (0, makeResponse_1.default)(res, 200, "Speciality updated Successfully", updatedSpeciality, false);
     }).catch(function (err) {
-        return makeResponse_2.sendErrorResponse(res, 400, "Unable to update record", statusCode_1.SERVER_ERROR_CODE);
+        return (0, makeResponse_2.sendErrorResponse)(res, 400, "Unable to update record", statusCode_1.SERVER_ERROR_CODE);
     });
 };
 var deleteSpeciality = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -155,10 +155,10 @@ var deleteSpeciality = function (req, res, next) { return __awaiter(void 0, void
                 speciality = _a.sent();
                 if (!speciality)
                     return [2 /*return*/, res.sendStatus(404)];
-                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", speciality, false)];
+                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", speciality, false)];
             case 3:
                 e_1 = _a.sent();
-                return [2 /*return*/, makeResponse_2.sendErrorResponse(res, 400, "Unable to delete record", statusCode_1.SERVER_ERROR_CODE)];
+                return [2 /*return*/, (0, makeResponse_2.sendErrorResponse)(res, 400, "Unable to delete record", statusCode_1.SERVER_ERROR_CODE)];
             case 4: return [2 /*return*/];
         }
     });

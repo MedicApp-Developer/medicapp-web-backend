@@ -49,19 +49,19 @@ var createQrPrescription = function (req, res, next) { return __awaiter(void 0, 
         qrPrescription = new QrPrescription_1.default({ patientId: patientId, doctorId: doctorId, date: date, data: data });
         return [2 /*return*/, qrPrescription.save()
                 .then(function (result) {
-                return makeResponse_1.default(res, 201, "QR Prescription Created Successfully", result, false);
+                return (0, makeResponse_1.default)(res, 201, "QR Prescription Created Successfully", result, false);
             })
                 .catch(function (err) {
-                return makeResponse_1.default(res, 400, err.message, null, true);
+                return (0, makeResponse_1.default)(res, 400, err.message, null, true);
             })];
     });
 }); };
 var getQrPrescription = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         QrPrescription_1.default.find({ patientId: res.locals.jwt.reference_id }).populate("doctorId").then(function (prescriptions) {
-            return makeResponse_1.default(res, 201, "QR Prescription Created Successfully", prescriptions, false);
+            return (0, makeResponse_1.default)(res, 201, "QR Prescription Created Successfully", prescriptions, false);
         }).catch(function (err) {
-            return makeResponse_1.default(res, 400, err.message, null, true);
+            return (0, makeResponse_1.default)(res, 400, err.message, null, true);
         });
         return [2 /*return*/];
     });

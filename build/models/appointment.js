@@ -25,6 +25,11 @@ var AppointmentSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    date: {
+        type: String,
+        required: false,
+        default: new Date().toISOString()
+    },
     doctorId: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "Doctor",

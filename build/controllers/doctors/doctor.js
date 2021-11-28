@@ -90,23 +90,32 @@ var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
         switch (_b.label) {
             case 0:
                 _a = req.body, email = _a.email, firstName = _a.firstName, lastName = _a.lastName, mobile = _a.mobile, specialityId = _a.specialityId, experience = _a.experience, gender = _a.gender, country = _a.country, language = _a.language;
-                password = utilities_1.getRandomPassword();
+                password = (0, utilities_1.getRandomPassword)();
                 if (!(email && firstName && lastName && mobile && specialityId && experience && gender && country && language)) return [3 /*break*/, 2];
                 return [4 /*yield*/, user_1.default.find({ email: email }).then(function (result) {
                         if (result.length === 0) {
                             if (email && firstName && lastName && mobile) {
                                 var newDoctor = new doctor_1.default({
                                     _id: new mongoose_1.default.Types.ObjectId(),
-                                    experience: experience, specialityId: specialityId,
-                                    email: email, password: password, firstName: firstName, lastName: lastName, mobile: mobile, hospitalId: res.locals.jwt.reference_id
+                                    experience: experience,
+                                    specialityId: specialityId,
+                                    language: language,
+                                    country: country,
+                                    gender: gender,
+                                    email: email,
+                                    password: password,
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    mobile: mobile,
+                                    hospitalId: res.locals.jwt.reference_id
                                 });
                                 var options = {
                                     from: config_1.default.mailer.user,
                                     to: email,
                                     subject: "Welcome to Medicapp",
-                                    text: "Your account account has been created as a doctor, and your password is " + password
+                                    text: "Your account account has been created as a doctor, and your password is ".concat(password)
                                 };
-                                mailer_1.sendEmail(options);
+                                (0, mailer_1.sendEmail)(options);
                                 return newDoctor.save()
                                     .then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
@@ -114,53 +123,53 @@ var createDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
                                             case 0: return [4 /*yield*/, user_2.default.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, "", roles_1.Roles.DOCTOR, result._id)];
                                             case 1:
                                                 _a.sent();
-                                                return [2 /*return*/, makeResponse_1.default(res, 201, "Doctor Created Successfully", result, false)];
+                                                return [2 /*return*/, (0, makeResponse_1.default)(res, 201, "Doctor Created Successfully", result, false)];
                                         }
                                     });
                                 }); })
                                     .catch(function (err) {
-                                    return makeResponse_1.default(res, 400, err.message, null, true);
+                                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
                                 });
                             }
                             else {
-                                return makeResponse_1.default(res, 400, "Validation Failed", null, true);
+                                return (0, makeResponse_1.default)(res, 400, "Validation Failed", null, true);
                             }
                         }
                         else {
-                            return makeResponse_1.default(res, 400, "Email Already in use", null, true);
+                            return (0, makeResponse_1.default)(res, 400, "Email Already in use", null, true);
                         }
                     })];
             case 1:
                 _b.sent();
                 return [3 /*break*/, 3];
-            case 2: return [2 /*return*/, makeResponse_1.default(res, 400, "Validation Failed", null, true)];
+            case 2: return [2 /*return*/, (0, makeResponse_1.default)(res, 400, "Validation Failed", null, true)];
             case 3: return [2 /*return*/];
         }
     });
 }); };
 var uploadProfilePic = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        uploadS3_1.uploadImage(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
+        (0, uploadS3_1.uploadImage)(req, res, function (error) { return __awaiter(void 0, void 0, void 0, function () {
             var id, filter;
             return __generator(this, function (_a) {
                 if (error) {
                     console.log(error);
-                    return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "Error in uploading image", statusCode_1.SERVER_ERROR_CODE)];
+                    return [2 /*return*/, (0, makeResponse_1.sendErrorResponse)(res, 400, "Error in uploading image", statusCode_1.SERVER_ERROR_CODE)];
                 }
                 else {
                     // If File not found
                     // console.log("Ressss => ", req.files);
                     if (req.file === undefined) {
-                        return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, "No File Selected", statusCode_1.PARAMETER_MISSING_CODE)];
+                        return [2 /*return*/, (0, makeResponse_1.sendErrorResponse)(res, 400, "No File Selected", statusCode_1.PARAMETER_MISSING_CODE)];
                     }
                     else {
                         id = req.params.id;
                         filter = { _id: id };
                         // @ts-ignore
                         doctor_1.default.findOneAndUpdate(filter, { image: req.file.location }).then(function (updatedDoctor) {
-                            return makeResponse_1.default(res, 200, "Doctor profile picture uploaded Successfully", updatedDoctor, false);
+                            return (0, makeResponse_1.default)(res, 200, "Doctor profile picture uploaded Successfully", updatedDoctor, false);
                         }).catch(function (err) {
-                            return makeResponse_1.default(res, 400, err.message, null, true);
+                            return (0, makeResponse_1.default)(res, 400, err.message, null, true);
                         });
                     }
                 }
@@ -177,44 +186,52 @@ var getAllDoctors = function (req, res, next) { return __awaiter(void 0, void 0,
             case 0:
                 page = parseInt(req.query.page || "0");
                 hospitalId = null;
-                if (!(res.locals.jwt.role === roles_1.Roles.HOSPITAL)) return [3 /*break*/, 2];
+                if (!req.query.getAll) return [3 /*break*/, 1];
+                doctor_1.default.find({}).then(function (doctors) {
+                    return (0, makeResponse_1.default)(res, 200, "All Doctors", { doctors: doctors }, false);
+                }).catch(function (err) {
+                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+                });
+                return [3 /*break*/, 5];
+            case 1:
+                if (!(res.locals.jwt.role === roles_1.Roles.HOSPITAL)) return [3 /*break*/, 3];
                 hospitalId = res.locals.jwt.reference_id;
                 return [4 /*yield*/, doctor_1.default.find({ hospitalId: hospitalId }).countDocuments({})];
-            case 1:
+            case 2:
                 total_1 = _a.sent();
                 doctor_1.default.find({ hospitalId: hospitalId }).populate("specialityId").limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
-                    return makeResponse_1.default(res, 200, "All Doctors", { totalItems: total_1, totalPages: Math.ceil(total_1 / pagination_1.Pagination.PAGE_SIZE), doctors: result }, false);
+                    return (0, makeResponse_1.default)(res, 200, "All Doctors", { totalItems: total_1, totalPages: Math.ceil(total_1 / pagination_1.Pagination.PAGE_SIZE), doctors: result }, false);
                 })
                     .catch(function (err) {
-                    return makeResponse_1.default(res, 400, err.message, null, true);
+                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
                 });
-                return [3 /*break*/, 4];
-            case 2:
-                if (!(res.locals.jwt.role === roles_1.Roles.NURSE)) return [3 /*break*/, 4];
+                return [3 /*break*/, 5];
+            case 3:
+                if (!(res.locals.jwt.role === roles_1.Roles.NURSE)) return [3 /*break*/, 5];
                 reference_id = req.query.reference_id;
                 return [4 /*yield*/, nurse_1.default.findById(reference_id)];
-            case 3:
+            case 4:
                 nurse = _a.sent();
                 hospitalId = nurse === null || nurse === void 0 ? void 0 : nurse.hospitalId;
                 doctor_1.default.find({ hospitalId: hospitalId }).populate("specialityId")
                     .then(function (result) {
-                    return makeResponse_1.default(res, 200, "All Doctors", { doctors: result }, false);
+                    return (0, makeResponse_1.default)(res, 200, "All Doctors", { doctors: result }, false);
                 })
                     .catch(function (err) {
-                    return makeResponse_1.default(res, 400, err.message, null, true);
+                    return (0, makeResponse_1.default)(res, 400, err.message, null, true);
                 });
-                _a.label = 4;
-            case 4: return [2 /*return*/];
+                _a.label = 5;
+            case 5: return [2 /*return*/];
         }
     });
 }); };
 var getSingleDoctor = function (req, res, next) {
     doctor_1.default.findById({ _id: req.params.id }).populate('hospitalId').populate("specialityId")
         .then(function (data) {
-        return makeResponse_1.default(res, 200, "Doctor", data, false);
+        return (0, makeResponse_1.default)(res, 200, "Doctor", data, false);
     }).catch(function (err) {
-        return makeResponse_1.default(res, 400, err.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
 var updateDoctor = function (req, res, next) {
@@ -226,9 +243,9 @@ var updateDoctor = function (req, res, next) {
     var filter = { _id: id };
     user_2.default.updateUser(req, res, _id, req.body);
     doctor_1.default.findOneAndUpdate(filter, update).then(function (updatedDoctor) {
-        return makeResponse_1.default(res, 200, "Doctor updated Successfully", updatedDoctor, false);
+        return (0, makeResponse_1.default)(res, 200, "Doctor updated Successfully", updatedDoctor, false);
     }).catch(function (err) {
-        return makeResponse_1.default(res, 400, err.message, null, true);
+        return (0, makeResponse_1.default)(res, 400, err.message, null, true);
     });
 };
 var deleteDoctor = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -248,7 +265,7 @@ var deleteDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
                 return [4 /*yield*/, user_2.default.deleteUserWithEmail(doctor.email)];
             case 3:
                 _a.sent();
-                return [2 /*return*/, makeResponse_1.default(res, 200, "Deleted Successfully", doctor, false)];
+                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Deleted Successfully", doctor, false)];
             case 4:
                 e_1 = _a.sent();
                 return [2 /*return*/, res.sendStatus(400)];
@@ -268,19 +285,47 @@ var searchDoctor = function (req, res, next) { return __awaiter(void 0, void 0, 
                     { firstName: searchedTextRegex },
                     { lastName: searchedTextRegex },
                     { email: searchedTextRegex },
-                    { mobile: searchedTextRegex }
+                    { mobile: searchedTextRegex },
+                    { experience: searchedTextRegex },
+                    { language: searchedTextRegex },
+                    { country: searchedTextRegex },
+                    { gender: searchedTextRegex }
                 ];
                 return [4 /*yield*/, doctor_1.default.find({ $and: [{ $or: searchQuery }, { hospitalId: res.locals.jwt.reference_id }] }).countDocuments({})];
             case 1:
                 total = _a.sent();
                 doctor_1.default.find({ $and: [{ $or: searchQuery }, { hospitalId: res.locals.jwt.reference_id }] }).limit(pagination_1.Pagination.PAGE_SIZE).skip(pagination_1.Pagination.PAGE_SIZE * page)
                     .then(function (result) {
-                    return makeResponse_1.default(res, 200, "Search Results", { searchedText: searchedText, totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), doctors: result }, false);
+                    return (0, makeResponse_1.default)(res, 200, "Search Results", { searchedText: searchedText, totalItems: total, totalPages: Math.ceil(total / pagination_1.Pagination.PAGE_SIZE), doctors: result }, false);
                 }).catch(function (err) {
-                    return makeResponse_1.default(res, 400, "No doctor found", null, true);
+                    return (0, makeResponse_1.default)(res, 400, "No doctor found", null, true);
                 });
                 return [2 /*return*/];
         }
+    });
+}); };
+var searchDoctorsOfAllHospitals = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var searchedText, searchedTextRegex, searchQuery;
+    return __generator(this, function (_a) {
+        searchedText = req.params.searchedText;
+        searchedTextRegex = new RegExp(searchedText, 'i');
+        searchQuery = [
+            { firstName: searchedTextRegex },
+            { lastName: searchedTextRegex },
+            { email: searchedTextRegex },
+            { mobile: searchedTextRegex },
+            { experience: searchedTextRegex },
+            { language: searchedTextRegex },
+            { country: searchedTextRegex },
+            { gender: searchedTextRegex }
+        ];
+        doctor_1.default.find({ $or: searchQuery })
+            .then(function (result) {
+            return (0, makeResponse_1.default)(res, 200, "Search Results", result, false);
+        }).catch(function (err) {
+            return (0, makeResponse_1.default)(res, 400, "No doctor found", null, true);
+        });
+        return [2 /*return*/];
     });
 }); };
 var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -308,7 +353,7 @@ var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 
                 return [4 /*yield*/, doctor_1.default.find({ $or: doctorSearchQuery })];
             case 2:
                 searchedDoctors = _a.sent();
-                return [2 /*return*/, makeResponse_1.default(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false)];
+                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false)];
         }
     });
 }); };
@@ -316,9 +361,29 @@ var searchDoctorBySpeciality = function (req, res, next) { return __awaiter(void
     return __generator(this, function (_a) {
         doctor_1.default.find({ specialityId: req.params.specialityId }).populate("specialityId").populate("hospitalId")
             .then(function (data) {
-            return makeResponse_1.default(res, 200, "Searched Doctor", data, false);
+            return (0, makeResponse_1.default)(res, 200, "Searched Doctor", data, false);
         }).catch(function (err) {
-            return makeResponse_1.default(res, 400, err.message, null, true);
+            return (0, makeResponse_1.default)(res, 400, err.message, null, true);
+        });
+        return [2 /*return*/];
+    });
+}); };
+var filterDoctors = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, checkedSpecialities, hospitalTypes, checkedLanguages, checkedNationalities, checkedGenders, filterQuery;
+    return __generator(this, function (_b) {
+        _a = req.body, checkedSpecialities = _a.checkedSpecialities, hospitalTypes = _a.hospitalTypes, checkedLanguages = _a.checkedLanguages, checkedNationalities = _a.checkedNationalities, checkedGenders = _a.checkedGenders;
+        filterQuery = {
+            $and: [
+                checkedSpecialities.length > 0 ? { 'specialityId': { $in: checkedSpecialities } } : {},
+                checkedLanguages.length > 0 ? { 'language': { $in: checkedLanguages } } : {},
+                checkedNationalities.length > 0 ? { 'country': { $in: checkedNationalities } } : {},
+                checkedGenders.length > 0 ? { 'gender': { $in: checkedGenders } } : {}
+            ]
+        };
+        doctor_1.default.find(filterQuery).then(function (result) {
+            return (0, makeResponse_1.default)(res, 200, "Filtered Doctors", result, false);
+        }).catch(function (err) {
+            return (0, makeResponse_1.default)(res, 400, err.message, null, true);
         });
         return [2 /*return*/];
     });
@@ -332,5 +397,7 @@ exports.default = {
     searchDoctor: searchDoctor,
     searchHospitalAndDoctor: searchHospitalAndDoctor,
     searchDoctorBySpeciality: searchDoctorBySpeciality,
-    uploadProfilePic: uploadProfilePic
+    uploadProfilePic: uploadProfilePic,
+    filterDoctors: filterDoctors,
+    searchDoctorsOfAllHospitals: searchDoctorsOfAllHospitals
 };

@@ -2,34 +2,34 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var info = function (namespace, message, object) {
     if (object) {
-        console.info("[" + getTimeStamp() + "] [INFO] [" + namespace + "] " + message, object);
+        console.info("[".concat(getTimeStamp(), "] [INFO] [").concat(namespace, "] ").concat(message), object);
     }
     else {
-        console.info("[" + getTimeStamp() + "] [INFO] [" + namespace + "] " + message);
+        console.info("[".concat(getTimeStamp(), "] [INFO] [").concat(namespace, "] ").concat(message));
     }
 };
 var warn = function (namespace, message, object) {
     if (object) {
-        console.warn("[" + getTimeStamp() + "] [WARN] [" + namespace + "] " + message, object);
+        console.warn("[".concat(getTimeStamp(), "] [WARN] [").concat(namespace, "] ").concat(message), object);
     }
     else {
-        console.warn("[" + getTimeStamp() + "] [WARN] [" + namespace + "] " + message);
+        console.warn("[".concat(getTimeStamp(), "] [WARN] [").concat(namespace, "] ").concat(message));
     }
 };
 var error = function (namespace, message, object) {
     if (object) {
-        console.error("[" + getTimeStamp() + "] [ERROR] [" + namespace + "] " + message, object);
+        console.error("[".concat(getTimeStamp(), "] [ERROR] [").concat(namespace, "] ").concat(message), object);
     }
     else {
-        console.error("[" + getTimeStamp() + "] [ERROR] [" + namespace + "] " + message);
+        console.error("[".concat(getTimeStamp(), "] [ERROR] [").concat(namespace, "] ").concat(message));
     }
 };
 var debug = function (namespace, message, object) {
     if (object) {
-        console.debug("[" + getTimeStamp() + "] [DEBUG] [" + namespace + "] " + message, object);
+        console.debug("[".concat(getTimeStamp(), "] [DEBUG] [").concat(namespace, "] ").concat(message), object);
     }
     else {
-        console.debug("[" + getTimeStamp() + "] [DEBUG] [" + namespace + "] " + message);
+        console.debug("[".concat(getTimeStamp(), "] [DEBUG] [").concat(namespace, "] ").concat(message));
     }
 };
 var getTimeStamp = function () {

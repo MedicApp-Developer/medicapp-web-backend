@@ -8,8 +8,8 @@ var is_empty_1 = __importDefault(require("is-empty"));
 var validateLoginInput = function (data) {
     var errors = {};
     // Convert empty fields to an empty string so we can use validator functions
-    data.email = !is_empty_1.default(data.email) ? data.email : "";
-    data.password = !is_empty_1.default(data.password) ? data.password : "";
+    data.email = !(0, is_empty_1.default)(data.email) ? data.email : "";
+    data.password = !(0, is_empty_1.default)(data.password) ? data.password : "";
     // Email checks
     if (validator_1.default.isEmpty(data.email)) {
         errors.email = "Email field is required";
@@ -23,7 +23,7 @@ var validateLoginInput = function (data) {
     }
     return {
         errors: errors,
-        isValid: is_empty_1.default(errors)
+        isValid: (0, is_empty_1.default)(errors)
     };
 };
 exports.default = validateLoginInput;

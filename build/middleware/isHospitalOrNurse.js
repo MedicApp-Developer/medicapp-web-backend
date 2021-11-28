@@ -17,14 +17,14 @@ var isHospitalOrNurse = function (req, res, next) {
         // @ts-ignore
         jsonwebtoken_1.default.verify(token, config_1.default.server.token.secret, function (error, decoded) {
             if (error) {
-                return makeResponse_1.default(res, 404, error.message, error, true);
+                return (0, makeResponse_1.default)(res, 404, error.message, error, true);
             }
             else if ((decoded === null || decoded === void 0 ? void 0 : decoded.role) === roles_1.Roles.HOSPITAL || (decoded === null || decoded === void 0 ? void 0 : decoded.role) === roles_1.Roles.NURSE) {
                 res.locals.jwt = decoded;
                 next();
             }
             else {
-                return makeResponse_1.default(res, 404, "Only Hospital Admins and Nurse can perform this task", null, true);
+                return (0, makeResponse_1.default)(res, 404, "Only Hospital Admins and Nurse can perform this task", null, true);
             }
         });
     }

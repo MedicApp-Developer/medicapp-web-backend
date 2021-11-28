@@ -9,8 +9,8 @@ var multer_1 = __importDefault(require("multer"));
 var multer_s3_1 = __importDefault(require("multer-s3"));
 var path_1 = __importDefault(require("path"));
 var aws_1 = __importDefault(require("../config/aws"));
-exports.uploadsOnlyVideo = multer_1.default({
-    storage: multer_s3_1.default({
+exports.uploadsOnlyVideo = (0, multer_1.default)({
+    storage: (0, multer_s3_1.default)({
         s3: aws_1.default,
         // @ts-ignore
         bucket: config_1.default.bucket.name,
@@ -24,8 +24,8 @@ exports.uploadsOnlyVideo = multer_1.default({
     }),
     limits: { fileSize: 50000000 }, // In bytes: 2000000 bytes = 50 MB
 }).single("video");
-exports.uploadEmirateFileId = multer_1.default({
-    storage: multer_s3_1.default({
+exports.uploadEmirateFileId = (0, multer_1.default)({
+    storage: (0, multer_s3_1.default)({
         s3: aws_1.default,
         // @ts-ignore
         bucket: config_1.default.bucket.name,
@@ -39,8 +39,8 @@ exports.uploadEmirateFileId = multer_1.default({
     }),
     limits: { fileSize: 50000000 }, // In bytes: 2000000 bytes = 50 MB
 }).single("emirateIdFile");
-exports.uploadImage = multer_1.default({
-    storage: multer_s3_1.default({
+exports.uploadImage = (0, multer_1.default)({
+    storage: (0, multer_s3_1.default)({
         s3: aws_1.default,
         // @ts-ignore
         bucket: config_1.default.bucket.name,

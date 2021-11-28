@@ -87,10 +87,10 @@ var getHomeData = function (req, res, next) { return __awaiter(void 0, void 0, v
                     })];
             case 3:
                 upcommingAppointments = _a.sent();
-                return [2 /*return*/, makeResponse_1.default(res, 200, "Patient Appointments", { upcommingAppointments: upcommingAppointments, specialities: specialities, hospitals: hospitals }, false)];
+                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Patient Appointments", { upcommingAppointments: upcommingAppointments, specialities: specialities, hospitals: hospitals }, false)];
             case 4:
                 err_1 = _a.sent();
-                return [2 /*return*/, makeResponse_1.sendErrorResponse(res, 400, err_1.message, statusCode_1.SERVER_ERROR_CODE)];
+                return [2 /*return*/, (0, makeResponse_1.sendErrorResponse)(res, 400, err_1.message, statusCode_1.SERVER_ERROR_CODE)];
             case 5: return [2 /*return*/];
         }
     });
