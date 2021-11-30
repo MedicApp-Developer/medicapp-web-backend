@@ -329,12 +329,12 @@ var searchDoctorsOfAllHospitals = function (req, res, next) { return __awaiter(v
     });
 }); };
 var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var searchedText, searchedTextRegex, hospitalSearchQuery, doctorSearchQuery, searchedHospitals, searchedDoctors;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a, text, searchFor, checkedGenders, checkedLanguages, checkedNationalities, checkedSpecialities, checkedCategories, hospitalTypes, checkedAddons, searchedTextRegex, hospitalSearchQuery, doctorSearchQuery, searchedHospitals, searchedDoctors, filterQuery, filterQuery;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                searchedText = req.params.searchedText;
-                searchedTextRegex = new RegExp(searchedText, 'i');
+                _a = req.body, text = _a.text, searchFor = _a.searchFor, checkedGenders = _a.checkedGenders, checkedLanguages = _a.checkedLanguages, checkedNationalities = _a.checkedNationalities, checkedSpecialities = _a.checkedSpecialities, checkedCategories = _a.checkedCategories, hospitalTypes = _a.hospitalTypes, checkedAddons = _a.checkedAddons;
+                searchedTextRegex = new RegExp(text, 'i');
                 hospitalSearchQuery = [
                     { name: searchedTextRegex },
                     { location: searchedTextRegex },
@@ -347,13 +347,44 @@ var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 
                     { email: searchedTextRegex },
                     { mobile: searchedTextRegex }
                 ];
-                return [4 /*yield*/, hospital_1.default.find({ $or: hospitalSearchQuery }).populate("category")];
+                searchedHospitals = null;
+                searchedDoctors = null;
+                if (!(searchFor === roles_1.Roles.HOSPITAL)) return [3 /*break*/, 2];
+                filterQuery = {
+                    $and: [
+                        text !== "" ? hospitalSearchQuery : {},
+                        checkedCategories.length > 0 ? { 'category': { $in: checkedCategories } } : {},
+                        hospitalTypes.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
+                        checkedAddons.length > 0 ? { 'services': { $in: checkedAddons } } : {}
+                    ]
+                };
+                return [4 /*yield*/, hospital_1.default.find(filterQuery).populate("category")];
             case 1:
-                searchedHospitals = _a.sent();
-                return [4 /*yield*/, doctor_1.default.find({ $or: doctorSearchQuery }).populate("specialityId").populate("hospitalId")];
+                searchedHospitals = _b.sent();
+                return [3 /*break*/, 7];
             case 2:
-                searchedDoctors = _a.sent();
-                return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false)];
+                if (!(searchFor === roles_1.Roles.DOCTOR)) return [3 /*break*/, 4];
+                filterQuery = {
+                    $and: [
+                        text !== "" ? doctorSearchQuery : {},
+                        checkedSpecialities.length > 0 ? { 'specialityId': { $in: checkedSpecialities } } : {},
+                        checkedLanguages.length > 0 ? { 'language': { $in: checkedLanguages } } : {},
+                        checkedNationalities.length > 0 ? { 'country': { $in: checkedNationalities } } : {},
+                        checkedGenders.length > 0 ? { 'gender': { $in: checkedGenders } } : {}
+                    ]
+                };
+                return [4 /*yield*/, doctor_1.default.find(filterQuery).populate("specialityId").populate("hospitalId")];
+            case 3:
+                searchedDoctors = _b.sent();
+                return [3 /*break*/, 7];
+            case 4: return [4 /*yield*/, hospital_1.default.find({ $or: hospitalSearchQuery }).populate("category")];
+            case 5:
+                searchedHospitals = _b.sent();
+                return [4 /*yield*/, doctor_1.default.find({ $or: doctorSearchQuery }).populate("specialityId").populate("hospitalId")];
+            case 6:
+                searchedDoctors = _b.sent();
+                _b.label = 7;
+            case 7: return [2 /*return*/, (0, makeResponse_1.default)(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false)];
         }
     });
 }); };

@@ -222,9 +222,9 @@ const searchDoctorsOfAllHospitals = async (req: Request, res: Response, next: Ne
 };
 
 const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFunction) => {
-    const { searchedText } = req.params;
+    const { text, searchFor, checkedGenders, checkedLanguages, checkedNationalities, checkedSpecialities, checkedCategories, hospitalTypes, checkedAddons} = req.body;
     // Regex 
-    const searchedTextRegex = new RegExp(searchedText, 'i');
+    const searchedTextRegex = new RegExp(text, 'i');
 
     const hospitalSearchQuery = [
         { name: searchedTextRegex }, 
@@ -240,8 +240,37 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
         { mobile: searchedTextRegex } 
     ]
 
-    const searchedHospitals = await Hospital.find({$or: hospitalSearchQuery}).populate("category");
-    const searchedDoctors = await Doctor.find({$or: doctorSearchQuery}).populate("specialityId").populate("hospitalId");
+    let searchedHospitals = null;
+    let searchedDoctors = null;
+
+    if(searchFor === Roles.HOSPITAL) {
+
+        const filterQuery = {
+            $and: [
+                text !== "" ? hospitalSearchQuery: {},
+                checkedCategories.length > 0 ? { 'category': { $in: checkedCategories } } : {},
+                hospitalTypes.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
+                checkedAddons.length > 0 ? { 'services': { $in: checkedAddons } } : {}
+            ]
+        }
+        searchedHospitals = await Hospital.find(filterQuery).populate("category");
+    } else if(searchFor === Roles.DOCTOR) {
+
+        const filterQuery = {
+            $and: [
+                text !== "" ? doctorSearchQuery: {},
+                checkedSpecialities.length > 0 ? { 'specialityId': { $in: checkedSpecialities } } : {},
+                checkedLanguages.length > 0 ? { 'language': { $in: checkedLanguages } } : {},
+                checkedNationalities.length > 0 ? { 'country': { $in: checkedNationalities } } : {},
+                checkedGenders.length > 0 ? { 'gender': { $in: checkedGenders } } : {}
+            ]
+        }
+
+        searchedDoctors = await Doctor.find(filterQuery).populate("specialityId").populate("hospitalId");
+    }else {
+        searchedHospitals = await Hospital.find({$or: hospitalSearchQuery}).populate("category");
+        searchedDoctors = await Doctor.find({$or: doctorSearchQuery}).populate("specialityId").populate("hospitalId");
+    }
 
     return makeResponse(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false);
 };
