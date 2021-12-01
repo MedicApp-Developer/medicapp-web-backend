@@ -12,7 +12,7 @@ router.post('/', isHospital, controller.createDoctor);
 router.put('/:id',extractJWT, controller.updateDoctor);
 router.delete('/:id',isHospital, controller.deleteDoctor);
 router.get('/search/:searchedText', extractJWT, controller.searchDoctor);
-router.get('/searchHospitalAndDoctor/:searchedText', extractJWT, controller.searchHospitalAndDoctor);
+router.post('/searchHospitalAndDoctor', extractJWT, controller.searchHospitalAndDoctor);
 router.get('/searchDoctorBySpeciality/:specialityId', controller.searchDoctorBySpeciality);
 router.put('/uploadProfilePicture/:id', controller.uploadProfilePic);
 router.post('/filter', extractJWT, controller.filterDoctors);
