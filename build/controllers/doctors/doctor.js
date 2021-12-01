@@ -333,6 +333,7 @@ var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
+                console.log("0-------------------------0");
                 _a = req.body, text = _a.text, searchFor = _a.searchFor, checkedGenders = _a.checkedGenders, checkedLanguages = _a.checkedLanguages, checkedNationalities = _a.checkedNationalities, checkedSpecialities = _a.checkedSpecialities, checkedCategories = _a.checkedCategories, hospitalTypes = _a.hospitalTypes, checkedAddons = _a.checkedAddons;
                 searchedTextRegex = new RegExp(text, 'i');
                 hospitalSearchQuery = [
@@ -352,10 +353,10 @@ var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 
                 if (!(searchFor === roles_1.Roles.HOSPITAL)) return [3 /*break*/, 2];
                 filterQuery = {
                     $and: [
-                        text !== "" ? hospitalSearchQuery : {},
-                        checkedCategories.length > 0 ? { 'category': { $in: checkedCategories } } : {},
-                        hospitalTypes.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
-                        checkedAddons.length > 0 ? { 'services': { $in: checkedAddons } } : {}
+                        text !== "" ? { $or: hospitalSearchQuery } : {},
+                        (checkedCategories === null || checkedCategories === void 0 ? void 0 : checkedCategories.length) > 0 ? { 'category': { $in: checkedCategories } } : {},
+                        (hospitalTypes === null || hospitalTypes === void 0 ? void 0 : hospitalTypes.length) > 0 ? { 'type': { $in: hospitalTypes } } : {},
+                        (checkedAddons === null || checkedAddons === void 0 ? void 0 : checkedAddons.length) > 0 ? { 'services': { $in: checkedAddons } } : {}
                     ]
                 };
                 return [4 /*yield*/, hospital_1.default.find(filterQuery).populate("category")];
@@ -366,11 +367,11 @@ var searchHospitalAndDoctor = function (req, res, next) { return __awaiter(void 
                 if (!(searchFor === roles_1.Roles.DOCTOR)) return [3 /*break*/, 4];
                 filterQuery = {
                     $and: [
-                        text !== "" ? doctorSearchQuery : {},
-                        checkedSpecialities.length > 0 ? { 'specialityId': { $in: checkedSpecialities } } : {},
-                        checkedLanguages.length > 0 ? { 'language': { $in: checkedLanguages } } : {},
-                        checkedNationalities.length > 0 ? { 'country': { $in: checkedNationalities } } : {},
-                        checkedGenders.length > 0 ? { 'gender': { $in: checkedGenders } } : {}
+                        text !== "" ? { $or: doctorSearchQuery } : {},
+                        (checkedSpecialities === null || checkedSpecialities === void 0 ? void 0 : checkedSpecialities.length) > 0 ? { 'specialityId': { $in: checkedSpecialities } } : {},
+                        (checkedLanguages === null || checkedLanguages === void 0 ? void 0 : checkedLanguages.length) > 0 ? { 'language': { $in: checkedLanguages } } : {},
+                        (checkedNationalities === null || checkedNationalities === void 0 ? void 0 : checkedNationalities.length) > 0 ? { 'country': { $in: checkedNationalities } } : {},
+                        (checkedGenders === null || checkedGenders === void 0 ? void 0 : checkedGenders.length) > 0 ? { 'gender': { $in: checkedGenders } } : {}
                     ]
                 };
                 return [4 /*yield*/, doctor_1.default.find(filterQuery).populate("specialityId").populate("hospitalId")];

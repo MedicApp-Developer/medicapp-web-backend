@@ -222,7 +222,9 @@ const searchDoctorsOfAllHospitals = async (req: Request, res: Response, next: Ne
 };
 
 const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("0-------------------------0");
     const { text, searchFor, checkedGenders, checkedLanguages, checkedNationalities, checkedSpecialities, checkedCategories, hospitalTypes, checkedAddons} = req.body;
+    
     // Regex 
     const searchedTextRegex = new RegExp(text, 'i');
 
@@ -247,10 +249,10 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
 
         const filterQuery = {
             $and: [
-                text !== "" ? hospitalSearchQuery: {},
-                checkedCategories.length > 0 ? { 'category': { $in: checkedCategories } } : {},
-                hospitalTypes.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
-                checkedAddons.length > 0 ? { 'services': { $in: checkedAddons } } : {}
+                text !== "" ? {$or: hospitalSearchQuery} : {},
+                checkedCategories?.length > 0 ? { 'category': { $in: checkedCategories } } : {},
+                hospitalTypes?.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
+                checkedAddons?.length > 0 ? { 'services': { $in: checkedAddons } } : {}
             ]
         }
         searchedHospitals = await Hospital.find(filterQuery).populate("category");
@@ -258,11 +260,11 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
 
         const filterQuery = {
             $and: [
-                text !== "" ? doctorSearchQuery: {},
-                checkedSpecialities.length > 0 ? { 'specialityId': { $in: checkedSpecialities } } : {},
-                checkedLanguages.length > 0 ? { 'language': { $in: checkedLanguages } } : {},
-                checkedNationalities.length > 0 ? { 'country': { $in: checkedNationalities } } : {},
-                checkedGenders.length > 0 ? { 'gender': { $in: checkedGenders } } : {}
+                text !== "" ? {$or: doctorSearchQuery} : {},
+                checkedSpecialities?.length > 0 ? { 'specialityId': { $in: checkedSpecialities } } : {},
+                checkedLanguages?.length > 0 ? { 'language': { $in: checkedLanguages } } : {},
+                checkedNationalities?.length > 0 ? { 'country': { $in: checkedNationalities } } : {},
+                checkedGenders?.length > 0 ? { 'gender': { $in: checkedGenders } } : {}
             ]
         }
 
