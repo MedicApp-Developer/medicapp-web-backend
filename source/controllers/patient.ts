@@ -228,10 +228,23 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
               })
 
         // Get Lab Results
-        const labResults = await LaboratoryRequest.find({ patientId: req.params.id });
+        const labResults = await LaboratoryRequest.find({ patientId: req.params.id }).populate({
+            path : 'doctorId',
+            populate: [
+                { path: 'specialityId' },
+                { path: 'hospitalId' }
+            ]
+        });
 
         // Get QR Prescriptions
-        const qrPrescriptions = await QrPrescription.find({ patientId: req.params.id }).populate("doctorId");
+        const qrPrescriptions = await QrPrescription.find({ patientId: req.params.id })
+            .populate({
+                path : 'doctorId',
+                populate: [
+                    { path: 'specialityId' },
+                    { path: 'hospitalId' }
+                ]
+            });
         
         return makeResponse(res, 200, "Patient profile data", {
             patient,
