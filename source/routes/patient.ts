@@ -12,7 +12,7 @@ router.get('/', extractJWT,controller.getAllPatients);
 router.get('/:id', extractJWT,controller.getSinglePatient);
 router.get('/profile/:id', extractJWT,controller.getPatientAccountInfo);
 router.post('/', controller.createPatient);
-router.put('/:id',isHospitalOrNurse, controller.updatePatient);
+router.put('/:id', extractJWT, controller.updatePatient);
 router.delete('/:id',isHospitalOrNurse, controller.deletePatient);
 router.post('/createNursePatient', isNurse, controller.createPatientFromNurse);
 

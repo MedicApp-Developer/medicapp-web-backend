@@ -222,7 +222,7 @@ const searchDoctorsOfAllHospitals = async (req: Request, res: Response, next: Ne
 };
 
 const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("0-------------------------0");
+    
     const { text, searchFor, checkedGenders, checkedLanguages, checkedNationalities, checkedSpecialities, checkedCategories, hospitalTypes, checkedAddons} = req.body;
     
     // Regex 

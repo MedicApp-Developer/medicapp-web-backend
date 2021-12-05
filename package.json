@@ -4,6 +4,7 @@
   "description": "",
   "main": "source/server.ts",
   "scripts": {
+    "dev": "ts-node-dev source/server.ts",
     "start": "node build/server.js",
     "postinstall": "tsc",
     "watch-node": "nodemon build/server.js",

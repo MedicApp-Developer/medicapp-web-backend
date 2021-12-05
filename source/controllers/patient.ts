@@ -185,15 +185,22 @@ const getSinglePatient = async (req: Request, res: Response, next: NextFunction)
 };
 
 const updatePatient = (req: Request, res: Response, next: NextFunction) => {
+    const { _id } = res.locals.jwt;
+
     const { id } = req.params;
 
-    const filter = { _id: id };
-    let update = {...req.body};
+    const update = JSON.parse(JSON.stringify({...req.body}));
 
+    update.password && delete update.password;
+
+    const filter = { _id: id };
+
+    UserController.updateUser(req, res, _id, req.body);
+    
     Patient.findOneAndUpdate(filter, update).then(updatedPatient => {
-        return makeResponse(res, 200, "Patient updated Successfully", updatedPatient, false);
+        return makeResponse(res, 200, "Doctor updated Successfully", updatedPatient, false);
     }).catch(err => {
-        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+        return makeResponse(res, 400, err.message, null, true);
     });
 };
 
