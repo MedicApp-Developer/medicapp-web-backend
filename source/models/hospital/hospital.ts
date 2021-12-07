@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { Roles } from '../../constants/roles';
 import IHospital from '../../interfaces/hospitals/hospital';
 
 const HospitalSchema: Schema = new Schema(
@@ -28,6 +29,11 @@ const HospitalSchema: Schema = new Schema(
             type: [Schema.Types.ObjectId],
             ref: "Services",
             index: false
+        },
+        role: {
+            type: String,
+            required: false,
+            default: Roles.HOSPITAL,
         },
         tradeLicenseNo: { 
             type: String,

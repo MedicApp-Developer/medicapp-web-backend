@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { Roles } from '../../constants/roles';
 import IDoctor from '../../interfaces/doctors/doctor';
 
 const DoctorSchema: Schema = new Schema(
@@ -56,6 +57,11 @@ const DoctorSchema: Schema = new Schema(
         language: {
             type: String,
             required: false
+        },
+        role: {
+            type: String,
+            required: false,
+            default: Roles.DOCTOR
         },
         schedule: {
             monday: {
