@@ -10,6 +10,9 @@ const SERVER_TOKEN_ISSUER = process.env.SERVER_TOKEN_ISSUER;
 const SERVER_TOKEN_SECRET = process.env.SERVER_TOKEN_SECRET;
 // const SERVER_HOST_URL = "https://medicappae.com";
 const SERVER_HOST_URL = process.env.SERVER_HOST_URL;
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
 const SERVER = {
     hostname: SERVER_HOSTNAME,
@@ -76,11 +79,18 @@ const NODEMAILER = {
     user: MEDICAPP_EMAIL
 }
 
+const cloudinary = {
+    name: CLOUDINARY_CLOUD_NAME,
+    apiKey: CLOUDINARY_API_KEY,
+    secretKey: CLOUDINARY_API_SECRET
+}
+
 const config = {
     server: SERVER,
     mongo: MONGO,
     mailer: NODEMAILER,
-    bucket: BUCKET
+    bucket: BUCKET,
+    cloudinary
 };
 
 // Note: Application URL: https://sheltered-depths-86378.herokuapp.com

@@ -5,21 +5,23 @@ import { sendErrorResponse } from '../../functions/makeResponse';
 import { PARAMETER_MISSING_CODE, RECORD_NOT_FOUND, SERVER_ERROR_CODE, UNAUTHORIZED_CODE } from '../../constants/statusCode';
 import validateSpecialityInput from '../../validation/speciality';
 import { uploadImage } from '../../functions/uploadS3';
+import cloudinary from 'cloudinary';
+import config from '../../config/config';
 
 const NAMESPACE = "Speciality";
 
-const createSpeciality = (req: Request, res: Response, next: NextFunction) => {
-    uploadImage(req, res, async (error: any) => {
-        if (error) {
-            console.log(error);
-          return sendErrorResponse(res, 400, "Error in uploading image", SERVER_ERROR_CODE);
-        } else {
-          // If File not found
-          // console.log("Ressss => ", req.files);
-          if (req.file === undefined) {
-            return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
-          } else {
-  
+const createSpeciality = async (req: Request, res: Response, next: NextFunction) => {
+            // @ts-ignore
+            cloudinary.v2.config({
+                cloud_name: config.cloudinary.name,
+                api_key: config.cloudinary.apiKey,
+                api_secret: config.cloudinary.secretKey
+            })
+            
+            // @ts-ignore
+            const result = await cloudinary.uploader.upload(req.file.path);
+    
+            // @ts-ignore
             const { errors, isValid } = validateSpecialityInput(req.body);
             // Check validation
             if (!isValid) {
@@ -29,16 +31,13 @@ const createSpeciality = (req: Request, res: Response, next: NextFunction) => {
             const { name, tags } = req.body;
 
             // @ts-ignore
-            const newSpeciality = new Speciality({ name, logo: req.file.location, tags });
+            const newSpeciality = new Speciality({ name, logo: result.url, tags });
             newSpeciality.save().then(speciality => {
                return makeResponse(res, 201, "Speciality Created Successfully", speciality, false);
             })
             .catch(err => {
                return sendErrorResponse(res, 400, "Unable to create speciality", SERVER_ERROR_CODE);
-            });  
-        }
-        }
-      });
+            });
 };
 
 const getAllSpeciality = async (req: Request, res: Response, next: NextFunction) => {
