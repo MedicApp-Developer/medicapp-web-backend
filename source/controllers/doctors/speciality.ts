@@ -26,10 +26,10 @@ const createSpeciality = (req: Request, res: Response, next: NextFunction) => {
                 return makeResponse(res, 400, "Validation Failed", errors, true);
             }
             
-            const { name } = req.body;
+            const { name, tags } = req.body;
 
             // @ts-ignore
-            const newSpeciality = new Speciality({ name, logo: req.file.location });
+            const newSpeciality = new Speciality({ name, logo: req.file.location, tags });
             newSpeciality.save().then(speciality => {
                return makeResponse(res, 201, "Speciality Created Successfully", speciality, false);
             })
@@ -43,7 +43,6 @@ const createSpeciality = (req: Request, res: Response, next: NextFunction) => {
 
 const getAllSpeciality = async (req: Request, res: Response, next: NextFunction) => {
     // @ts-ignore
-    console.log("page => ", req.query.page);
     if(req.query.page !== "undefined"){
         // @ts-ignore
         const page = parseInt(req.query.page || "0");

@@ -13,6 +13,7 @@ import Nurse from '../../models/nurse/nurse';
 import Hospital from '../../models/hospital/hospital';
 import { uploadImage } from '../../functions/uploadS3';
 import { PARAMETER_MISSING_CODE, SERVER_ERROR_CODE } from '../../constants/statusCode';
+import Speciality from '../../models/doctors/speciality';
 
 const NAMESPACE = "Doctor";
 
@@ -239,7 +240,7 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
         { firstName: searchedTextRegex }, 
         { lastName: searchedTextRegex },
         { email: searchedTextRegex },
-        { mobile: searchedTextRegex } 
+        { mobile: searchedTextRegex }
     ]
 
     let searchedHospitals = null;
@@ -271,7 +272,20 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
         searchedDoctors = await Doctor.find(filterQuery).populate("specialityId").populate("hospitalId");
     }else {
         searchedHospitals = await Hospital.find({$or: hospitalSearchQuery}).populate("category");
-        searchedDoctors = await Doctor.find({$or: doctorSearchQuery}).populate("specialityId").populate("hospitalId");
+        // @ts-ignore
+        searchedDoctors = await Doctor.find({$or: doctorSearchQuery}).populate('specialityId', null, { name: "One" });
+        console.log(searchedDoctors.length);
+        if(searchedDoctors.length === 0){
+            const specialitySearchQuery = [
+                { name: searchedTextRegex }, 
+                { tags: searchedTextRegex },
+            ];
+            const searchSpecIds = await Speciality.find({$or: specialitySearchQuery}).select('_id')
+            // @ts-ignore
+            const filteredIds = searchSpecIds.map(function (obj) { return obj._id });
+           
+            searchedDoctors = await Doctor.find({specialityId: { $in: filteredIds}}).populate('specialityId');
+        }
     }
 
     return makeResponse(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false);

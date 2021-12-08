@@ -7,9 +7,13 @@ const SpecialitySchema: Schema = new Schema(
             type: String,
             required: true
         },
-        logo: {
+        tags: {
             type: String,
             required: true
+        },
+        logo: {
+            type: String,
+            required: false
         }
     },
     {
