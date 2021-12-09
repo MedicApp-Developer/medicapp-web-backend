@@ -10,6 +10,7 @@ import config from '../../config/config';
 import { uploadsOnlyVideo } from '../../functions/uploadS3';
 import { validateHospitalRegisteration } from '../../validation/hospitalRegisteration';
 import Doctor from '../../models/doctors/doctor';
+import Speciality from '../../models/doctors/speciality';
 
 const NAMESPACE = "Hospital";
 
@@ -142,12 +143,33 @@ const searchHospital = async (req: Request, res: Response, next: NextFunction) =
         { tradeLicenseNo: searchedTextRegex } 
     ]
 
-    Hospital.find({$or: searchQuery}).then(result => {
-        return makeResponse(res, 200, "Search Results", result, false);
-    }).catch((err: any) => {
-        return makeResponse(res, 400, "Error while searching hospital", null, true);
-    });
+    try {
 
+        const searchedHospitalList = await Hospital.find({$or: searchQuery});
+
+        if(searchedHospitalList.length === 0){
+            const specialitySearchQuery = [
+                { name: searchedTextRegex }, 
+                { tags: searchedTextRegex },
+            ];
+            const searchSpecIds = await Speciality.find({$or: specialitySearchQuery}).select('_id')
+            // @ts-ignore
+            const filteredIds = searchSpecIds.map(function (obj) { return obj._id });
+           
+            const searchedDoctorsIds = await Doctor.find({specialityId: { $in: filteredIds}}).select('hospitalId');
+            
+            const filteredHospitalIds = searchedDoctorsIds.map(function (obj) { return obj.hospitalId });
+
+            const searchResults = await Hospital.find({_id: { $in: filteredHospitalIds}})
+
+            return makeResponse(res, 200, "Search Results", searchResults, false);
+        }else {
+            return makeResponse(res, 200, "Search Results", searchedHospitalList, false);
+        }
+
+    } catch(err) {
+        return makeResponse(res, 400, "Error while searching hospital", null, true);
+    }
 };
 
 const uploadHospitalImages = async (req: Request, res: Response, next: NextFunction) => {

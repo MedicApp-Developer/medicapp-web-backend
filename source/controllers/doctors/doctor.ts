@@ -214,12 +214,29 @@ const searchDoctorsOfAllHospitals = async (req: Request, res: Response, next: Ne
         { gender: searchedTextRegex } 
     ]
 
-    Doctor.find({$or: searchQuery})
-    .then(result => {
-        return makeResponse(res, 200, "Search Results", result, false);
-    }).catch(err => {
+    try {
+        const searchedDoctorsList = await Doctor.find({$or: searchQuery});
+
+        if(searchedDoctorsList.length === 0) {
+            const specialitySearchQuery = [
+                { name: searchedTextRegex }, 
+                { tags: searchedTextRegex },
+            ];
+            const searchSpecIds = await Speciality.find({$or: specialitySearchQuery}).select('_id')
+            // @ts-ignore
+            const filteredIds = searchSpecIds.map(function (obj) { return obj._id });
+           
+            const searchedDoctors = await Doctor.find({specialityId: { $in: filteredIds}}).populate('specialityId');
+            
+            return makeResponse(res, 200, "Search Results", searchedDoctors, false);
+            
+        }else {
+            return makeResponse(res, 200, "Search Results", searchedDoctorsList, false);
+        }
+
+    } catch(err) {
         return makeResponse(res, 400, "No doctor found", null, true);
-    });
+    }
 };
 
 const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFunction) => {
@@ -274,7 +291,7 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
         searchedHospitals = await Hospital.find({$or: hospitalSearchQuery}).populate("category");
         // @ts-ignore
         searchedDoctors = await Doctor.find({$or: doctorSearchQuery}).populate('specialityId', null, { name: "One" });
-        console.log(searchedDoctors.length);
+        
         if(searchedDoctors.length === 0){
             const specialitySearchQuery = [
                 { name: searchedTextRegex }, 
