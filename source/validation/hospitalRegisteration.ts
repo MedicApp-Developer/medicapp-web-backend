@@ -11,7 +11,6 @@ export function validateHospitalRegisteration(data: any) {
   data.tradeLicenseNo = !isEmpty(data.tradeLicenseNo) ? data.tradeLicenseNo : "";
   data.issueDate = !isEmpty(data.issueDate) ? data.issueDate : "";
   data.expiryDate = !isEmpty(data.expiryDate) ? data.expiryDate : "";
-  data.location = !isEmpty(data.location) ? data.location : "";
   data.password = !isEmpty(data.password) ? data.password : "";
 
   if (Validator.isEmpty(data.name)) {
@@ -46,11 +45,6 @@ export function validateHospitalRegisteration(data: any) {
   if (Validator.isEmpty(data.expiryDate)) {
     // @ts-ignore
     errors.expiryDate = "Expiry Date field is required";
-  }
-
-  if (Validator.isEmpty(data.location)) {
-    // @ts-ignore
-    errors.location = "Location field is required";
   }
 
   // Password checks

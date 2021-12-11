@@ -52,8 +52,16 @@ const HospitalSchema: Schema = new Schema(
             required: false
         },
         location: {
+            type: { type: String, default: 'Point' },
+            coordinates: [Number],
+        },
+        address: {
             type: String,
-            required: true
+            required: false
+        },
+        state: {
+            type: String,
+            required: false
         },
         rating: {
             type: Number,
@@ -78,5 +86,7 @@ const HospitalSchema: Schema = new Schema(
         timestamps: true
     }
 );
+
+HospitalSchema.index({ location: '2dsphere' });
 
 export default mongoose.model<IHospital>('Hospital', HospitalSchema);

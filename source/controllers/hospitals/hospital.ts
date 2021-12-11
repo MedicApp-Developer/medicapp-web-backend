@@ -15,16 +15,16 @@ import Speciality from '../../models/doctors/speciality';
 const NAMESPACE = "Hospital";
 
 const createHospital = async (req: Request, res: Response, next: NextFunction) => {
-    uploadsOnlyVideo(req, res, async (error: any) => {
-        if (error) {
-          res.json({ error: error });
-          return makeResponse(res, 400, "Error in uploading image", null, true);
-        } else {
-          // If File not found
-          // console.log("Ressss => ", req.files);
-          if (req.file === undefined) {
-            return makeResponse(res, 400, "No File Selected", null, true);
-          } else {
+    // uploadsOnlyVideo(req, res, async (error: any) => {
+    //     if (error) {
+    //       res.json({ error: error });
+    //       return makeResponse(res, 400, "Error in uploading image", null, true);
+    //     } else {
+    //       // If File not found
+    //       // console.log("Ressss => ", req.files);
+    //       if (req.file === undefined) {
+    //         return makeResponse(res, 400, "No File Selected", null, true);
+    //       } else {
   
             const { errors, isValid } = validateHospitalRegisteration(req.body);
             // Check validation
@@ -32,7 +32,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                 return makeResponse(res, 400, "Validation Failed", errors, true);
             }
             
-            const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location, type } = req.body;
+            const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location, address, state, type } = req.body;
     
             await User.find({ email }).then((result: any) => {
                 if(result.length === 0){
@@ -40,9 +40,11 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                         const newHospital = new Hospital({
                             _id: new mongoose.Types.ObjectId(),
                             type, category: null, addons: [], phoneNo,
-                            email, name, tradeLicenseNo, issueDate, expiryDate, location,
-                            // @ts-ignore
-                            tradeLicenseFile: req.file.location
+                            email, name, tradeLicenseNo, issueDate, expiryDate, address, state,
+                            location: {
+                                "type": "Point",
+                                "coordinates": location
+                            }
                         });
                         
                         return newHospital.save()
@@ -64,9 +66,9 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                 }
             }); 
            
-          }
-        }
-      });
+    //       }
+    //     }
+    //   });
 };
 
 const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
