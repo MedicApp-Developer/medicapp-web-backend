@@ -8,10 +8,21 @@ import Hospital from '../models/hospital/hospital';
 const NAMESPACE = "Home";
 
 const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
+    const { lat, lng } = req.body;
 
     try {
         const specialities = await Speciality.find({});
-        const hospitals = await Hospital.find({}).limit(10).skip(0);
+        const hospitals = await Hospital.find({
+            location: {
+                $near: {
+                  $maxDistance: 5000, // 5 KM
+                  $geometry: {
+                    type: "Point",
+                    coordinates: [lat, lng]
+                  }
+                }
+            }
+        }).limit(10).skip(0);
 
         const upcommingAppointments = await Appointment.find({patientId: res.locals.jwt.reference_id}).select(['-hospitalId'])
             .populate("patientId")

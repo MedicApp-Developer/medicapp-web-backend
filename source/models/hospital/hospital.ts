@@ -52,8 +52,15 @@ const HospitalSchema: Schema = new Schema(
             required: false
         },
         location: {
-            type: { type: String, default: 'Point' },
-            coordinates: [Number],
+            type: {
+                type: String,
+                enum: ['Point'],
+                default: 'Point',
+              },
+              coordinates: {
+                type: [Number],
+                default: [0, 0],
+              }
         },
         address: {
             type: String,
