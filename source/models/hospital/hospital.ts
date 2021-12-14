@@ -94,6 +94,7 @@ const HospitalSchema: Schema = new Schema(
     }
 );
 
+// On MongoDB Atlas create index { location: '2dsphere' }
 HospitalSchema.index({ location: '2dsphere' });
 
 export default mongoose.model<IHospital>('Hospital', HospitalSchema);

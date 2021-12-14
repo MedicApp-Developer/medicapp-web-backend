@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get('/', extractJWT,controller.getAllHospitals);
 router.get('/:id', extractJWT,controller.getSingleHospital); 
+router.get('/details/:id', extractJWT,controller.getHospitalDetail); 
 router.post('/', controller.createHospital);
 router.put('/:id',extractJWT, controller.updateHospital);
 router.delete('/:id',extractJWT, controller.deleteHospital);

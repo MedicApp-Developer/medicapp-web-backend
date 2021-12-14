@@ -92,6 +92,34 @@ const getSingleHospital = async (req: Request, res: Response, next: NextFunction
     })
 };
 
+const getHospitalDetail = async (req: Request, res: Response, next: NextFunction) => {    
+
+    const { id } = req.params;
+
+    try {
+        const hospitalDetail = await Hospital.findById({ _id: id }).populate("services");
+    
+        const hospitalDoctors = await Doctor.find({ hospitalId: id }).populate("specialityId");
+        const specialities:any = [];
+    
+        // @ts-ignore
+        if(hospitalDoctors?.length !== 0) {
+            // @ts-ignore
+            hospitalDoctors?.forEach((doctor) => {
+                // @ts-ignore
+                specialities.push(doctor.specialityId.name); 
+            })
+        }
+    
+        // @ts-ignore
+        return makeResponse(res, 200, "Hospital", { hospitalDetail, hospitalDoctors, specialities }, false);
+
+    } catch(err) {
+        // @ts-ignore
+        return makeResponse(res, 400, err.message, null, true);
+    }
+};
+
 const updateHospital = (req: Request, res: Response, next: NextFunction) => {
     // This _id is Hospital User ID
     const { _id } = res.locals.jwt;
@@ -226,5 +254,6 @@ export default {
     deleteHospital,
     searchHospital,
     uploadHospitalImages,
-    filterHospital
+    filterHospital,
+    getHospitalDetail
 };
