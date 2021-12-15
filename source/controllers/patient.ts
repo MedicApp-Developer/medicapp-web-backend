@@ -58,6 +58,13 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                                     if(_error){
                                         return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                                     }else if(token){
+                                        const options = {
+                                            from: config.mailer.user,
+                                            to: email,
+                                            subject: "Welcome to Medicapp",
+                                            text: `Your account account has been created as a patient, and your password is ${password}`
+                                        }                                    
+                                        sendEmail(options);
                                         return makeResponse(res, 200, "Patient registered successfully", {user: createdUser, patient: savedPatient, token: token}, false);
                                     }
                                 })            
