@@ -4,25 +4,19 @@ import ISlot from '../../interfaces/doctors/slot';
 
 const SlotSchema: Schema = new Schema(
     {
-        date: {
+        from: {
             type: String,
             required: true
         },
-        timeFrom: {
+        to: {
             type: String,
             required: true
         },
-        timeTo: {
-            type: String,
-            required: true
-        },
-        dateTimeTo: {
-            type: String,
-            required: true
-        },
-        dateTimeFrom: {
-            type: String,
-            required: true
+        appointmentId: {
+            type: Schema.Types.ObjectId,
+            ref: "Appointment",
+            index: false,
+            default: null
         },
         hospitalId: {
             type: Schema.Types.ObjectId,

@@ -5,11 +5,11 @@ import makeResponse, { sendErrorResponse } from '../../functions/makeResponse';
 const NAMESPACE = "Slot";
 
 const createSlot = async (req: Request, res: Response, next: NextFunction) => {
-        const { date, timeTo, timeFrom, dateTimeTo, dateTimeFrom, doctorId, hospitalId } = req.body;
+        const { from, to, doctorId, hospitalId, appointmentId } = req.body;
     
-        if(date && timeTo && timeFrom && dateTimeTo && dateTimeFrom && doctorId && hospitalId) {
+        if(from && to && doctorId && hospitalId && appointmentId) {
             const newSlot = new Slot({
-                date, timeTo, timeFrom, dateTimeTo, dateTimeFrom, doctorId, hospitalId
+                from, to, doctorId, hospitalId, appointmentId
             });
             newSlot.save().then(result => {
                 return makeResponse(res, 200, "Doctor", result, false);

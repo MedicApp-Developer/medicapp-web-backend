@@ -1,11 +1,9 @@
 import { Document } from 'mongoose';
 
 export default interface ISlot extends Document {
-    date: string;
-    timeFrom: string;
-    timeTo: string;
-    dateTimeTo: string;
-    dateTimeFrom: string;
+    from: string;
+    to: string;
+    appointmentId: string;
     doctorId: string;
     hospitalId: string;
     status: string;
