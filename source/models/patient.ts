@@ -17,7 +17,8 @@ const PatientSchema: Schema = new Schema(
         },
         emiratesId: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         // emiratesIdFile: {
         //     type: String,
@@ -25,11 +26,13 @@ const PatientSchema: Schema = new Schema(
         // },
         birthday: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         gender: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         // issueDate: {
         //     type: String,
@@ -49,47 +52,58 @@ const PatientSchema: Schema = new Schema(
         },
         age: {
             type: Number,
-            required: false
+            required: false,
+            default: null
         },
         bloodType: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         allergies: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         diseases: {
             type: [String],
-            required: false
+            required: false,
+            default: null
         },
         height: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         weight: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         patientId: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         lastVisit: {
             type: String,
-            required: false
+            required: false,
+            default: null
         }, 
         heartRate: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         temprature: {
             type: String,
-            required: false
+            required: false,
+            default: null
         },
         glucose: {
             type: String,
-            required: false
+            required: false,
+            default: null
         }
     },
     {
