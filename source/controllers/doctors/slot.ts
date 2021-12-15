@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import Slot from '../../models/doctors/slot';
 import makeResponse, { sendErrorResponse } from '../../functions/makeResponse';
+import { SlotStatus } from '../../constants/slot';
+import { SERVER_ERROR_CODE } from '../../constants/statusCode';
 
 const NAMESPACE = "Slot";
 
@@ -21,6 +23,42 @@ const createSlot = async (req: Request, res: Response, next: NextFunction) => {
         }
 };
 
+const getDoctorAvailableSlots = async (req: Request, res: Response, next: NextFunction) => {
+    const { doctorId } = req.params;
+    try {
+        const slots = await Slot.find({ status: SlotStatus.AVAILABLE, doctorId });
+        return makeResponse(res, 201, "Doctor's Available Slots", slots, false);
+    } catch(err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+    }    
+};
+
+const getDoctorBookedSlots = async (req: Request, res: Response, next: NextFunction) => {
+    const { doctorId } = req.params;
+    try {
+        const slots = await Slot.find({ status: SlotStatus.BOOKED, doctorId });
+        return makeResponse(res, 201, "Doctor's Booked Slots", slots, false);
+    } catch(err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+    }    
+};
+
+const getDoctorAllSlots = async (req: Request, res: Response, next: NextFunction) => {
+    const { doctorId } = req.params;
+    try {
+        const slots = await Slot.find({ doctorId });
+        return makeResponse(res, 201, "Doctor's All Slots", slots, false);
+    } catch(err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+    }    
+};
+
 export default { 
-    createSlot
+    createSlot,
+    getDoctorAllSlots,
+    getDoctorAvailableSlots,
+    getDoctorBookedSlots
 };
