@@ -17,20 +17,13 @@ import { validatePatientRegisteration } from '../validation/patientRegisteration
 import { DUPLICATE_VALUE_CODE, PARAMETER_MISSING_CODE, SERVER_ERROR_CODE, UNAUTHORIZED_CODE } from '../constants/statusCode';
 import LaboratoryRequest from '../models/labortories/labRequest';
 import QrPrescription from '../models/labortories/QrPrescription';
+import bcryptjs from 'bcryptjs';
+import signJWT from '../functions/signJWT';
+
 
 const NAMESPACE = "Patient";
 
 const createPatient = async (req: Request, res: Response, next: NextFunction) => {
-    // uploadEmirateFileId(req, res, async (error: any) => {
-    //     if (error) {
-    //       return sendErrorResponse(res, 400, "Error in uploading Patient Emirate ID File", SERVER_ERROR_CODE);
-    //     } else {
-    //       // If File not found
-    //       // console.log("Ressss => ", req.files);
-    //       if (req.file === undefined) {
-    //         return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
-    //       } else {
-  
             const { firstName, lastName, email, birthday, emiratesId, gender, location, phone, password } = req.body;
     
             const { errors, isValid } = validatePatientRegisteration(req.body);
@@ -40,36 +33,46 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                 return sendErrorResponse(res, 400, Object.values(errors)[0], Object.values(errors)[0].includes("invalid") ? INVALID_VALUE_CODE : PARAMETER_MISSING_CODE);
             }
 
-            await User.find({ email }).then((result: any) => {
-                if(result.length === 0){
-                    // @ts-ignore
+            try {
+                const result = await User.find({ email });
+
+                if(result.length === 0) {
                     const newPatient = new Patient({
-                            _id: new mongoose.Types.ObjectId(),
-                            firstName, lastName, email, birthday, gender, location, phone, emiratesId
+                        _id: new mongoose.Types.ObjectId(),
+                        firstName, lastName, email, birthday, gender, location, phone, emiratesId
+                    }); 
+
+                    const savedPatient = await newPatient.save();
+                    
+                    if(savedPatient) {
+                        bcryptjs.hash(password, 10, async (hashError, hash) => {
+                            if(hashError){
+                                return false;
+                            }
+                            
                             // @ts-ignore
-                            // emiratesIdFile: req.file.location
-                        }); 
-    
-                        const options = {
-                            from: config.mailer.user,
-                            to: email,
-                            subject: "Welcome to Medicapp",
-                            text: `Your account account has been created as a patient, and your password is ${password}`
-                        }
-    
-                        sendEmail(options);
-                        
-                        return newPatient.save()
-                            .then(async result => {
-                                UserController.createPatientUserFromEmailAndPassword(req, res, email, password, firstName, lastName, phone, emiratesId, Roles.PATIENT, result._id);
-                            })
-                            .catch(err => {
-                                return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+                            const _user = new User({ _id: new mongoose.Types.ObjectId(), firstName, lastName, email, phoneNo: phone, password: hash, role: Roles.PATIENT, emiratesId, referenceId: savedPatient._id });
+                            _user.save().then(createdUser => {
+                                // @ts-ignore
+                                signJWT(createdUser, (_error, token) => {
+                                    if(_error){
+                                        return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
+                                    }else if(token){
+                                        return makeResponse(res, 200, "Patient registered successfully", {user: createdUser, patient: savedPatient, token: token}, false);
+                                    }
+                                })            
                             });
-                }else {
+                            
+                            }
+                        )}
+                } else {
                     return sendErrorResponse(res, 400, "Email already exists", DUPLICATE_VALUE_CODE);
                 }
-            }); 
+
+            } catch(err) {
+                // @ts-ignore
+                return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+            }
 };
 
 const createPatientFromNurse = async (req: Request, res: Response, next: NextFunction) => {

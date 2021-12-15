@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { Roles } from '../constants/roles';
 import IPatient from '../interfaces/patient';
 
 const PatientSchema: Schema = new Schema(
@@ -19,6 +20,10 @@ const PatientSchema: Schema = new Schema(
             type: String,
             required: false,
             default: null
+        },
+        role: {
+            type: String,
+            default: Roles.PATIENT
         },
         // emiratesIdFile: {
         //     type: String,
@@ -82,8 +87,7 @@ const PatientSchema: Schema = new Schema(
         },
         patientId: {
             type: String,
-            required: false,
-            default: null
+            required: false
         },
         lastVisit: {
             type: String,

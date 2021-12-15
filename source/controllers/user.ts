@@ -78,12 +78,18 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                 if(!result){
                     return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                 }else if(result){
-                    signJWT(users[0], (_error, token) => {
+                    signJWT(users[0], async (_error, token) => {
                         if(_error){
                             logging.error(NAMESPACE, 'Unable to sign token: ', _error);
                             return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                         }else if(token){ 
-                            return makeResponse(res, 200, "Authentication Successful", {user: users[0], token: token}, false);
+                            if(users[0].role === Roles.PATIENT) {
+                                const patient = await Patient.findById(users[0].referenceId);
+                                console.log(patient);
+                                return makeResponse(res, 200, "Authentication Successful", {user: patient, token: token}, false);
+                            }else {
+                                return makeResponse(res, 200, "Authentication Successful", {user: users[0], token: token}, false);
+                            }
                         }
                     })
                 }

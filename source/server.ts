@@ -21,6 +21,7 @@ import labRequestRoutes from './routes/labortories/labRequest';
 import promoVideoRoutes from './routes/hospitals/promos';
 import specialityRoutes from './routes/doctors/speciality';
 import qrPrescriptionRoutes from './routes/labortories/QrPrescription';
+import slotRoutes from './routes/doctors/slot';
 import homeRoutes from './routes/home';
 import cors from 'cors'
 
@@ -93,6 +94,7 @@ router.use('/api/promos', promoVideoRoutes);
 router.use('/api/speciality', specialityRoutes);
 router.use('/api/home', homeRoutes);
 router.use('/api/qrprescription', qrPrescriptionRoutes);
+router.use('/api/slots', slotRoutes);
 
 // Simple Root Message
 router.get('/', (req, res) => {
