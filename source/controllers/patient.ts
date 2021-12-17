@@ -207,7 +207,7 @@ const updatePatient = (req: Request, res: Response, next: NextFunction) => {
 
     UserController.updateUser(req, res, _id, req.body);
     
-    Patient.findOneAndUpdate(filter, update).then(updatedPatient => {
+    Patient.findOneAndUpdate(filter, update, { new: true }).then(updatedPatient => {
         return makeResponse(res, 200, "Doctor updated Successfully", updatedPatient, false);
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true);

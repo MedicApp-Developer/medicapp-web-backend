@@ -66,7 +66,7 @@ const PatientSchema: Schema = new Schema(
             default: null
         },
         allergies: {
-            type: String,
+            type: [String],
             required: false,
             default: null
         },
