@@ -65,7 +65,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                                             text: `Your account account has been created as a patient, and your password is ${password}`
                                         }                                    
                                         sendEmail(options);
-                                        return makeResponse(res, 200, "Patient registered successfully", {user: createdUser, patient: savedPatient, token: token}, false);
+                                        return makeResponse(res, 200, "Patient registered successfully", {patient: savedPatient, token: token}, false);
                                     }
                                 })            
                             });
