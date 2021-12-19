@@ -4,14 +4,8 @@ import ISlot from '../../interfaces/doctors/slot';
 
 const SlotSchema: Schema = new Schema(
     {
-        from: {
-            type: Date,
-            required: true
-        },
-        to: {
-            type: Date,
-            required: true
-        },
+        from: Date,
+        to: Date,
         appointmentId: {
             type: Schema.Types.ObjectId,
             ref: "Appointment",

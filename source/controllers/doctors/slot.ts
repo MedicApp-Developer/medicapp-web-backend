@@ -11,7 +11,7 @@ const createSlot = async (req: Request, res: Response, next: NextFunction) => {
     
         if(from && to && doctorId && hospitalId) {
             const newSlot = new Slot({
-                from, to, doctorId, hospitalId
+                from: new Date(from), to: new Date(to), doctorId, hospitalId
             });
             newSlot.save().then(result => {
                 return makeResponse(res, 200, "Doctor", result, false);
@@ -38,10 +38,10 @@ const getDoctorAvailableSlots = async (req: Request, res: Response, next: NextFu
                 doctorId,
                 to: {
                     // @ts-ignore
-                    $gte: new Date(new Date(startDate).setHours(11, 11, 11)),
+                    $gte: new Date(new Date(startDate).setHours(0o0, 0o0, 0o0)),
                     $lte: new Date(new Date(endDate).setHours(23, 59, 59))
                 } 
-            });
+            }).populate('doctorId').populate('hospitalId');
             return makeResponse(res, 201, "Doctor's Available Slots", slots, false);
         }
     } catch(err) {
@@ -52,9 +52,26 @@ const getDoctorAvailableSlots = async (req: Request, res: Response, next: NextFu
 
 const getDoctorBookedSlots = async (req: Request, res: Response, next: NextFunction) => {
     const { doctorId } = req.params;
+    const { startDate, endDate } = req.body;
+
     try {
-        const slots = await Slot.find({ status: SlotStatus.BOOKED, doctorId });
-        return makeResponse(res, 201, "Doctor's Booked Slots", slots, false);
+        if(startDate === undefined || endDate === undefined) {
+            const slots = await Slot.find({ status: SlotStatus.BOOKED, doctorId });
+            return makeResponse(res, 201, "Doctor's Booked Slots", slots, false);
+        } else {
+            const slots = await Slot.find({ 
+                // @ts-ignore
+                status: SlotStatus.BOOKED, 
+                doctorId,
+                to: {
+                    // @ts-ignore
+                    $gte: new Date(new Date(startDate).setHours(0o0, 0o0, 0o0)),
+                    $lte: new Date(new Date(endDate).setHours(23, 59, 59))
+                } 
+            }).populate('doctorId').populate('hospitalId');
+            return makeResponse(res, 201, "Doctor's Booked Slots", slots, false);
+        }
+        
     } catch(err) {
         // @ts-ignore
         return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
@@ -63,9 +80,25 @@ const getDoctorBookedSlots = async (req: Request, res: Response, next: NextFunct
 
 const getDoctorAllSlots = async (req: Request, res: Response, next: NextFunction) => {
     const { doctorId } = req.params;
+    const { startDate, endDate } = req.body;
+
     try {
-        const slots = await Slot.find({ doctorId });
-        return makeResponse(res, 201, "Doctor's All Slots", slots, false);
+        if(startDate === undefined || endDate === undefined) {
+            const slots = await Slot.find({ doctorId });
+            return makeResponse(res, 201, "Doctor's All Slots", slots, false);
+        } else {
+            const slots = await Slot.find({ 
+                // @ts-ignore
+                doctorId,
+                to: {
+                    // @ts-ignore
+                    $gte: new Date(new Date(startDate).setHours(0o0, 0o0, 0o0)),
+                    $lte: new Date(new Date(endDate).setHours(23, 59, 59))
+                } 
+            }).populate('doctorId').populate('hospitalId');
+            return makeResponse(res, 201, "Doctor's All Slots", slots, false);
+        }
+        
     } catch(err) {
         // @ts-ignore
         return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
