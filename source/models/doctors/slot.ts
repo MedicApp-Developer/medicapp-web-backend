@@ -5,11 +5,11 @@ import ISlot from '../../interfaces/doctors/slot';
 const SlotSchema: Schema = new Schema(
     {
         from: {
-            type: String,
+            type: Date,
             required: true
         },
         to: {
-            type: String,
+            type: Date,
             required: true
         },
         appointmentId: {

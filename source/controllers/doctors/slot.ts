@@ -25,13 +25,29 @@ const createSlot = async (req: Request, res: Response, next: NextFunction) => {
 
 const getDoctorAvailableSlots = async (req: Request, res: Response, next: NextFunction) => {
     const { doctorId } = req.params;
+    const { startDate, endDate } = req.body;
+
     try {
-        const slots = await Slot.find({ status: SlotStatus.AVAILABLE, doctorId });
-        return makeResponse(res, 201, "Doctor's Available Slots", slots, false);
+        if(startDate === undefined || endDate === undefined) {
+            const slots = await Slot.find({ status: SlotStatus.AVAILABLE, doctorId });
+            return makeResponse(res, 201, "Doctor's Available Slots", slots, false);
+        } else {
+            const slots = await Slot.find({ 
+                // @ts-ignore
+                status: SlotStatus.AVAILABLE, 
+                doctorId,
+                to: {
+                    // @ts-ignore
+                    $gte: new Date(new Date(startDate).setHours(11, 11, 11)),
+                    $lte: new Date(new Date(endDate).setHours(23, 59, 59))
+                } 
+            });
+            return makeResponse(res, 201, "Doctor's Available Slots", slots, false);
+        }
     } catch(err) {
         // @ts-ignore
         return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
-    }    
+    }   
 };
 
 const getDoctorBookedSlots = async (req: Request, res: Response, next: NextFunction) => {

@@ -23,6 +23,7 @@ import specialityRoutes from './routes/doctors/speciality';
 import qrPrescriptionRoutes from './routes/labortories/QrPrescription';
 import slotRoutes from './routes/doctors/slot';
 import homeRoutes from './routes/home';
+import bookmarkRoutes from './routes/bookmark';
 import cors from 'cors'
 
 const NAMESPACE = 'Server';
@@ -95,6 +96,7 @@ router.use('/api/speciality', specialityRoutes);
 router.use('/api/home', homeRoutes);
 router.use('/api/qrprescription', qrPrescriptionRoutes);
 router.use('/api/slots', slotRoutes);
+router.use('/api/bookmarks', bookmarkRoutes);
 
 // Simple Root Message
 router.get('/', (req, res) => {
