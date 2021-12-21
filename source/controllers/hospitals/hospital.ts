@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Hospital from '../../models/hospital/hospital';
 import User from '../../models/user';
-import makeResponse from '../../functions/makeResponse';
+import makeResponse, { sendErrorResponse } from '../../functions/makeResponse';
 import UserController from '../user';
 import { Roles } from '../../constants/roles';
 import { HospitalType } from '../../constants/hospital';
@@ -11,6 +11,7 @@ import { uploadsOnlyVideo } from '../../functions/uploadS3';
 import { validateHospitalRegisteration } from '../../validation/hospitalRegisteration';
 import Doctor from '../../models/doctors/doctor';
 import Speciality from '../../models/doctors/speciality';
+import { SERVER_ERROR_CODE } from '../../constants/statusCode';
 
 const NAMESPACE = "Hospital";
 
@@ -246,6 +247,18 @@ const filterHospital = async (req: Request, res: Response, next: NextFunction) =
     });
 }
 
+const getHospitalDoctors = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const doctors = await Doctor.find({ hospitalId: req.params.hospitalId }).populate("specialityId");
+        
+        return makeResponse(res, 200, "Filtered Hospital", doctors, false);
+    
+    } catch(err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+    }
+}
+
 export default { 
     createHospital, 
     getAllHospitals,
@@ -255,5 +268,6 @@ export default {
     searchHospital,
     uploadHospitalImages,
     filterHospital,
-    getHospitalDetail
+    getHospitalDetail,
+    getHospitalDoctors
 };

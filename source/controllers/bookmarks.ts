@@ -11,7 +11,6 @@ const createBookmark = async (req: Request, res: Response, next: NextFunction) =
     const bookmarks = await Bookmark.find({ user: res.locals.jwt._id });
     if(bookmarks) {
         const update = type === Roles.DOCTOR ? {doctorIds: id} : {hospitalIds: id} ;
-        console.log("Update => ", update);
         Bookmark.findOneAndUpdate(
             { user: res.locals.jwt._id },
             { $push: update },
