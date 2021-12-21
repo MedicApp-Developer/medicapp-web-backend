@@ -83,17 +83,15 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 const createPatientFromNurse = async (req: Request, res: Response, next: NextFunction) => {
-        const { email, firstName, lastName, mobile, time, doctorId, referenceId, birthday, gender, location } = req.body;
+        const { email, firstName, lastName, mobile, birthday, gender, location, emiratesId } = req.body;
         const password = getRandomPassword();
-        
-        const nurse: any = await Nurse.find({_id: referenceId});
        
         await User.find({email}).then(async result => {
             if(result.length === 0){
                 if(email && firstName && lastName && mobile){
                     const newPatient = new Patient({
                         _id: new mongoose.Types.ObjectId(),
-                        birthday, gender, location, email, password, firstName, lastName, phone: mobile, hospitalId: nurse[0].hospitalId
+                        birthday, gender, location, email, password, firstName, lastName, phone: mobile, emiratesId
                     }); 
 
                     const options = {
@@ -107,10 +105,8 @@ const createPatientFromNurse = async (req: Request, res: Response, next: NextFun
                     
                     return newPatient.save()
                         .then(async result => {
-                            // TODO: Frontend se Nurse dashboard se jb patient create hota hai tb b patient ki emiratesId store krani hai lazmi werna issue ayega
-                            UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, "" ,Roles.PATIENT, result._id);
-                            createAppointmentByNurse(req, res, next, time, doctorId, result._id, nurse[0].hospitalId);
-                            return makeResponse(res, 201, "Appointment Created Successfully", result, false);
+                            await UserController.createUserFromEmailAndPassword(req, res, email, password, firstName, lastName, "",Roles.PATIENT, result._id)
+                            return makeResponse(res, 201, "Patient Created Successfully", result, false);
                         })
                         .catch(err => {
                             return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
@@ -118,13 +114,6 @@ const createPatientFromNurse = async (req: Request, res: Response, next: NextFun
                 }else {
                     return sendErrorResponse(res, 400, "Validation Failed", SERVER_ERROR_CODE);
                 }
-            }else {
-                const newAppointment = new Appointment({ time, doctorId, patientId: result[0].referenceId, hospitalId: nurse[0].hospitalId });
-                newAppointment.save().then(anotherAppointment => {
-                    return makeResponse(res, 201, "Appointment Created Successfully", anotherAppointment, false);
-                }).catch(err => {
-                    return sendErrorResponse(res, 400, "Validation Failed", SERVER_ERROR_CODE);
-                });
             }
         })
 }

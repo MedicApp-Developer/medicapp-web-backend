@@ -287,6 +287,18 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
         }
 
         searchedDoctors = await Doctor.find(filterQuery).populate("specialityId").populate("hospitalId");
+        
+        if(searchedDoctors.length === 0){
+            const specialitySearchQuery = [
+                { name: searchedTextRegex }, 
+                { tags: searchedTextRegex },
+            ];
+            const searchSpecIds = await Speciality.find({$or: specialitySearchQuery}).select('_id')
+            // @ts-ignore
+            const filteredIds = searchSpecIds.map(function (obj) { return obj._id });
+           
+            searchedDoctors = await Doctor.find({specialityId: { $in: filteredIds}}).populate('specialityId');
+        }
     }else {
         searchedHospitals = await Hospital.find({$or: hospitalSearchQuery}).populate("category");
         // @ts-ignore
@@ -305,7 +317,7 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
         }
     }
 
-    return makeResponse(res, 200, "Search Results", { hospital: searchedHospitals, doctor: searchedDoctors }, false);
+    return makeResponse(res, 200, "Search Results", { hospital: searchedHospitals ?? [], doctor: searchedDoctors ?? [] }, false);
 };
 
 const searchDoctorBySpeciality = async (req: Request, res: Response, next: NextFunction) => {
