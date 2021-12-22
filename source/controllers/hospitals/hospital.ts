@@ -249,7 +249,7 @@ const filterHospital = async (req: Request, res: Response, next: NextFunction) =
 
 const getHospitalDoctors = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const doctors = await Doctor.find({ hospitalId: req.params.hospitalId }).populate("specialityId");
+        const doctors = await Doctor.find({ hospitalId: req.params.hospitalId }).populate("specialityId").populate("hospitalId");
         
         return makeResponse(res, 200, "Filtered Hospital", doctors, false);
     
