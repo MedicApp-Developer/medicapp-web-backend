@@ -297,12 +297,12 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
             // @ts-ignore
             const filteredIds = searchSpecIds.map(function (obj) { return obj._id });
            
-            searchedDoctors = await Doctor.find({specialityId: { $in: filteredIds}}).populate('specialityId');
+            searchedDoctors = await Doctor.find({specialityId: { $in: filteredIds}}).populate('specialityId').populate("hospitalId");
         }
     }else {
         searchedHospitals = await Hospital.find({$or: hospitalSearchQuery}).populate("category");
         // @ts-ignore
-        searchedDoctors = await Doctor.find({$or: doctorSearchQuery}).populate('specialityId', null, { name: "One" });
+        searchedDoctors = await Doctor.find({$or: doctorSearchQuery}).populate('specialityId', null, { name: "One" }).populate("hospitalId");
         
         if(searchedDoctors.length === 0){
             const specialitySearchQuery = [
