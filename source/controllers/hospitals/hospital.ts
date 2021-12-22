@@ -108,7 +108,10 @@ const getHospitalDetail = async (req: Request, res: Response, next: NextFunction
             // @ts-ignore
             hospitalDoctors?.forEach((doctor) => {
                 // @ts-ignore
-                specialities.push(doctor.specialityId.name); 
+                if(specialities.filter(sp => sp === doctor?.specialityId?.name).length === 0){
+                    // @ts-ignore
+                    specialities.push(doctor.specialityId.name); 
+                }
             })
         }
     
