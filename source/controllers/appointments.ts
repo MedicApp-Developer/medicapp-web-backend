@@ -51,7 +51,7 @@ const cancelAppointment = (req: Request, res: Response, next: NextFunction) => {
             return sendErrorResponse(res, 400, "Validation Failed Error", SERVER_ERROR_CODE);
         }
     }else {
-        return sendErrorResponse(res, 400, "Validation Failed", PARAMETER_MISSING_CODE);
+        return sendErrorResponse(res, 400, "Parameter missing", PARAMETER_MISSING_CODE);
     }
 };
 
