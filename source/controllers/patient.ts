@@ -246,7 +246,7 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
         const patient = await Patient.findById({ _id: req.params.id });
 
         // Get Upcomming Appointments
-        const upcommingAppointments = await Appointment.find({patientId: req.params.id}).select(['-hospitalId'])
+        const upcommingAppointments = await Slot.find({patientId: req.params.id}).select(['-hospitalId'])
             .populate("patientId")
             .populate({
                 path : 'doctorId',
@@ -284,8 +284,6 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
 
         
     } catch(err: any) {
-        console.log("OUT PATIENT");
-        
         return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
     }
 };
