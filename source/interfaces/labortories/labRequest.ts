@@ -1,7 +1,7 @@
 import { Document } from 'mongoose';
 
 export default interface ILabortoryRequest extends Document {
-    appointmentId: string;
+    slotId: string;
     doctorId: string;
     patientId: string;
     laboratoryId: string;

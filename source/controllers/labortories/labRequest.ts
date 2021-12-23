@@ -7,10 +7,10 @@ import LaboratoryRequest from '../../models/labortories/labRequest';
 const NAMESPACE = "Labortory Request";
 
 const createLabRequest = async (req: Request, res: Response, next: NextFunction) => {
-    const { appointmentId, doctorId, patientId, laboratoryId, tests } = req.body;
+    const { slotId, doctorId, patientId, laboratoryId, tests } = req.body;
     
     const newlabRequest = new LaboratoryRequest(
-        { appointmentId, doctorId, patientId, laboratoryId, tests }
+        { slotId, doctorId, patientId, laboratoryId, tests }
     );
 
     return newlabRequest.save()

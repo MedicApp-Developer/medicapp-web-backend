@@ -3,9 +3,9 @@ import ILabortoryRequest from '../../interfaces/labortories/labRequest';
 
 const LabortoryRequestSchema: Schema = new Schema(
     {
-        appointmentId: {
+        slotId: {
             type: Schema.Types.ObjectId,
-            ref: "Appointment",
+            ref: "Slot",
             index: false
         },
         doctorId: {
