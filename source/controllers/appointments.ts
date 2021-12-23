@@ -161,9 +161,9 @@ export const getDoctorAppointments = async (req: Request, res: Response, next: N
     const { doctorId } = req.params;
     // @ts-ignore
     const page = parseInt(req.query.page || "0");
-    const total = await Appointment.find({doctorId}).countDocuments({});
+    const total = await Slot.find({doctorId}).countDocuments({});
 
-    Appointment.find({doctorId})
+    Slot.find({doctorId})
         .populate("patientId")
         .populate("doctorId")
         .limit(Pagination.PAGE_SIZE)
