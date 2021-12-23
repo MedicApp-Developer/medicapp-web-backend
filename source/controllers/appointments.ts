@@ -113,8 +113,8 @@ const deletePatientAppointment = async (req: Request, res: Response, next: NextF
     const _id = req.params.id;
     const patientId = req.params.patientId;
     try {
-        Appointment.findByIdAndDelete(_id).then(response => {
-            Appointment.find({ patientId }).select(['-hospitalId'])
+        Slot.findByIdAndDelete(_id).then(response => {
+            Slot.find({ patientId }).select(['-hospitalId'])
             .populate("patientId")
             .populate({
                 path : 'doctorId',
