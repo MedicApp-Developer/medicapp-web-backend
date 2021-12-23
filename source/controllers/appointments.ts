@@ -31,6 +31,30 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+const cancelAppointment = (req: Request, res: Response, next: NextFunction) => {
+    
+    const { slotId } = req.body;
+
+    if(slotId) {
+        try {
+            const filter = { _id: slotId };
+            let update = { patientId: null, status: SlotStatus.AVAILABLE };
+            
+            // @ts-ignore
+            Slot.findOneAndUpdate(filter, update, { upsert: true }).then(updatedSlot => {
+                return makeResponse(res, 200, "Updated Slot", updatedSlot, false);
+            }).catch(err => {
+                return sendErrorResponse(res, 400, "No slot with this ID", RECORD_NOT_FOUND);
+            })
+    
+        } catch(err) {
+            return sendErrorResponse(res, 400, "Validation Failed", SERVER_ERROR_CODE);
+        }
+    }else {
+        return sendErrorResponse(res, 400, "Validation Failed", PARAMETER_MISSING_CODE);
+    }
+};
+
 const getAllAppointments = (req: Request, res: Response, next: NextFunction) => {
     Appointment.find({patientId: res.locals.jwt.reference_id })
         .select(['-hospitalId'])
@@ -159,5 +183,6 @@ export default {
     deleteAppointment,
     getHospitalAppointments,
     getDoctorAppointments,
-    deletePatientAppointment
+    deletePatientAppointment,
+    cancelAppointment
 };
