@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/', extractJWT,controller.getAllAppointments);
 router.get('/:id', extractJWT,controller.getSingleAppointment);
 router.post('/', extractJWT, controller.createAppointment);
-router.delete('/', extractJWT, controller.cancelAppointment);
+router.delete('/cancel/:slotId', extractJWT, controller.cancelAppointment);
 router.put('/:id',extractJWT, controller.updateAppointment);
 router.delete('/:id',extractJWT, controller.deleteAppointment);
 router.delete('/:id/:patientId',extractJWT, controller.deletePatientAppointment);

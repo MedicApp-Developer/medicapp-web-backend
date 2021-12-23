@@ -33,7 +33,7 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
 
 const cancelAppointment = (req: Request, res: Response, next: NextFunction) => {
     
-    const { slotId } = req.body;
+    const { slotId } = req.params;
 
     if(slotId) {
         try {
