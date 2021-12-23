@@ -6,9 +6,9 @@ const SlotSchema: Schema = new Schema(
     {
         from: Date,
         to: Date,
-        appointmentId: {
+        patientId: {
             type: Schema.Types.ObjectId,
-            ref: "Appointment",
+            ref: "Patient",
             index: false,
             default: null
         },

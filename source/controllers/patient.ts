@@ -19,6 +19,8 @@ import LaboratoryRequest from '../models/labortories/labRequest';
 import QrPrescription from '../models/labortories/QrPrescription';
 import bcryptjs from 'bcryptjs';
 import signJWT from '../functions/signJWT';
+import Slot from '../models/doctors/slot';
+import { SlotStatus } from '../constants/slot';
 
 
 const NAMESPACE = "Patient";
@@ -120,7 +122,7 @@ const createPatientFromNurse = async (req: Request, res: Response, next: NextFun
 
 const getAllPatients = async (req: Request, res: Response, next: NextFunction) => {
     const { role, reference_id, _id } = res.locals.jwt;
-    
+
     // @ts-ignore
     const page = parseInt(req.query.page || "0");
 
@@ -130,30 +132,51 @@ const getAllPatients = async (req: Request, res: Response, next: NextFunction) =
         const nurse: any  = await Nurse.findById(reference_id);
         hospitalId = nurse.hospitalId;
     }else if(role === Roles.HOSPITAL){
-        const hospital: any  = await Hospital.findById(reference_id);
-        hospitalId = hospital._id;
+        hospitalId = reference_id;
     }
 
     if(role === Roles.DOCTOR){
-        const total = await Appointment.find({ doctorId: reference_id }).countDocuments({});
-
-        Appointment.find({ doctorId: reference_id }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page).populate('patientId')
-            .then(result => {
+        Slot.find({ doctorId: reference_id, status: SlotStatus.BOOKED })
+            .then(async result => {
                 const patients = result.map(item => ( item.patientId ))
-    
-                return makeResponse(res, 200, "All Patients", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), patients }, false);
+                
+                const patientIds:any = [];
+
+                patients.map(item => {
+                    // @ts-ignore
+                    if(patientIds.filter(pat => pat.equals(item)).length === 0) {
+                        patientIds.push(item);
+                    }
+                })
+
+                const total = await Patient.find({ '_id': { $in: patientIds }}).countDocuments({});
+
+                const patientsArray = await Patient.find({ '_id': { $in: patientIds }}).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+
+                return makeResponse(res, 200, "All Patients", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), patients: patientsArray }, false);
             })
             .catch(err => {
                 return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
-            })
+            })    
     }else {
-        const total = await Appointment.find({ hospitalId }).countDocuments({});
-
-        Appointment.find({ hospitalId }).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page).populate('patientId')
-            .then(result => {
+        Slot.find({ hospitalId, status: SlotStatus.BOOKED })
+            .then(async result => {
                 const patients = result.map(item => ( item.patientId ))
+                
+                const patientIds:any = [];
 
-                return makeResponse(res, 200, "All Patients", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), patients }, false);
+                patients.map(item => {
+                    // @ts-ignore
+                    if(patientIds.filter(pat => pat.equals(item)).length === 0) {
+                        patientIds.push(item);
+                    }
+                })
+
+                const total = await Patient.find({ '_id': { $in: patientIds }}).countDocuments({});
+
+                const patientsArray = await Patient.find({ '_id': { $in: patientIds }}).limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+
+                return makeResponse(res, 200, "All Patients", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), patients: patientsArray }, false);
             })
             .catch(err => {
                 return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);

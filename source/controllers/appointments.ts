@@ -1,21 +1,34 @@
 import { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
 import Appointment from '../models/appointment';
-import makeResponse from '../functions/makeResponse';
+import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import { Pagination } from '../constants/pagination';
+import { PARAMETER_MISSING_CODE, RECORD_NOT_FOUND, SERVER_ERROR_CODE } from '../constants/statusCode';
+import Slot from '../models/doctors/slot';
+import { SlotStatus } from '../constants/slot';
 
 const NAMESPACE = "Appointment";
 
 const createAppointment = (req: Request, res: Response, next: NextFunction) => {
-     const { time, doctorId, patientId, hospitalId } = req.body;
+    
+    const { patientId, slotId } = req.body;
 
-     const newAppointment = new Appointment({ time, doctorId, patientId, hospitalId });
-     newAppointment.save().then(result => {
-        return makeResponse(res, 201, "Appointment Created Successfully", result, false);
-     })
-     .catch(err => {
-        return makeResponse(res, 400, err.message, null, true);
-     });
+    if(patientId && slotId) {
+        try {
+            const filter = { _id: slotId };
+            let update = { patientId, status: SlotStatus.BOOKED };
+            
+            Slot.findOneAndUpdate(filter, update, { upsert: true }).then(updatedSlot => {
+                return makeResponse(res, 200, "Updated Slot", updatedSlot, false);
+            }).catch(err => {
+                return sendErrorResponse(res, 400, "No slot with this ID", RECORD_NOT_FOUND);
+            })
+    
+        } catch(err) {
+            return sendErrorResponse(res, 400, "Validation Failed", SERVER_ERROR_CODE);
+        }
+    }else {
+        return sendErrorResponse(res, 400, "Validation Failed", PARAMETER_MISSING_CODE);
+    }
 };
 
 const getAllAppointments = (req: Request, res: Response, next: NextFunction) => {
