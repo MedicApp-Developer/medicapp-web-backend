@@ -96,7 +96,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
     let hospitalId = null;
     // TODO: Multiple timings in a single day for a doctor
     if(req.query.getAll !== "undefined") {
-        Doctor.find({}).populate("specialityId").then(doctors => {
+        Doctor.find({}).populate("specialityId").populate("hospitalId").then(doctors => {
             return makeResponse(res, 200, "All Doctors", { doctors }, false);
         }).catch(err => {
             return makeResponse(res, 400, err.message, null, true);
@@ -105,7 +105,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
         hospitalId = res.locals.jwt.reference_id;
         const total = await Doctor.find({ hospitalId }).countDocuments({});
 
-        Doctor.find({ hospitalId }).populate("specialityId").limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+        Doctor.find({ hospitalId }).populate("specialityId").populate("hospitalId").limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
             .then(result => {
                 return makeResponse(res, 200, "All Doctors", {totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), doctors: result}, false);
             })
@@ -116,7 +116,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
         const { reference_id } = req.query;
         const nurse = await Nurse.findById(reference_id);
         hospitalId = nurse?.hospitalId;
-        Doctor.find({ hospitalId }).populate("specialityId")
+        Doctor.find({ hospitalId }).populate("specialityId").populate("hospitalId")
             .then(result => {
                 return makeResponse(res, 200, "All Doctors", { doctors: result }, false);
             })
