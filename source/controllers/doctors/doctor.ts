@@ -14,6 +14,7 @@ import Hospital from '../../models/hospital/hospital';
 import { uploadImage } from '../../functions/uploadS3';
 import { PARAMETER_MISSING_CODE, SERVER_ERROR_CODE } from '../../constants/statusCode';
 import Speciality from '../../models/doctors/speciality';
+import cloudinary from 'cloudinary';
 
 const NAMESPACE = "Doctor";
 
@@ -63,31 +64,27 @@ const createDoctor = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 const uploadProfilePic = async (req: Request, res: Response, next: NextFunction) => {
-    uploadImage(req, res, async (error: any) => {
-        if (error) {
-            console.log(error);
-          return sendErrorResponse(res, 400, "Error in uploading image", SERVER_ERROR_CODE);
-        } else {
-          // If File not found
-          // console.log("Ressss => ", req.files);
-          if (req.file === undefined) {
-            return sendErrorResponse(res, 400, "No File Selected", PARAMETER_MISSING_CODE);
-          } else {
+        // @ts-ignore
+        cloudinary.v2.config({
+            cloud_name: config.cloudinary.name,
+            api_key: config.cloudinary.apiKey,
+            api_secret: config.cloudinary.secretKey
+        })
+        
+        // @ts-ignore
+        const result = await cloudinary.uploader.upload(req.file.path);
+    
+        // This id is updated hospital itself id 
+        const { id } = req.params;
 
-            // This id is updated hospital itself id 
-            const { id } = req.params;
-
-            const filter = { _id: id };
+        const filter = { _id: id };
             
-            // @ts-ignore
-            Doctor.findOneAndUpdate(filter, {image: req.file.location}).then(updatedDoctor => {
-                return makeResponse(res, 200, "Doctor profile picture uploaded Successfully", updatedDoctor, false);
-            }).catch(err => {
-                return makeResponse(res, 400, err.message, null, true);
-            });
-          }
-        }
-      });
+        // @ts-ignore
+        Doctor.findOneAndUpdate(filter, {image: result.url}).then(updatedDoctor => {
+            return makeResponse(res, 200, "Doctor profile picture uploaded Successfully", updatedDoctor, false);
+        }).catch(err => {
+            return makeResponse(res, 400, err.message, null, true);
+        });
 }
 
 const getAllDoctors = async (req: Request, res: Response, next: NextFunction) => {

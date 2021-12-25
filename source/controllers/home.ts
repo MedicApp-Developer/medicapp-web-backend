@@ -4,6 +4,8 @@ import Appointment from '../models/appointment';
 import { SERVER_ERROR_CODE } from '../constants/statusCode';
 import Speciality from '../models/doctors/speciality';
 import Hospital from '../models/hospital/hospital';
+import Category from '../models/category';
+import Services from '../models/hospital/services';
 
 const NAMESPACE = "Home";
 
@@ -41,6 +43,32 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+const getFilters = async (req: Request, res: Response, next: NextFunction) => {
+
+  try {
+      const specialities = await Speciality.find({});
+      const hospitalCategories = await Category.find({});
+      const hospitalServices = await Services.find({});
+
+      const filters = {
+        hospitalFilters: {
+          hospitalCategories,
+          hospitalServices
+        },
+        doctorFilters: {
+          specialities
+        }
+      }
+
+      return makeResponse(res, 200, "All Filters", {...filters}, false);
+      
+
+  }catch(err: any) {
+      return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+  }
+};
+
 export default { 
-    getHomeData
+    getHomeData,
+    getFilters
 };
