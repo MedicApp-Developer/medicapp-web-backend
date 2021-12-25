@@ -56,7 +56,7 @@ const cancelAppointment = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getAllAppointments = (req: Request, res: Response, next: NextFunction) => {
-    Appointment.find({patientId: res.locals.jwt.reference_id })
+    Slot.find({patientId: res.locals.jwt.reference_id })
         .select(['-hospitalId'])
         .populate("patientId")
         .populate({
@@ -75,7 +75,7 @@ const getAllAppointments = (req: Request, res: Response, next: NextFunction) => 
 };
 
 const getSingleAppointment = (req: Request, res: Response, next: NextFunction) => {
-    Appointment.findById({ _id: req.params.id })
+    Slot.findById({ _id: req.params.id })
         .populate("doctorId")
         .populate("patientId")
     .then(data => {
@@ -101,7 +101,7 @@ const updateAppointment = (req: Request, res: Response, next: NextFunction) => {
 const deleteAppointment = async (req: Request, res: Response, next: NextFunction) => {
     const _id = req.params.id;
     try {
-        const appointment = await Appointment.findByIdAndDelete(_id);
+        const appointment = await Slot.findByIdAndDelete(_id);
     if (!appointment) return res.sendStatus(404);
         return makeResponse(res, 200, "Deleted Successfully", appointment, false);
     } catch (e) {
@@ -147,7 +147,7 @@ export const createAppointmentByNurse = (req: Request, res: Response, next: Next
 export const getHospitalAppointments = (req: Request, res: Response, next: NextFunction) => {
     const { hospitalId } = req.params;
     
-    Appointment.find({hospitalId})
+    Slot.find({hospitalId})
         .populate("doctorId")
         .populate("patientId")
         .then(appointments => {

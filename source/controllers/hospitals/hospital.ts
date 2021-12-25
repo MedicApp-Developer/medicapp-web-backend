@@ -12,6 +12,7 @@ import { validateHospitalRegisteration } from '../../validation/hospitalRegister
 import Doctor from '../../models/doctors/doctor';
 import Speciality from '../../models/doctors/speciality';
 import { SERVER_ERROR_CODE } from '../../constants/statusCode';
+import cloudinary from 'cloudinary';
 
 const NAMESPACE = "Hospital";
 
@@ -207,29 +208,28 @@ const searchHospital = async (req: Request, res: Response, next: NextFunction) =
 };
 
 const uploadHospitalImages = async (req: Request, res: Response, next: NextFunction) => {
-    uploadsOnlyVideo(req, res, async (error: any) => {
-        if (error) {
-          res.json({ error: error });
-          return makeResponse(res, 400, "Error in uploading image", null, true);
-        } else {
-          if (req.file === undefined) {
-            return makeResponse(res, 400, "No File Selected", null, true);
-          } else {
+            // @ts-ignore
+            cloudinary.v2.config({
+                cloud_name: config.cloudinary.name,
+                api_key: config.cloudinary.apiKey,
+                api_secret: config.cloudinary.secretKey
+            })
+                
+            // @ts-ignore
+            const result = await cloudinary.uploader.upload(req.file.path);
+
             const { id } = req.params;
 
             const filter = { _id: id };
             
             // @ts-ignore
-            let update = { $push: { images: [req.file.location] } };
+            let update = { $push: { images: [result.url] } };
             
             Hospital.update(filter, update).then((updatedHospital: any) => {
                 return makeResponse(res, 200, "Hospital image uploaded Successfully", updatedHospital, false);
             }).catch((err: any) => {
                 return makeResponse(res, 400, err.message, null, true);
             });
-          }
-        }
-      });
 }
 
 const filterHospital = async (req: Request, res: Response, next: NextFunction) => {
