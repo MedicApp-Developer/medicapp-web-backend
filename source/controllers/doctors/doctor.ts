@@ -313,7 +313,7 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
             // @ts-ignore
             const filteredIds = searchSpecIds.map(function (obj) { return obj._id });
            
-            searchedDoctors = await Doctor.find({specialityId: { $in: filteredIds}}).populate('specialityId');
+            searchedDoctors = await Doctor.find({specialityId: { $in: filteredIds}}).populate('specialityId').populate("hospitalId");
         }
     }
 
