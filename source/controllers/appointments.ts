@@ -10,12 +10,12 @@ const NAMESPACE = "Appointment";
 
 const createAppointment = (req: Request, res: Response, next: NextFunction) => {
     
-    const { patientId, slotId } = req.body;
+    const { patientId, slotId, description } = req.body;
 
     if(patientId && slotId) {
         try {
             const filter = { _id: slotId };
-            let update = { patientId, status: SlotStatus.BOOKED };
+            let update = { patientId, status: SlotStatus.BOOKED, description };
             
             Slot.findOneAndUpdate(filter, update, { upsert: true }).then(updatedSlot => {
                 return makeResponse(res, 200, "Updated Slot", updatedSlot, false);
@@ -38,7 +38,7 @@ const cancelAppointment = (req: Request, res: Response, next: NextFunction) => {
     if(slotId) {
         try {
             const filter = { _id: slotId };
-            let update = { patientId: null, status: SlotStatus.AVAILABLE };
+            let update = { patientId: null, status: SlotStatus.AVAILABLE, description: "" };
             
             // @ts-ignore
             Slot.findOneAndUpdate(filter, update, { upsert: true }).then(updatedSlot => {

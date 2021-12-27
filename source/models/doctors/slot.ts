@@ -26,6 +26,11 @@ const SlotSchema: Schema = new Schema(
             type: String,
             required: true,
             default: SlotStatus.AVAILABLE
+        },
+        description: {
+            type: String,
+            required: false,
+            default: ""
         }
     },
     {

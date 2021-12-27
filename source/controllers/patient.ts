@@ -10,8 +10,6 @@ import Nurse from '../models/nurse/nurse';
 import User from '../models/user';
 import { getRandomPassword } from '../functions/utilities';
 import { sendEmail } from '../functions/mailer';
-import { createAppointmentByNurse } from './appointments';
-import Hospital from '../models/hospital/hospital';
 import { Pagination } from '../constants/pagination';
 import { validatePatientRegisteration } from '../validation/patientRegisteration';
 import { DUPLICATE_VALUE_CODE, PARAMETER_MISSING_CODE, SERVER_ERROR_CODE, UNAUTHORIZED_CODE } from '../constants/statusCode';
@@ -21,6 +19,7 @@ import bcryptjs from 'bcryptjs';
 import signJWT from '../functions/signJWT';
 import Slot from '../models/doctors/slot';
 import { SlotStatus } from '../constants/slot';
+import Family from '../models/family';
 
 
 const NAMESPACE = "Patient";
@@ -244,6 +243,7 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
     try {
         // Get all information of patient
         const patient = await Patient.findById({ _id: req.params.id });
+        const familyMembers = await Family.find({patientId: req.params.id});
 
         // Get Upcomming Appointments
         const upcommingAppointments = await Slot.find({patientId: req.params.id}).select(['-hospitalId'])
@@ -279,7 +279,8 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
             patient,
             upcommingAppointments,
             labResults,
-            qrPrescriptions
+            qrPrescriptions,
+            familyMembers
         }, false);
 
         

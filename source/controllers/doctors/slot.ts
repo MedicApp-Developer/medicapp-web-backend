@@ -84,7 +84,7 @@ const getDoctorAllSlots = async (req: Request, res: Response, next: NextFunction
 
     try {
         if(startDate === undefined || endDate === undefined) {
-            const slots = await Slot.find({ doctorId });
+            const slots = await Slot.find({ doctorId }).populate('doctorId').populate('hospitalId').populate('patientId');
             return makeResponse(res, 201, "Doctor's All Slots", slots, false);
         } else {
             const slots = await Slot.find({ 
@@ -95,7 +95,7 @@ const getDoctorAllSlots = async (req: Request, res: Response, next: NextFunction
                     $gte: new Date(new Date(startDate).setHours(0o0, 0o0, 0o0)),
                     $lte: new Date(new Date(endDate).setHours(23, 59, 59))
                 } 
-            }).populate('doctorId').populate('hospitalId');
+            }).populate('doctorId').populate('hospitalId').populate('patientId');
             return makeResponse(res, 201, "Doctor's All Slots", slots, false);
         }
         

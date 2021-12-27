@@ -7,4 +7,5 @@ export default interface ISlot extends Document {
     doctorId: string;
     hospitalId: string;
     status: string;
+    description: string;
 }
