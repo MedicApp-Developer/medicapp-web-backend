@@ -10,6 +10,7 @@ import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE, INVALID_VALUE_CODE, DUPLICAT
 import { Roles } from '../constants/roles';
 import Patient from '../models/patient';
 import Bookmark from '../models/bookmark';
+import Family from '../models/family';
 
 const NAMESPACE = "User";
 
@@ -86,8 +87,9 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                         }else if(token){ 
                             if(users[0].role === Roles.PATIENT) {
                                 const patient = await Patient.findById(users[0].referenceId);
+                                const familyMembers = await Family.find({ patientId: users[0].referenceId });
                                 const bookmarks = await Bookmark.find({ user: users[0]._id }).select("hospitalIds doctorIds");
-                                return makeResponse(res, 200, "Authentication Successful", {bookmarks: bookmarks.length > 0 ? bookmarks[0] : { doctorIds: [], hospitalIds: [] }, user: patient, token: token}, false);
+                                return makeResponse(res, 200, "Authentication Successful", {bookmarks: bookmarks.length > 0 ? bookmarks[0] : { doctorIds: [], hospitalIds: [] }, user: patient, familyMembers: familyMembers.length > 0 ? familyMembers : [], token: token}, false);
                             }else {
                                 return makeResponse(res, 200, "Authentication Successful", {user: users[0], token: token}, false);
                             }
