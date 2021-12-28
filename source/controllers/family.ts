@@ -2,13 +2,21 @@ import { NextFunction, Request, Response } from 'express';
 import Family from '../models/family';
 import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 
-import { SERVER_ERROR_CODE } from '../constants/statusCode';
+import { DUPLICATE_VALUE_CODE, SERVER_ERROR_CODE } from '../constants/statusCode';
+import User from '../models/user';
 
 const NAMESPACE = "Patient";
 
 const createFamilyMember = async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const { firstName, lastName, relation, emiratesId, patientId } = req.body;
+
+                const user = await User.find({ emiratesId }).countDocuments();
+                const family = await Family.find({ emiratesId }).countDocuments();
+
+                if(user > 0 || family > 0) {
+                    return sendErrorResponse(res, 400, "Emirates ID already exists", DUPLICATE_VALUE_CODE);
+                }
 
                 const newFamilyMember = new Family({
                     firstName, lastName, relation, emiratesId, patientId

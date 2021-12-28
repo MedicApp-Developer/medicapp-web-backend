@@ -35,7 +35,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
             }
 
             try {
-                const result = await User.find({ email });
+                const result = await User.find({$or:[ {email}, {emiratesId}]});
 
                 if(result.length === 0) {
                     const newPatient = new Patient({
@@ -74,7 +74,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                             }
                         )}
                 } else {
-                    return sendErrorResponse(res, 400, "Email already exists", DUPLICATE_VALUE_CODE);
+                    return sendErrorResponse(res, 400, "Email OR Emirates ID already exists", DUPLICATE_VALUE_CODE);
                 }
 
             } catch(err) {

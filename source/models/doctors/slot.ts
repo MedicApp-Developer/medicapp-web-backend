@@ -31,6 +31,12 @@ const SlotSchema: Schema = new Schema(
             type: String,
             required: false,
             default: ""
+        },
+        femilyMemberId: {
+            type: Schema.Types.ObjectId,
+            ref: "Family",
+            index: false,
+            default: null
         }
     },
     {
