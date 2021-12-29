@@ -9,7 +9,7 @@ const NAMESPACE = "Patient";
 
 const createFamilyMember = async (req: Request, res: Response, next: NextFunction) => {
             try {
-                const { firstName, lastName, relation, emiratesId, patientId } = req.body;
+                const { firstName, lastName, relation, emiratesId, phoneNo, patientId } = req.body;
 
                 const user = await User.find({ emiratesId }).countDocuments();
                 const family = await Family.find({ emiratesId }).countDocuments();
@@ -19,7 +19,7 @@ const createFamilyMember = async (req: Request, res: Response, next: NextFunctio
                 }
 
                 const newFamilyMember = new Family({
-                    firstName, lastName, relation, emiratesId, patientId
+                    firstName, lastName, relation, emiratesId, phoneNo, patientId
                 });
 
                 const member = await newFamilyMember.save();

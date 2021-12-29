@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { SlotStatus } from '../../constants/slot';
+import { SlotStatus, SlotTypes } from '../../constants/slot';
 import ISlot from '../../interfaces/doctors/slot';
 
 const SlotSchema: Schema = new Schema(
@@ -32,12 +32,17 @@ const SlotSchema: Schema = new Schema(
             required: false,
             default: ""
         },
-        femilyMemberId: {
+        familyMemberId: {
             type: Schema.Types.ObjectId,
             ref: "Family",
             index: false,
             default: null
-        }
+        },
+        type: {
+            type: String,
+            required: false,
+            default: SlotTypes.DOCTOR
+        },
     },
     {
         timestamps: true

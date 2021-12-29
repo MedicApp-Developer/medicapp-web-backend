@@ -11,6 +11,7 @@ import { Roles } from '../constants/roles';
 import Patient from '../models/patient';
 import Bookmark from '../models/bookmark';
 import Family from '../models/family';
+import Hospital from '../models/hospital/hospital';
 
 const NAMESPACE = "User";
 
@@ -90,6 +91,9 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                                 const familyMembers = await Family.find({ patientId: users[0].referenceId });
                                 const bookmarks = await Bookmark.find({ user: users[0]._id }).select("hospitalIds doctorIds");
                                 return makeResponse(res, 200, "Authentication Successful", {bookmarks: bookmarks.length > 0 ? bookmarks[0] : { doctorIds: [], hospitalIds: [] }, user: patient, familyMembers: familyMembers.length > 0 ? familyMembers : [], token: token}, false);
+                            }else if(users[0].role === Roles.HOSPITAL) {
+                                    const hospital = await Hospital.findById(users[0].referenceId);
+                                    return makeResponse(res, 200, "Authentication Successful", {user: users[0], hospital, token: token}, false);
                             }else {
                                 return makeResponse(res, 200, "Authentication Successful", {user: users[0], token: token}, false);
                             }

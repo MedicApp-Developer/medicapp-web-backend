@@ -10,13 +10,13 @@ const NAMESPACE = "Appointment";
 
 const createAppointment = (req: Request, res: Response, next: NextFunction) => {
     
-    const { patientId, slotId, description, femilyMemberId } = req.body;
+    const { patientId, slotId, description, familyMemberId } = req.body;
 
     if(patientId && slotId) {
         try {
             const filter = { _id: slotId };
-            let update = { patientId, status: SlotStatus.BOOKED, description, femilyMemberId };
-            
+            let update = { patientId, status: SlotStatus.BOOKED, description, familyMemberId };
+
             Slot.findOneAndUpdate(filter, update, { upsert: true }).then(updatedSlot => {
                 return makeResponse(res, 200, "Updated Slot", updatedSlot, false);
             }).catch(err => {
@@ -38,7 +38,7 @@ const cancelAppointment = (req: Request, res: Response, next: NextFunction) => {
     if(slotId) {
         try {
             const filter = { _id: slotId };
-            let update = { patientId: null, status: SlotStatus.AVAILABLE, description: "", femilyMemberId: null };
+            let update = { patientId: null, status: SlotStatus.AVAILABLE, description: "", familyMemberId: null };
             
             // @ts-ignore
             Slot.findOneAndUpdate(filter, update, { upsert: true }).then(updatedSlot => {
@@ -59,7 +59,7 @@ const getAllAppointments = (req: Request, res: Response, next: NextFunction) => 
     Slot.find({patientId: res.locals.jwt.reference_id })
         .select(['-hospitalId'])
         .populate("patientId")
-        .populate("femilyMemberId")
+        .populate("familyMemberId")
         .populate({
             path : 'doctorId',
             populate: [
@@ -78,7 +78,7 @@ const getAllAppointments = (req: Request, res: Response, next: NextFunction) => 
 const getSingleAppointment = (req: Request, res: Response, next: NextFunction) => {
     Slot.findById({ _id: req.params.id })
         .populate("doctorId")
-        .populate("femilyMemberId")
+        .populate("familyMemberId")
         .populate("patientId")
     .then(data => {
         return makeResponse(res, 200, "Appointment", data, false);
@@ -118,7 +118,7 @@ const deletePatientAppointment = async (req: Request, res: Response, next: NextF
         Slot.findByIdAndDelete(_id).then(response => {
             Slot.find({ patientId }).select(['-hospitalId'])
             .populate("patientId")
-            .populate("femilyMemberId")
+            .populate("familyMemberId")
             .populate({
                 path : 'doctorId',
                 populate: [
@@ -152,7 +152,7 @@ export const getHospitalAppointments = (req: Request, res: Response, next: NextF
     
     Slot.find({hospitalId})
         .populate("doctorId")
-        .populate("femilyMemberId")
+        .populate("familyMemberId")
         .populate("patientId")
         .then(appointments => {
             return makeResponse(res, 200, "Hospital Appointments", appointments, false);
@@ -169,7 +169,7 @@ export const getDoctorAppointments = async (req: Request, res: Response, next: N
 
     Slot.find({doctorId})
         .populate("patientId")
-        .populate("femilyMemberId")
+        .populate("familyMemberId")
         .populate("doctorId")
         .limit(Pagination.PAGE_SIZE)
         .skip(Pagination.PAGE_SIZE * page)

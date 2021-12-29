@@ -19,6 +19,10 @@ const FamilySchema: Schema = new Schema(
             type: String,
             required: true
         },
+        phoneNo: {
+            type: String,
+            required: true
+        },
         patientId: {
             type: Schema.Types.ObjectId,
             ref: "Patient",

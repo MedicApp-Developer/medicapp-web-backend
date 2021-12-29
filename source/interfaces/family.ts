@@ -5,5 +5,6 @@ export default interface IFamily extends Document {
     lastName: string;
     relation: string;
     emiratesId: string;
+    phoneNo: string;
     patientId: string;
 }
