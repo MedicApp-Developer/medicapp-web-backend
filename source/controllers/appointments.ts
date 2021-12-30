@@ -4,7 +4,7 @@ import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import { Pagination } from '../constants/pagination';
 import { PARAMETER_MISSING_CODE, RECORD_NOT_FOUND, SERVER_ERROR_CODE } from '../constants/statusCode';
 import Slot from '../models/doctors/slot';
-import { SlotStatus } from '../constants/slot';
+import { SlotStatus, SlotTypes } from '../constants/slot';
 
 const NAMESPACE = "Appointment";
 
@@ -38,7 +38,7 @@ const cancelAppointment = (req: Request, res: Response, next: NextFunction) => {
     if(slotId) {
         try {
             const filter = { _id: slotId };
-            let update = { patientId: null, status: SlotStatus.AVAILABLE, description: "", familyMemberId: null };
+            let update = { patientId: null, status: SlotStatus.AVAILABLE, description: "", familyMemberId: null, type: SlotTypes.DOCTOR };
             
             // @ts-ignore
             Slot.findOneAndUpdate(filter, update, { upsert: true }).then(updatedSlot => {
@@ -115,9 +115,17 @@ const deletePatientAppointment = async (req: Request, res: Response, next: NextF
     const _id = req.params.id;
     const patientId = req.params.patientId;
     try {
-        Slot.findByIdAndDelete(_id).then(response => {
-            Slot.find({ patientId }).select(['-hospitalId'])
+
+        const filter = { _id };
+        let update = { patientId: null, status: SlotStatus.AVAILABLE, description: "", familyMemberId: null };
+            
+        // @ts-ignore
+        await Slot.findOneAndUpdate(filter, update, { upsert: true });
+
+        Slot.findById(_id).then(response => {
+            Slot.find({ patientId })
             .populate("patientId")
+            .populate("hospitalId")
             .populate("familyMemberId")
             .populate({
                 path : 'doctorId',

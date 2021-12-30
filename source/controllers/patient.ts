@@ -246,9 +246,10 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
         const familyMembers = await Family.find({patientId: req.params.id});
 
         // Get Upcomming Appointments
-        const upcommingAppointments = await Slot.find({patientId: req.params.id}).select(['-hospitalId'])
+        const upcommingAppointments = await Slot.find({patientId: req.params.id})
             .populate("patientId")
             .populate("familyMemberId")
+            .populate("hospitalId")
             .populate({
                 path : 'doctorId',
                 populate: [
