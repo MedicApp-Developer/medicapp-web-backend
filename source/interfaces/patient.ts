@@ -23,4 +23,5 @@ export default interface IPatient extends Document {
     temprature: string;
     heartRate: string;
     doctors?: string;
+    image: string;
 }

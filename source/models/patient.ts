@@ -21,6 +21,11 @@ const PatientSchema: Schema = new Schema(
             required: false,
             default: null
         },
+        image: {
+            type: String,
+            required: false,
+            default: ""
+        },
         role: {
             type: String,
             default: Roles.PATIENT

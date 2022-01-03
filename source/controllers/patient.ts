@@ -20,6 +20,7 @@ import signJWT from '../functions/signJWT';
 import Slot from '../models/doctors/slot';
 import { SlotStatus } from '../constants/slot';
 import Family from '../models/family';
+import cloudinary from 'cloudinary';
 
 
 const NAMESPACE = "Patient";
@@ -291,6 +292,68 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
     }
 };
 
+const getLabResults = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        // Get Lab Results
+        const labResults = await LaboratoryRequest.find({ patientId: req.params.id }).populate({
+            path : 'doctorId',
+            populate: [
+                { path: 'specialityId' },
+                { path: 'hospitalId' }
+            ]
+        });
+
+        return makeResponse(res, 200, "Patient lab results", labResults, false);
+
+        
+    } catch(err: any) {
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+    }
+};
+
+const getQRPrescription = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        // Get QR Prescriptions
+        const qrPrescriptions = await QrPrescription.find({ patientId: req.params.id })
+            .populate({
+                path : 'doctorId',
+                populate: [
+                    { path: 'specialityId' },
+                    { path: 'hospitalId' }
+                ]
+            });
+
+        return makeResponse(res, 200, "Patient lab results", qrPrescriptions, false);
+
+    } catch(err: any) {
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+    }
+};
+
+const uploadProfilePic = async (req: Request, res: Response, next: NextFunction) => {
+    // @ts-ignore
+    cloudinary.v2.config({
+        cloud_name: config.cloudinary.name,
+        api_key: config.cloudinary.apiKey,
+        api_secret: config.cloudinary.secretKey
+    })
+    
+    // @ts-ignore
+    const result = await cloudinary.uploader.upload(req.file.path);
+
+    // This id is updated hospital itself id 
+    const { id } = req.params;
+
+    const filter = { _id: id };
+        
+    // @ts-ignore
+    Patient.findOneAndUpdate(filter, {image: result.url}).then(updatedPatient => {
+        return makeResponse(res, 200, "Patient profile picture uploaded Successfully", updatedPatient, false);
+    }).catch(err => {
+        return makeResponse(res, 400, err.message, null, true);
+    });
+}
+
 export default { 
     createPatient, 
     getAllPatients,
@@ -298,5 +361,8 @@ export default {
     updatePatient,
     deletePatient,
     createPatientFromNurse,
-    getPatientAccountInfo
+    getPatientAccountInfo,
+    getLabResults,
+    getQRPrescription,
+    uploadProfilePic
 };
