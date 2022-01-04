@@ -347,7 +347,7 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
     const filter = { _id: id };
         
     // @ts-ignore
-    Patient.findOneAndUpdate(filter, {image: result.url}).then(updatedPatient => {
+    Patient.findOneAndUpdate(filter, {image: result.url}, { new: true }).then(updatedPatient => {
         return makeResponse(res, 200, "Patient profile picture uploaded Successfully", updatedPatient, false);
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true);
