@@ -26,7 +26,7 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
             }
         }).limit(10).skip(0);
 
-        const upcommingAppointments = await Appointment.find({patientId: res.locals.jwt.reference_id}).select(['-hospitalId'])
+        const upcommingAppointments = await Appointment.find({patientId: res.locals.jwt._id}).select(['-hospitalId'])
             .populate("patientId")
             .populate({
                 path : 'doctorId',
