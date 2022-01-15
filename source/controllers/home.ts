@@ -42,7 +42,7 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
         ]
       })
 
-    return makeResponse(res, 200, "Patient Appointments", { upcommingAppointments: upcommingAppointments.length === 0 ? {} : upcommingAppointments[0], specialities, hospitals }, false)
+    return makeResponse(res, 200, "Patient Appointments", { upcommingAppointments: upcommingAppointments.length === 0 ? null : upcommingAppointments[0], specialities, hospitals }, false)
 
   } catch (err: any) {
     return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)

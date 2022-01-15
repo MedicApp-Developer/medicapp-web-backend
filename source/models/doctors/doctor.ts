@@ -1,6 +1,6 @@
-import mongoose, { Schema } from 'mongoose';
-import { Roles } from '../../constants/roles';
-import IDoctor from '../../interfaces/doctors/doctor';
+import mongoose, { Schema } from 'mongoose'
+import { Roles } from '../../constants/roles'
+import IDoctor from '../../interfaces/doctors/doctor'
 
 const DoctorSchema: Schema = new Schema(
     {
@@ -47,16 +47,19 @@ const DoctorSchema: Schema = new Schema(
             required: false
         },
         gender: {
-            type: String,
-            required: false
+            type: Schema.Types.ObjectId,
+            ref: "Gender",
+            index: false
         },
         country: {
-            type: String,
-            required: false
-        }, 
+            type: Schema.Types.ObjectId,
+            ref: "Country",
+            index: false
+        },
         language: {
-            type: String,
-            required: false
+            type: Schema.Types.ObjectId,
+            ref: "Language",
+            index: false
         },
         role: {
             type: String,
@@ -139,6 +142,6 @@ const DoctorSchema: Schema = new Schema(
     {
         timestamps: true
     }
-);
+)
 
-export default mongoose.model<IDoctor>('Doctor', DoctorSchema);
+export default mongoose.model<IDoctor>('Doctor', DoctorSchema)
