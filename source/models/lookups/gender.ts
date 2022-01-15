@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-import ILookup from '../../interfaces/lookups/Lookup'
+import ILookup from '../../interfaces/lookups/lookup'
 
 const GenderSchema: Schema = new Schema(
 	{
