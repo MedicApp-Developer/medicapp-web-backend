@@ -1,12 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
 import makeResponse, { sendErrorResponse } from '../functions/makeResponse'
-import Appointment from '../models/appointment'
 import { SERVER_ERROR_CODE } from '../constants/statusCode'
 import Speciality from '../models/doctors/speciality'
 import Hospital from '../models/hospital/hospital'
 import Category from '../models/category'
 import Services from '../models/hospital/services'
 import Slot from '../models/doctors/slot'
+import Gender from '../models/lookups/gender'
+import Language from '../models/lookups/language'
+import Country from '../models/lookups/country'
 
 const NAMESPACE = "Home"
 
@@ -56,18 +58,24 @@ const getFilters = async (req: Request, res: Response, next: NextFunction) => {
     const hospitalCategories = await Category.find({})
     const hospitalServices = await Services.find({})
 
+    const genderList = await Gender.find({})
+    const languageList = await Language.find({})
+    const nationalityList = await Country.find({})
+
     const filters = {
       hospitalFilters: {
         hospitalCategories,
         hospitalServices
       },
       doctorFilters: {
-        specialities
+        specialities,
+        genders: genderList,
+        languages: languageList,
+        nationalities: nationalityList
       }
     }
 
     return makeResponse(res, 200, "All Filters", { ...filters }, false)
-
 
   } catch (err: any) {
     return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
