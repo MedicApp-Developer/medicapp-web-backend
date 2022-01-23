@@ -26,6 +26,7 @@ import homeRoutes from './routes/home'
 import bookmarkRoutes from './routes/bookmark'
 import familyRoutes from './routes/family'
 import lookupRoutes from './routes/lookups/apis'
+import leavesRoutes from './routes/leaves'
 import cors from 'cors'
 
 const NAMESPACE = 'Server'
@@ -101,6 +102,7 @@ router.use('/api/slots', slotRoutes)
 router.use('/api/bookmarks', bookmarkRoutes)
 router.use('/api/family', familyRoutes)
 router.use('/api/lookups', lookupRoutes)
+router.use('/api/leaves', leavesRoutes)
 
 // Simple Root Message
 router.get('/', (req, res) => {
