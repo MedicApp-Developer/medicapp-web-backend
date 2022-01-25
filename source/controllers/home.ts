@@ -42,7 +42,7 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
           { path: 'specialityId' },
           { path: 'hospitalId' }
         ]
-      })
+      }).populate('familyMemberId')
 
     return makeResponse(res, 200, "Patient Appointments", { upcommingAppointments: upcommingAppointments.length === 0 ? null : upcommingAppointments[0], specialities, hospitals }, false)
 

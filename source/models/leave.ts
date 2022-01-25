@@ -13,6 +13,10 @@ const LeaveSchema: Schema = new Schema(
 			ref: "Doctor",
 			index: false
 		},
+		issuedDate: {
+			type: String,
+			required: true
+		},
 		days: {
 			type: Number,
 			required: true
