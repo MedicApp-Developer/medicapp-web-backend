@@ -1,5 +1,5 @@
-import mongoose, { Schema } from 'mongoose';
-import IQrPrescription from '../../interfaces/labortories/QrPrescription';
+import mongoose, { Schema } from 'mongoose'
+import IQrPrescription from '../../interfaces/labortories/QrPrescription'
 
 const QrPrescriptionSchema: Schema = new Schema(
     {
@@ -8,6 +8,22 @@ const QrPrescriptionSchema: Schema = new Schema(
             required: true
         },
         date: {
+            type: String,
+            required: true
+        },
+        treatmentType: {
+            type: String,
+            required: true
+        },
+        prescription: {
+            type: String,
+            required: true
+        },
+        dosageADay: {
+            type: String,
+            required: true
+        },
+        consumptionDays: {
             type: String,
             required: true
         },
@@ -25,6 +41,6 @@ const QrPrescriptionSchema: Schema = new Schema(
     {
         timestamps: true
     }
-);
+)
 
-export default mongoose.model<IQrPrescription>('QrPrescription', QrPrescriptionSchema);
+export default mongoose.model<IQrPrescription>('QrPrescription', QrPrescriptionSchema)

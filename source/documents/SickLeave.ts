@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-function getAge(dateString: any) {
+export function getAge(dateString: any) {
 	var today = new Date()
 	var birthDate = new Date(dateString)
 	var age = today.getFullYear() - birthDate.getFullYear()

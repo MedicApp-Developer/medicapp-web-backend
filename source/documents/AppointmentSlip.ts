@@ -13,7 +13,7 @@ const generateAppointmentSlip = (slot: any) => {
 			<style>
 			.container {
 				padding: 2rem;
-				font-family: 'Lato', sans-serif 
+				font-family: 'Lato', sans-serif; 
 			}
 			
 			.logoImage {
