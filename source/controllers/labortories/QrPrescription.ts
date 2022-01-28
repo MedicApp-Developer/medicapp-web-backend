@@ -26,11 +26,19 @@ const createQrPrescription = async (req: Request, res: Response, next: NextFunct
 }
 
 const getQrPrescription = async (req: Request, res: Response, next: NextFunction) => {
-    QrPrescription.find({ patientId: res.locals.jwt.reference_id }).populate("doctorId").then(prescriptions => {
-        return makeResponse(res, 201, "QR Prescription Created Successfully", prescriptions, false)
-    }).catch(err => {
-        return makeResponse(res, 400, err.message, null, true)
-    })
+    QrPrescription.find({ patientId: res.locals.jwt.reference_id })
+        .populate({
+            path: 'doctorId',
+            populate: [
+                { path: 'specialityId' },
+                { path: 'hospitalId' }
+            ]
+        })
+        .then(prescriptions => {
+            return makeResponse(res, 201, "QR Prescription Created Successfully", prescriptions, false)
+        }).catch(err => {
+            return makeResponse(res, 400, err.message, null, true)
+        })
 }
 
 const getQRPrescriptionSlip = async (req: Request, res: Response, next: NextFunction) => {

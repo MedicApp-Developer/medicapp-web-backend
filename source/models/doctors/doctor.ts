@@ -26,7 +26,7 @@ const DoctorSchema: Schema = new Schema(
             index: false
         },
         specialityId: {
-            type: Schema.Types.ObjectId,
+            type: [Schema.Types.ObjectId],
             ref: "Speciality",
             index: false
         },

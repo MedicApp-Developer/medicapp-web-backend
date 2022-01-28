@@ -1,6 +1,6 @@
-import mongoose, { Schema } from 'mongoose';
-import { Roles } from '../../constants/roles';
-import IHospital from '../../interfaces/hospitals/hospital';
+import mongoose, { Schema } from 'mongoose'
+import { Roles } from '../../constants/roles'
+import IHospital from '../../interfaces/hospitals/hospital'
 
 const HospitalSchema: Schema = new Schema(
     {
@@ -21,7 +21,7 @@ const HospitalSchema: Schema = new Schema(
             required: false
         },
         category: {
-            type: Schema.Types.ObjectId,
+            type: [Schema.Types.ObjectId],
             ref: "Category",
             index: false
         },
@@ -35,7 +35,7 @@ const HospitalSchema: Schema = new Schema(
             required: false,
             default: Roles.HOSPITAL,
         },
-        tradeLicenseNo: { 
+        tradeLicenseNo: {
             type: String,
             required: true
         },
@@ -56,11 +56,11 @@ const HospitalSchema: Schema = new Schema(
                 type: String,
                 enum: ['Point'],
                 default: 'Point',
-              },
-              coordinates: {
+            },
+            coordinates: {
                 type: [Number],
                 default: [0, 0],
-              }
+            }
         },
         address: {
             type: String,
@@ -74,7 +74,7 @@ const HospitalSchema: Schema = new Schema(
             type: Number,
         },
         images: {
-             type: [String]
+            type: [String]
         },
         about: {
             type: String
@@ -92,9 +92,9 @@ const HospitalSchema: Schema = new Schema(
     {
         timestamps: true
     }
-);
+)
 
 // On MongoDB Atlas create index { location: '2dsphere' }
-HospitalSchema.index({ location: '2dsphere' });
+HospitalSchema.index({ location: '2dsphere' })
 
-export default mongoose.model<IHospital>('Hospital', HospitalSchema);
+export default mongoose.model<IHospital>('Hospital', HospitalSchema)
