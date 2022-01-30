@@ -9,12 +9,12 @@ import generateSickLeaveDocument from '../documents/SickLeave'
 const NAMESPACE = "Sick Leaves"
 
 const createLeave = async (req: Request, res: Response, next: NextFunction) => {
-	const { days, description, patientId, doctorId } = req.body
+	const { from, to, description, patientId, doctorId } = req.body
 
 	try {
 
 		const leaves = new Leave({
-			days: parseInt(days), description, patientId, doctorId, issuedDate: new Date().toISOString()
+			from, to, description, patientId, doctorId, issuedDate: new Date().toISOString()
 		})
 
 		await leaves.save()
@@ -46,6 +46,7 @@ const downloadSickLeave = async (req: Request, res: Response, next: NextFunction
 		const leaves = await Leave.find({ _id: id }).populate({
 			path: 'doctorId',
 			populate: [
+				{ path: 'specialityId' },
 				{ path: 'hospitalId' }
 			]
 		}).populate("patientId")

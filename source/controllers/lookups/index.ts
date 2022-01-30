@@ -24,7 +24,7 @@ const MONGO = {
 }
 
 const gender = [
-	{ name: "Male" },
+	{ name_en: "Male", name_ar: "ذكر" },
 	{ name: "Female" },
 	{ name: "Other" }
 ]

@@ -17,8 +17,12 @@ const LeaveSchema: Schema = new Schema(
 			type: String,
 			required: true
 		},
-		days: {
-			type: Number,
+		from: {
+			type: String,
+			required: true
+		},
+		to: {
+			type: String,
 			required: true
 		},
 		description: {

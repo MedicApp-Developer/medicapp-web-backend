@@ -4,6 +4,7 @@ export default interface ILeave extends Document {
 	patientId: string
 	doctorId: string
 	issuedDate: string
-	days: number
+	from: string
+	to: string
 	description: string
 }

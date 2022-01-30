@@ -13,6 +13,8 @@ export function getAge(dateString: any) {
 
 const generateSickLeaveDocument = (leave: any) => {
 	const todayDate = moment(new Date()).format("YYYY/MM/DD")
+	const fromDate = moment(leave?.from).format("YYYY/MM/DD")
+	const toDate = moment(leave?.to).format("YYYY/MM/DD")
 	return `
 		<!DOCTYPE html>
 		<html>
@@ -90,7 +92,8 @@ const generateSickLeaveDocument = (leave: any) => {
   
   <h1 class="underline center heading">Sick Leave</h1>
   <p>Doctor's diagnose and remarks: ${leave?.description}</p>
-  <p>Days Of Leave: ${leave?.days}</p>
+  <p>From: ${fromDate}</p>
+  <p>To: ${toDate}</p>
   <div class="imageContainer">
       <img src="https://res.cloudinary.com/dsimhetcs/image/upload/v1642879618/jvk6lifa3ixqulihbdci.png" class="image" />
   </div>
