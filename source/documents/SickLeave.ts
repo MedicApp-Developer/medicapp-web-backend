@@ -12,6 +12,7 @@ export function getAge(dateString: any) {
 }
 
 const generateSickLeaveDocument = (leave: any) => {
+	console.log("leave => ", leave)
 	const todayDate = moment(new Date()).format("YYYY/MM/DD")
 	const fromDate = moment(leave?.from).format("YYYY/MM/DD")
 	const toDate = moment(leave?.to).format("YYYY/MM/DD")
@@ -100,7 +101,7 @@ const generateSickLeaveDocument = (leave: any) => {
   
   <div class="signature">
     <p> <span class="bold space">Doctor:</span> <span class="underline-signature">${leave?.doctorId?.firstName + " " + leave?.doctorId?.lastName}</span></p>
-    <p><span class="bold space">Hospital:</span> <span class="underline-signature">${leave?.doctorId?.hospitalId?.firstName + " " + leave?.doctorId?.hospitalId?.lastName}</span></p>
+    <p><span class="bold space">Hospital:</span> <span class="underline-signature">${leave?.doctorId?.hospitalId?.name}</span></p>
     <p><span class="bold space">Signature:</span> <span class="underline-signature">${leave?.doctorId?.firstName + " " + leave?.doctorId?.lastName}<span/></p>
   </div>
   <br/>
