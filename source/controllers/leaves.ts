@@ -30,7 +30,13 @@ const createLeave = async (req: Request, res: Response, next: NextFunction) => {
 const getSickLeaves = async (req: Request, res: Response, next: NextFunction) => {
 	const { id } = req.params
 	try {
-		const leaves = await Leave.find({ patientId: id }).populate("doctorId")
+		const leaves = await Leave.find({ patientId: id }).populate({
+			path: 'doctorId',
+			populate: [
+				{ path: 'specialityId' },
+				{ path: 'hospitalId' }
+			]
+		}).populate("patientId")
 
 		return makeResponse(res, 200, "Leaves", leaves, false)
 
