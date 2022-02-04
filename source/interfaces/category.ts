@@ -1,5 +1,6 @@
-import { Document } from 'mongoose';
+import { Document } from 'mongoose'
 
 export default interface ICategory extends Document {
-    name: string;
+    name_en: string
+    name_ar: string
 }

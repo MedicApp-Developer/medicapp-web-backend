@@ -1,6 +1,7 @@
-import { Document } from 'mongoose';
+import { Document } from 'mongoose'
 
 export default interface ISpeciality extends Document {
-    name: string;
-    logo: string;
+    name_ar: string
+    name_en: string
+    logo: string
 }

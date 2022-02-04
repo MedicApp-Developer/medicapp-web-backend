@@ -3,7 +3,11 @@ import ILookup from '../../interfaces/lookups/lookup'
 
 const CountrySchema: Schema = new Schema(
 	{
-		name: {
+		name_en: {
+			type: String,
+			required: true
+		},
+		name_ar: {
 			type: String,
 			required: true
 		}

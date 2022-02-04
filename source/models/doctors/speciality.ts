@@ -1,9 +1,13 @@
-import mongoose, { Schema } from 'mongoose';
-import ISpeciality from '../../interfaces/doctors/speciality';
+import mongoose, { Schema } from 'mongoose'
+import ISpeciality from '../../interfaces/doctors/speciality'
 
 const SpecialitySchema: Schema = new Schema(
     {
-        name: {
+        name_ar: {
+            type: String,
+            required: true
+        },
+        name_en: {
             type: String,
             required: true
         },
@@ -19,6 +23,6 @@ const SpecialitySchema: Schema = new Schema(
     {
         timestamps: true
     }
-);
+)
 
-export default mongoose.model<ISpeciality>('Speciality', SpecialitySchema);
+export default mongoose.model<ISpeciality>('Speciality', SpecialitySchema)

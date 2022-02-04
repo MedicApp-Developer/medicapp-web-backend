@@ -2,7 +2,7 @@ import moment from 'moment'
 
 const generateAppointmentSlip = (slot: any) => {
 	const appointmentDate = moment(slot?.from).format("YYYY/MM/DD")
-	const appointmentTime = moment(slot?.from).format('HH:mm')
+	const appointmentTime = moment(slot?.from).format('HH:mm a')
 	const todayDate = moment(new Date()).format("YYYY/MM/DD")
 	return `
 		<!DOCTYPE html>
