@@ -9,7 +9,7 @@ const router = express.Router()
 router.get('/', controller.getAllSpeciality)
 router.get('/:id', extractJWT, controller.getSingleSpeciality)
 router.post('/', upload.single("image"), controller.createSpeciality)
-router.put('/:id', extractJWT, controller.updateSpeciality)
+router.put('/:id', upload.single("image"), extractJWT, controller.updateSpeciality)
 router.delete('/:id', extractJWT, controller.deleteSpeciality)
 
 export = router

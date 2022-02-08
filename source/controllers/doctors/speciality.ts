@@ -75,11 +75,21 @@ const getSingleSpeciality = (req: Request, res: Response, next: NextFunction) =>
         })
 }
 
-const updateSpeciality = (req: Request, res: Response, next: NextFunction) => {
+const updateSpeciality = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params
 
+    // @ts-ignore
+    cloudinary.v2.config({
+        cloud_name: config.cloudinary.name,
+        api_key: config.cloudinary.apiKey,
+        api_secret: config.cloudinary.secretKey
+    })
+
+    // @ts-ignore
+    const result = await cloudinary.uploader.upload(req.file.path)
+
     const filter = { _id: id }
-    let update = { ...req.body }
+    let update = { name_en: req.body.name_en, name_ar: req.body.name_ar, tags: req.body.tags, logo: result.url }
 
     Speciality.findOneAndUpdate(filter, update).then(updatedSpeciality => {
         return makeResponse(res, 200, "Speciality updated Successfully", updatedSpeciality, false)
