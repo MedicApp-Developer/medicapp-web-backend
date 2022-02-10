@@ -109,10 +109,10 @@ const getHospitalDetail = async (req: Request, res: Response, next: NextFunction
             // @ts-ignore
             hospitalDoctors?.forEach((doctor) => {
                 // @ts-ignore
-                if (specialities.filter(sp => sp === doctor?.specialityId?.name).length === 0) {
+                if (specialities.filter(sp => sp === doctor?.specialityId?.name_en).length === 0) {
                     // @ts-ignore
                     doctor?.specialityId?.forEach((element: any) => {
-                        specialities.push(element.name)
+                        specialities.push(element.name_en)
                     })
 
                 }
