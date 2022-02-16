@@ -13,6 +13,11 @@ import Doctor from '../../models/doctors/doctor'
 import Speciality from '../../models/doctors/speciality'
 import { SERVER_ERROR_CODE } from '../../constants/statusCode'
 import cloudinary from 'cloudinary'
+import Slot from '../../models/doctors/slot'
+import path from 'path'
+import pdf from 'html-pdf'
+import generateHospitalFinanceReport from '../../documents/HospitalFinanceReport'
+import { SlotStatus } from '../../constants/slot'
 
 const NAMESPACE = "Hospital"
 
@@ -109,10 +114,10 @@ const getHospitalDetail = async (req: Request, res: Response, next: NextFunction
             // @ts-ignore
             hospitalDoctors?.forEach((doctor) => {
                 // @ts-ignore
-                if (specialities.filter(sp => sp === doctor?.specialityId?.name_en).length === 0) {
+                if (specialities.filter(sp => sp.name_en === doctor?.specialityId?.name_en).length === 0) {
                     // @ts-ignore
                     doctor?.specialityId?.forEach((element: any) => {
-                        specialities.push(element.name_en)
+                        specialities.push(element)
                     })
 
                 }
@@ -265,6 +270,50 @@ const getHospitalDoctors = async (req: Request, res: Response, next: NextFunctio
     }
 }
 
+const getHospitalFinanceData = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const hospital = await Hospital.find({ _id: req.params.hospitalId });
+        const appointments = await Slot.find({ hospitalId: req.params.hospitalId });
+
+        return makeResponse(res, 200, "Hospital Finance Data", { hospital, appointments }, false)
+
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
+const getHospitalFinanceReport = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { fromDate, toDate, hospitalId } = req.body;
+
+        const hospital = await Hospital.find({ _id: hospitalId });
+        const appointments = await Slot.find({
+            // @ts-ignore
+            hospitalId,
+            from: {
+                $gte: new Date(new Date(fromDate).setHours(0o0, 0o0, 0o0)),
+                $lt: new Date(new Date(toDate).setHours(23, 59, 59))
+            },
+            status: SlotStatus.BOOKED
+        }).populate("patientId");
+
+        pdf.create(generateHospitalFinanceReport(hospital[0], appointments, fromDate, toDate), {}).toFile('Hospital Finance Report.pdf', (err) => {
+            if (err) {
+                return Promise.reject()
+            }
+
+            return Promise.resolve().then(result => {
+                res.sendFile(path.resolve('Hospital Finance Report.pdf'))
+            })
+        })
+
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
 export default {
     createHospital,
     getAllHospitals,
@@ -275,5 +324,7 @@ export default {
     uploadHospitalImages,
     filterHospital,
     getHospitalDetail,
-    getHospitalDoctors
+    getHospitalDoctors,
+    getHospitalFinanceData,
+    getHospitalFinanceReport
 }
