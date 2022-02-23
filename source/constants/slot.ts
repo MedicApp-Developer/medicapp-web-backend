@@ -7,5 +7,5 @@ export class SlotTypes {
     public static DOCTOR: string = "DOCTOR"; // DEFAULT
     public static PCR_TEST: string = "PCR_TEST";
     public static PCR_VACCINATION: string = "PCR_VACCINATION";
+    public static MEDICAPP_PCR: string = "MEDICAPP_PCR";
 }
-  

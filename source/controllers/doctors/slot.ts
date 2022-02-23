@@ -37,6 +37,56 @@ const createSlot = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const createMedicappSlot = async (req: Request, res: Response, next: NextFunction) => {
+    const { from, to, patientId, description, familyMemberId } = req.body
+
+    if (!(from && to && patientId)) {
+        return makeResponse(res, 400, "Validation Failed", null, true)
+    }
+
+    try {
+        const newSlot = new Slot({
+            from: new Date(from), to: new Date(to), type: SlotTypes.MEDICAPP_PCR, patientId, description, familyMemberId, status: SlotStatus.BOOKED
+        })
+        newSlot.save().then(result => {
+            return makeResponse(res, 200, "MEDICAPP Slot Created", result, false)
+        }).catch(err => {
+            return makeResponse(res, 400, "Problem while creating the slot", null, true)
+        })
+    } catch (err) {
+        // @ts-ignore
+        return makeResponse(res, 400, err.message, null, true)
+    }
+}
+
+const getPatientMedicappBookedSlots = async (req: Request, res: Response, next: NextFunction) => {
+    const { patientId } = req.params
+    const { startDate, endDate } = req.body
+
+    try {
+        if (startDate === undefined || endDate === undefined) {
+            const slots = await Slot.find({ status: SlotStatus.BOOKED, patientId, type: SlotTypes.MEDICAPP_PCR }).populate('patientId').populate('familyMemberId')
+            return makeResponse(res, 201, "Patient's MEDICAPP Available Slots", slots, false)
+        } else {
+            const slots = await Slot.find({
+                // @ts-ignore
+                status: SlotStatus.BOOKED,
+                patientId,
+                type: SlotTypes.MEDICAPP_PCR,
+                to: {
+                    // @ts-ignore
+                    $gte: new Date(new Date(startDate).setHours(0o0, 0o0, 0o0)),
+                    $lte: new Date(new Date(endDate).setHours(23, 59, 59))
+                }
+            }).populate('patientId').populate('familyMemberId')
+            return makeResponse(res, 201, "Patient's MEDICAPP Booked Slots", slots, false)
+        }
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
 const getDoctorAvailableSlots = async (req: Request, res: Response, next: NextFunction) => {
     const { doctorId } = req.params
     const { startDate, endDate } = req.body
@@ -203,5 +253,7 @@ export default {
     getDoctorBookedSlots,
     getHospitalPCRTestSlots,
     getHospitalPCRVaccinationSlots,
-    getAppointmentSlip
+    getAppointmentSlip,
+    createMedicappSlot,
+    getPatientMedicappBookedSlots
 }

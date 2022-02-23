@@ -11,5 +11,7 @@ router.post('/booked/doctor/:doctorId', extractJWT, controller.getDoctorBookedSl
 router.post('/PCRTests/hospital/:hospitalId', extractJWT, controller.getHospitalPCRTestSlots)
 router.post('/PCRVaccination/hospital/:hospitalId', extractJWT, controller.getHospitalPCRVaccinationSlots)
 router.get('/appointmentSlip/:id', extractJWT, controller.getAppointmentSlip)
+router.post('/medicapp', extractJWT, controller.createMedicappSlot);
+router.post('/patient/booked/:patientId', extractJWT, controller.getPatientMedicappBookedSlots);
 
 export = router

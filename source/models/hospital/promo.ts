@@ -11,10 +11,6 @@ const PromoSchema: Schema = new Schema(
             type: String,
             required: true
         },
-        key: {
-            type: String,
-            required: true
-        },
         likes: {
             type: Number,
             required: true,
