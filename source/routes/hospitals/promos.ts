@@ -6,6 +6,7 @@ import upload from '../../functions/multerCloudinary';
 const router = express.Router();
 
 router.get('/', isHospital, controller.getAllPromos);
+router.get('/all', isHospital, controller.getAllPromoVideos);
 router.post('/', isHospital, upload.single("video"), controller.createPromo);
 router.delete('/:id', isHospital, controller.deletePromo);
 

@@ -72,6 +72,21 @@ const getAllPromos = async (req: Request, res: Response, next: NextFunction) => 
     })
 };
 
+const getAllPromoVideos = async (req: Request, res: Response, next: NextFunction) => {
+  // @ts-ignore
+  const page = parseInt(req.query.page || "0");
+
+  const total = await Promos.find({}).countDocuments({});
+
+  Promos.find({}).populate("hospitalId").limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+    .then((result: any) => {
+      return makeResponse(res, 200, "All Promo Videos", { totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), videos: result }, false);
+    })
+    .catch((err: any) => {
+      return makeResponse(res, 400, err.message, null, true);
+    })
+};
+
 const deletePromo = async (req: Request, res: Response, next: NextFunction) => {
   const _id = req.params.id;
   try {
@@ -86,5 +101,6 @@ const deletePromo = async (req: Request, res: Response, next: NextFunction) => {
 export default {
   createPromo,
   getAllPromos,
-  deletePromo
+  deletePromo,
+  getAllPromoVideos
 };
