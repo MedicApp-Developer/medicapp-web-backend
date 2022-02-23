@@ -76,11 +76,14 @@ const getAllPromoVideos = async (req: Request, res: Response, next: NextFunction
   // @ts-ignore
   const page = parseInt(req.query.page || "0");
 
+  // @ts-ignore
+  const limit = parseInt(req.query.limit || "4")
+
   const total = await Promos.find({}).countDocuments({});
 
-  Promos.find({}).populate("hospitalId").limit(Pagination.PAGE_SIZE).skip(Pagination.PAGE_SIZE * page)
+  Promos.find({}).populate("hospitalId").limit(Pagination.PAGE_SIZE).skip(limit * page)
     .then((result: any) => {
-      return makeResponse(res, 200, "All Promo Videos", { totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), videos: result }, false);
+      return makeResponse(res, 200, "All Promo Videos", { totalItems: total, totalPages: Math.ceil(total / limit), videos: result }, false);
     })
     .catch((err: any) => {
       return makeResponse(res, 400, err.message, null, true);
