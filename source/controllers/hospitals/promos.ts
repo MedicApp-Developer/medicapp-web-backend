@@ -81,7 +81,15 @@ const getAllPromoVideos = async (req: Request, res: Response, next: NextFunction
 
   const total = await Promos.find({}).countDocuments({});
 
-  Promos.find({}).populate("hospitalId").limit(Pagination.PAGE_SIZE).skip(limit * page)
+  Promos.find({})
+    .populate({
+      path: 'hospitalId',
+      populate: [
+        { path: 'category' },
+        { path: 'services' }
+      ]
+    })
+    .limit(Pagination.PAGE_SIZE).skip(limit * page)
     .then((result: any) => {
       return makeResponse(res, 200, "All Promo Videos", { totalItems: total, totalPages: Math.ceil(total / limit), videos: result }, false);
     })
