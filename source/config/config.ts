@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-/*** Server ***/ 
+/*** Server ***/
 const SERVER_HOSTNAME = process.env.SERVER_HOSTNAME;
 const SERVER_PORT = process.env.PORT;
 const SERVER_TOKEN_EXPIRETIME = process.env.SERVER_TOKEN_EXPIRETIME;
@@ -34,7 +34,8 @@ const MONGO_OPTIONS = {
     keepAlive: true,
     poolSize: 50,
     autoIndex: false,
-    retryWrites: false
+    retryWrites: false,
+    useFindAndModify: false
 };
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME;

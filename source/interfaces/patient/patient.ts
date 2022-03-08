@@ -24,4 +24,5 @@ export default interface IPatient extends Document {
     heartRate: string;
     doctors?: string;
     image: string;
+    points: number;
 }

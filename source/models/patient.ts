@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import { Roles } from '../constants/roles';
-import IPatient from '../interfaces/patient';
+import IPatient from '../interfaces/patient/patient';
 
 const PatientSchema: Schema = new Schema(
     {
@@ -8,11 +8,11 @@ const PatientSchema: Schema = new Schema(
             type: String,
             required: true
         },
-        lastName: { 
+        lastName: {
             type: String,
             required: true
         },
-        email: { 
+        email: {
             type: String,
             required: true
         },
@@ -98,7 +98,7 @@ const PatientSchema: Schema = new Schema(
             type: String,
             required: false,
             default: null
-        }, 
+        },
         heartRate: {
             type: String,
             required: false,
@@ -113,6 +113,11 @@ const PatientSchema: Schema = new Schema(
             type: String,
             required: false,
             default: null
+        },
+        points: {
+            type: Number,
+            required: false,
+            default: 0
         }
     },
     {

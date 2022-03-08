@@ -5,6 +5,7 @@ import { Pagination } from '../constants/pagination'
 import { PARAMETER_MISSING_CODE, RECORD_NOT_FOUND, SERVER_ERROR_CODE } from '../constants/statusCode'
 import Slot from '../models/doctors/slot'
 import { SlotStatus, SlotTypes } from '../constants/slot'
+import Patient from '../models/patient'
 
 const NAMESPACE = "Appointment"
 
@@ -116,6 +117,13 @@ const deletePatientAppointment = async (req: Request, res: Response, next: NextF
     const patientId = req.params.patientId
     try {
 
+        const slot = await Slot.findById({ _id });
+
+        // @ts-ignore
+        if (slot.status === SlotStatus.APPROVED) {
+            await Patient.findOneAndUpdate({ _id: patientId }, { $inc: { points: -20 } }, { new: true })
+        }
+
         const filter = { _id }
         let update = { patientId: null, status: SlotStatus.AVAILABLE, description: "", familyMemberId: null }
 
@@ -194,6 +202,67 @@ export const getDoctorAppointments = async (req: Request, res: Response, next: N
         })
 }
 
+export const getDoctorApprovedAppointments = async (req: Request, res: Response, next: NextFunction) => {
+    const { doctorId } = req.params
+    // @ts-ignore
+    const page = parseInt(req.query.page || "0")
+    const total = await Slot.find({ doctorId, status: SlotStatus.APPROVED }).countDocuments({})
+
+    Slot.find({ doctorId, status: SlotStatus.APPROVED })
+        .populate("patientId")
+        .populate("familyMemberId")
+        .populate("doctorId")
+        .limit(Pagination.PAGE_SIZE)
+        .skip(Pagination.PAGE_SIZE * page)
+        .then(appointments => {
+            return makeResponse(res, 200, "Doctor Approved Appointments", { totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), appointments }, false)
+        }).catch(err => {
+            return res.sendStatus(400)
+        })
+}
+
+export const getAllHospitalBookedAppointments = async (req: Request, res: Response, next: NextFunction) => {
+    const { hospitalId } = req.params
+    // @ts-ignore
+    const page = parseInt(req.query.page || "0")
+    const total = await Slot.find({ hospitalId, status: SlotStatus.BOOKED }).countDocuments({})
+
+    Slot.find({ hospitalId, status: SlotStatus.BOOKED })
+        .populate("patientId")
+        .populate("familyMemberId")
+        .populate("doctorId")
+        .limit(Pagination.PAGE_SIZE)
+        .skip(Pagination.PAGE_SIZE * page)
+        .then(appointments => {
+            return makeResponse(res, 200, "Hospital's Appointments", { totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), appointments }, false)
+        }).catch(err => {
+            return res.sendStatus(400)
+        })
+}
+
+export const approvePatientAppointment = async (req: Request, res: Response, next: NextFunction) => {
+    const { slotId, patientId } = req.params
+    // @ts-ignore
+
+    if (slotId && patientId) {
+        try {
+            const filter = { _id: slotId }
+            let update = { status: SlotStatus.APPROVED }
+
+            // @ts-ignore
+            await Slot.findOneAndUpdate(filter, update, { upsert: true });
+
+            await Patient.findOneAndUpdate({ _id: patientId }, { $inc: { points: 20 } }, { new: true })
+
+            return makeResponse(res, 200, "Hospital's Appointments", null, false)
+        } catch (err) {
+            return sendErrorResponse(res, 400, "Validation Failed Error", SERVER_ERROR_CODE)
+        }
+    } else {
+        return sendErrorResponse(res, 400, "Parameter missing", PARAMETER_MISSING_CODE)
+    }
+}
+
 export default {
     createAppointment,
     getAllAppointments,
@@ -203,5 +272,8 @@ export default {
     getHospitalAppointments,
     getDoctorAppointments,
     deletePatientAppointment,
-    cancelAppointment
+    cancelAppointment,
+    getAllHospitalBookedAppointments,
+    approvePatientAppointment,
+    getDoctorApprovedAppointments
 }

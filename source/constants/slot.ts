@@ -1,6 +1,7 @@
 export class SlotStatus {
     public static AVAILABLE: string = "AVAILABLE";
     public static BOOKED: string = "BOOKED";
+    public static APPROVED: string = "APPROVED";
 }
 
 export class SlotTypes {

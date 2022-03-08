@@ -25,18 +25,18 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
 const register = async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, email, password } = req.body;
 
-    if(!firstName || !lastName || !email || !password){
+    if (!firstName || !lastName || !email || !password) {
         return sendErrorResponse(res, 400, "Parameter missing", PARAMETER_MISSING_CODE);
     }
 
     await User.find({ email }).exec().then(user => {
-        if(user.length > 0){
+        if (user.length > 0) {
             return sendErrorResponse(res, 400, "User with this email already exists", DUPLICATE_VALUE_CODE);
         }
 
         // If email is valid
         bcryptjs.hash(password, 10, async (hashError, hash) => {
-            if(hashError){
+            if (hashError) {
                 return false;
             }
 
@@ -52,7 +52,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
             });
 
             _user.save().then(user => {
-                return makeResponse(res, 200, "Authentication Successful", {user: user}, false);
+                return makeResponse(res, 200, "Authentication Successful", { user: user }, false);
             }).catch(err => console.log(err));
         });
     });
@@ -65,7 +65,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
     // Check validation
     if (!isValid) {
         // @ts-ignore
-        return sendErrorResponse(res, 400, Object.values(errors)[0] , Object.values(errors)[0].includes("invalid") ? INVALID_VALUE_CODE : PARAMETER_MISSING_CODE);
+        return sendErrorResponse(res, 400, Object.values(errors)[0], Object.values(errors)[0].includes("invalid") ? INVALID_VALUE_CODE : PARAMETER_MISSING_CODE);
     }
 
     let { email, password } = req.body;
@@ -73,29 +73,29 @@ const login = (req: Request, res: Response, next: NextFunction) => {
     User.find({ email })
         .exec()
         .then(async users => {
-            if(users.length !== 1){
+            if (users.length !== 1) {
                 return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
             }
 
             bcryptjs.compare(password, users[0].password, (error, result) => {
-                if(!result){
+                if (!result) {
                     return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
-                }else if(result){
+                } else if (result) {
                     signJWT(users[0], async (_error, token) => {
-                        if(_error){
+                        if (_error) {
                             logging.error(NAMESPACE, 'Unable to sign token: ', _error);
                             return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
-                        }else if(token){ 
-                            if(users[0].role === Roles.PATIENT) {
+                        } else if (token) {
+                            if (users[0].role === Roles.PATIENT) {
                                 const patient = await Patient.findById(users[0].referenceId);
                                 const familyMembers = await Family.find({ patientId: users[0].referenceId });
                                 const bookmarks = await Bookmark.find({ user: users[0]._id }).select("hospitalIds doctorIds");
-                                return makeResponse(res, 200, "Authentication Successful", {bookmarks: bookmarks.length > 0 ? bookmarks[0] : { doctorIds: [], hospitalIds: [] }, user: patient, familyMembers: familyMembers.length > 0 ? familyMembers : [], token: token}, false);
-                            }else if(users[0].role === Roles.HOSPITAL) {
-                                    const hospital = await Hospital.findById(users[0].referenceId);
-                                    return makeResponse(res, 200, "Authentication Successful", {user: users[0], hospital, token: token}, false);
-                            }else {
-                                return makeResponse(res, 200, "Authentication Successful", {user: users[0], token: token}, false);
+                                return makeResponse(res, 200, "Authentication Successful", { bookmarks: bookmarks.length > 0 ? bookmarks[0] : { doctorIds: [], hospitalIds: [] }, user: patient, familyMembers: familyMembers.length > 0 ? familyMembers : [], token: token }, false);
+                            } else if (users[0].role === Roles.HOSPITAL) {
+                                const hospital = await Hospital.findById(users[0].referenceId);
+                                return makeResponse(res, 200, "Authentication Successful", { user: users[0], hospital, token: token }, false);
+                            } else {
+                                return makeResponse(res, 200, "Authentication Successful", { user: users[0], token: token }, false);
                             }
                         }
                     })
@@ -107,13 +107,13 @@ const login = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
- User.find().select("-password").exec()
-    .then(users => {
-        return makeResponse(res, 200, "Users List", users, false);
-    })
-    .catch(error => {
-        return makeResponse(res, 400, error.message, null, true);
-    })
+    User.find().select("-password").exec()
+        .then(users => {
+            return makeResponse(res, 200, "Users List", users, false);
+        })
+        .catch(error => {
+            return makeResponse(res, 400, error.message, null, true);
+        })
 };
 
 const deleteUser = (req: Request, res: Response, next: NextFunction) => {
@@ -126,13 +126,13 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
 
 const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, emiratesId: string, role: string, referenceId: string) => {
     await User.find({ email }).exec().then(user => {
-        if(user.length > 0){
+        if (user.length > 0) {
             return false;
         }
 
         // If email is valid
         bcryptjs.hash(password, 10, async (hashError, hash) => {
-            if(hashError){
+            if (hashError) {
                 return false;
             }
 
@@ -154,13 +154,13 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
 
 const createPatientUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, phoneNo: string, emiratesId: string, role: string, referenceId: string) => {
     await User.find({ email }).exec().then(user => {
-        if(user.length > 0){
+        if (user.length > 0) {
             return false;
         }
 
         // If email is valid
         bcryptjs.hash(password, 10, async (hashError, hash) => {
-            if(hashError){
+            if (hashError) {
                 return false;
             }
 
@@ -179,20 +179,20 @@ const createPatientUserFromEmailAndPassword = async (req: Request, res: Response
             _user.save().then(createdUser => {
                 // @ts-ignore
                 signJWT(createdUser, (_error, token) => {
-                    if(_error){
+                    if (_error) {
                         logging.error(NAMESPACE, 'Unable to sign token: ', _error);
                         return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
-                    }else if(token){
-                        return makeResponse(res, 200, "Patient registered successfully", {user: createdUser, token: token}, false);
+                    } else if (token) {
+                        return makeResponse(res, 200, "Patient registered successfully", { user: createdUser, token: token }, false);
                     }
-                })            
+                })
             });
         });
     });
 }
-    
+
 const deleteUserWithEmail = async (email: string) => {
-     User.deleteOne({ email }).then(user => {
+    User.deleteOne({ email }).then(user => {
         return true;
     }).catch(err => {
         return false;
@@ -200,27 +200,27 @@ const deleteUserWithEmail = async (email: string) => {
 }
 
 const updateUser = async (req: Request, res: Response, id: string, user: any) => {
-    
-    let update = {...req.body};
 
-    if(req.body.password) {
+    let update = { ...req.body };
+
+    if (req.body.password) {
         const hash = await bcryptjs.hash(user.password, 10);
         update = { ...update, password: hash }
-    }else {
+    } else {
         delete update.password;
     }
 
-    User.findOneAndUpdate({_id: id}, { ...update }).then(updatedHospital => {
+    User.findOneAndUpdate({ _id: id }, { ...update }).then(updatedHospital => {
         return true;
     }).catch(err => {
         return false;
     });
 }
 
-export default { 
-    validateToken, 
-    login, 
-    register, 
+export default {
+    validateToken,
+    login,
+    register,
     getAllUsers,
     deleteUser,
     createUserFromEmailAndPassword,

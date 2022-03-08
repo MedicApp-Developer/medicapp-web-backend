@@ -169,6 +169,19 @@ const getDoctorAllSlots = async (req: Request, res: Response, next: NextFunction
     }
 }
 
+const getDoctorApprovedSlots = async (req: Request, res: Response, next: NextFunction) => {
+    const { doctorId } = req.params
+
+    try {
+        const slots = await Slot.find({ doctorId, status: SlotStatus.APPROVED }).populate('doctorId').populate('hospitalId').populate('patientId').populate('familyMemberId')
+        return makeResponse(res, 201, "Doctor's Approved Slots", slots, false)
+
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
 const getHospitalPCRTestSlots = async (req: Request, res: Response, next: NextFunction) => {
     const { hospitalId } = req.params
     const { startDate, endDate } = req.body
@@ -246,6 +259,28 @@ const getAppointmentSlip = async (req: Request, res: Response, next: NextFunctio
     }
 }
 
+const cancelMedicappAppointment = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params
+
+    try {
+        const slot = await Slot.deleteOne({ _id: id });
+        return makeResponse(res, 200, "Appointment cancelled successfully", slot, false)
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
+const getAllMedicappBookedAppointments = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const slots = await Slot.find({ type: SlotTypes.MEDICAPP_PCR, status: SlotStatus.BOOKED });
+        return makeResponse(res, 200, "Appointment cancelled successfully", slots, false)
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
 export default {
     createSlot,
     getDoctorAllSlots,
@@ -255,5 +290,8 @@ export default {
     getHospitalPCRVaccinationSlots,
     getAppointmentSlip,
     createMedicappSlot,
-    getPatientMedicappBookedSlots
+    getPatientMedicappBookedSlots,
+    cancelMedicappAppointment,
+    getAllMedicappBookedAppointments,
+    getDoctorApprovedSlots
 }
