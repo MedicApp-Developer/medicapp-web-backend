@@ -9,4 +9,5 @@ export default interface IVendor extends Document {
 	role: string;
 	about: string;
 	referenceId: string;
+	vendorId: string;
 }

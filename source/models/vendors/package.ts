@@ -18,6 +18,10 @@ const PackageSchema: Schema = new Schema(
 			type: String,
 			required: false
 		},
+		subscribedCount: {
+			type: Number,
+			default: 0
+		},
 		off: {
 			type: String
 		},

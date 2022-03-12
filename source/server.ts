@@ -29,6 +29,7 @@ import lookupRoutes from './routes/lookups/apis'
 import leavesRoutes from './routes/leaves'
 import vendorsRoutes from './routes/vendors/vendors'
 import packagesRoutes from './routes/vendors/packages'
+import rewardsRoutes from './routes/rewards'
 import cors from 'cors'
 
 const NAMESPACE = 'Server'
@@ -107,6 +108,7 @@ router.use('/api/lookups', lookupRoutes)
 router.use('/api/leaves', leavesRoutes)
 router.use('/api/vendors', vendorsRoutes)
 router.use('/api/packages', packagesRoutes)
+router.use('/api/rewards', rewardsRoutes)
 
 // Simple Root Message
 router.get('/', (req, res) => {

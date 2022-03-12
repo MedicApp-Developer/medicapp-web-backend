@@ -11,4 +11,5 @@ export default interface IPackage extends Document {
 	termsAndConditions: string;
 	images: string[];
 	vendorId: string;
+	subscribedCount: number;
 }
