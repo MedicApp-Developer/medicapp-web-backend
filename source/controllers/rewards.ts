@@ -78,20 +78,15 @@ const getAllVendorRewards = async (req: Request, res: Response, next: NextFuncti
 
 const getPatientRewardsHomeData = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-
 		const packageCategories = [
 			"RESTAURANT",
 			"WELLNESS",
 			"HOTEL",
 			"RETAIL"
 		];
-
 		const popularPackages = await Package.find({ "subscribedCount": { $gt: 0 } }).sort('-subscribedCount').populate("vendorId");
-
 		const recommendedPackages = await Package.find({ "subscribedCount": { $lt: 1 } }).sort("-off").populate("vendorId");
-
 		return makeResponse(res, 200, "Rewards Home Data", { categories: packageCategories, popular: popularPackages, recommended: recommendedPackages }, false)
-
 	} catch (e) {
 		return res.sendStatus(400)
 	}
