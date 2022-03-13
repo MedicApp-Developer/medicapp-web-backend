@@ -9,6 +9,8 @@ import { getRandomPassword } from '../../functions/utilities'
 import config from '../../config/config'
 import { Pagination } from '../../constants/pagination'
 import Vendor from '../../models/vendors/vendor'
+import bcryptjs from 'bcryptjs';
+import cloudinary from 'cloudinary'
 
 const NAMESPACE = "Doctor"
 
@@ -71,10 +73,21 @@ const updateVendor = async (req: Request, res: Response, next: NextFunction) => 
 	try {
 		const update = JSON.parse(JSON.stringify({ ...req.body }))
 
-		const vendorFilter = { _id: id };
-		const userFilter = { referenceId: id };
+		if (!update.password) {
+			delete update.password;
+		} else {
+			bcryptjs.hash(update.password, 10, async (hashError, hash) => {
+				if (hashError) {
+					return false;
+				}
+				update.password = hash;
+				const userFilter = { referenceId: id };
 
-		await User.findOneAndUpdate(userFilter, update);
+				await User.findOneAndUpdate(userFilter, update);
+			})
+		}
+
+		const vendorFilter = { _id: id };
 
 		const vendor = await Vendor.findOneAndUpdate(vendorFilter, update);
 
@@ -97,9 +110,47 @@ const deleteVendor = async (req: Request, res: Response, next: NextFunction) => 
 	}
 }
 
+const getSingleVendors = async (req: Request, res: Response, next: NextFunction) => {
+	const { id } = req.params;
+	try {
+		const vendor = await Vendor.findById({ _id: id })
+		if (!vendor) return res.sendStatus(404)
+		return makeResponse(res, 200, "Vendor details", vendor, false)
+	} catch (e) {
+		return res.sendStatus(400)
+	}
+}
+
+const uploadVendorImages = async (req: Request, res: Response, next: NextFunction) => {
+	// @ts-ignore
+	cloudinary.v2.config({
+		cloud_name: config.cloudinary.name,
+		api_key: config.cloudinary.apiKey,
+		api_secret: config.cloudinary.secretKey
+	})
+
+	// @ts-ignore
+	const result = await cloudinary.uploader.upload(req.file.path)
+
+	const { id } = req.params
+
+	const filter = { _id: id }
+
+	// @ts-ignore
+	let update = { $push: { images: [result.url] } }
+
+	Vendor.update(filter, update).then((updatedVendor: any) => {
+		return makeResponse(res, 200, "Vendor image uploaded Successfully", updatedVendor, false)
+	}).catch((err: any) => {
+		return makeResponse(res, 400, err.message, null, true)
+	})
+}
+
 export default {
 	registerVendor,
 	getAllVendors,
 	deleteVendor,
-	updateVendor
+	updateVendor,
+	getSingleVendors,
+	uploadVendorImages
 }

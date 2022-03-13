@@ -27,6 +27,9 @@ const VendorSchema: Schema = new Schema(
 			type: String,
 			required: true
 		},
+		images: {
+			type: [String]
+		},
 		about: {
 			type: String
 		},

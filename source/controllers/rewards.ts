@@ -5,7 +5,8 @@ import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import Rewards from '../models/rewards';
 import { RewardStatus } from '../constants/rewards';
 import Package from '../models/vendors/package';
-
+import config from '../config/config';
+import { sendEmail } from '../functions/mailer'
 const NAMESPACE = "Rewards";
 
 const subscribePackage = async (req: Request, res: Response, next: NextFunction) => {
@@ -22,12 +23,22 @@ const subscribePackage = async (req: Request, res: Response, next: NextFunction)
 		// Update Subscribed Count
 		await Package.findOneAndUpdate({ _id: packageId }, { $inc: { subscribedCount: +1 } })
 
-		const packge = await Package.findById({ _id: packageId });
+		const packge = await Package.findById({ _id: packageId }).populate("vendorId");
 
 		const savedReward = await newReward.save();
 
 		// @ts-ignore
-		await Patient.findOneAndUpdate({ _id: patientId }, { $inc: { points: -packge.points } }, { new: true })
+		const patient = await Patient.findOneAndUpdate({ _id: patientId }, { $inc: { points: -packge.points } }, { new: true })
+
+		const options = {
+			from: config.mailer.user,
+			// @ts-ignore
+			to: patient.email,
+			subject: "Package Subscription",
+			// @ts-ignore
+			text: `You have successfully subscribed to ${packge.type === "ON_PERCENTAGE" ? packge.off + " % " + " off " : "BUY " + packge?.buyQuantity + " GET " + packge?.getQuantity} by ${packge.vendorId.firstName + " " + packge.vendorId.lastName} for ${packge?.points}`
+		}
+		sendEmail(options)
 
 		return makeResponse(res, 200, "Reward registered successfully", { reward: savedReward }, false);
 

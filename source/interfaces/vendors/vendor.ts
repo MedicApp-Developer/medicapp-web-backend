@@ -8,6 +8,7 @@ export default interface IVendor extends Document {
 	phoneNo: string;
 	role: string;
 	about: string;
+	images: string[];
 	referenceId: string;
 	vendorId: string;
 }
