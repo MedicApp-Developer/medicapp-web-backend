@@ -23,7 +23,7 @@ const subscribePackage = async (req: Request, res: Response, next: NextFunction)
 		// Update Subscribed Count
 		await Package.findOneAndUpdate({ _id: packageId }, { $inc: { subscribedCount: +1 } })
 
-		const packge = await Package.findById({ _id: packageId }).populate("vendorId");
+		const packge = await Package.findById({ _id: packageId }).populate("packageId").populate("patientId").populate("vendorId");
 
 		const savedReward = await newReward.save();
 
@@ -55,7 +55,7 @@ const approvePackage = async (req: Request, res: Response, next: NextFunction) =
 
 		const filter = { _id: id };
 
-		const reward = await Rewards.findOneAndUpdate(filter, update);
+		const reward = await Rewards.findOneAndUpdate(filter, update).populate("packageId").populate("patientId").populate("vendorId");
 
 		return makeResponse(res, 200, "Package approved", reward, false)
 	} catch (e) {
@@ -67,7 +67,7 @@ const getAllPatientRewards = async (req: Request, res: Response, next: NextFunct
 	const patientId = req.params.patientId
 	try {
 
-		const rewards = await Rewards.find({ patientId, status: RewardStatus.PENDING });
+		const rewards = await Rewards.find({ patientId, status: RewardStatus.PENDING }).populate("packageId").populate("patientId").populate("vendorId");
 
 		return makeResponse(res, 200, "Patient Subscribed Packages", rewards, false)
 	} catch (e) {
@@ -95,8 +95,8 @@ const getPatientRewardsHomeData = async (req: Request, res: Response, next: Next
 			"HOTEL",
 			"RETAIL"
 		];
-		const popularPackages = await Package.find({ "subscribedCount": { $gt: 0 } }).sort('-subscribedCount').populate("vendorId");
-		const recommendedPackages = await Package.find({ "subscribedCount": { $lt: 1 } }).sort("-off").populate("vendorId");
+		const popularPackages = await Package.find({ "subscribedCount": { $gt: 0 } }).sort('-subscribedCount').populate("packageId").populate("patientId").populate("vendorId");
+		const recommendedPackages = await Package.find({ "subscribedCount": { $lt: 1 } }).sort("-off").populate("packageId").populate("patientId").populate("vendorId");
 		return makeResponse(res, 200, "Rewards Home Data", { categories: packageCategories, popular: popularPackages, recommended: recommendedPackages }, false)
 	} catch (e) {
 		return res.sendStatus(400)

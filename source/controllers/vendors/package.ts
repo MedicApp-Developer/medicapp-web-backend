@@ -20,7 +20,7 @@ const createPackage = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 const getAllPackages = async (req: Request, res: Response, next: NextFunction) => {
-	Package.find({}).populate("vendorId")
+	Package.find({}).populate("packageId").populate("patientId").populate("vendorId")
 		.then((result: any) => {
 			return makeResponse(res, 200, "All Packages", result, false)
 		})
@@ -39,7 +39,7 @@ const updatePackage = async (req: Request, res: Response, next: NextFunction) =>
 
 		await Package.findOneAndUpdate(filter, update);
 
-		const newPackage = await Package.findById({ _id: id }).populate('vendorId');
+		const newPackage = await Package.findById({ _id: id }).populate("packageId").populate("patientId").populate("vendorId");
 
 		return makeResponse(res, 200, "Package updated Successfully", newPackage, false)
 
@@ -62,7 +62,7 @@ const deletePackage = async (req: Request, res: Response, next: NextFunction) =>
 const getSinglePackage = async (req: Request, res: Response, next: NextFunction) => {
 	const _id = req.params.id
 	try {
-		const result = await Package.findById({ _id }).populate('vendorId');
+		const result = await Package.findById({ _id }).populate("packageId").populate("patientId").populate("vendorId");
 		return makeResponse(res, 200, "Single Package", result, false)
 	} catch (e) {
 		return res.sendStatus(400)
@@ -72,7 +72,7 @@ const getSinglePackage = async (req: Request, res: Response, next: NextFunction)
 const getVendorPackages = async (req: Request, res: Response, next: NextFunction) => {
 	const vendorId = req.params.vendorId
 	try {
-		const result = await Package.find({ vendorId }).populate('vendorId');
+		const result = await Package.find({ vendorId }).populate("packageId").populate("patientId").populate("vendorId");
 		return makeResponse(res, 200, "Vendor Packages", result, false)
 	} catch (e) {
 		return res.sendStatus(400)
