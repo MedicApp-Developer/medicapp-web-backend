@@ -6,6 +6,7 @@ import { SERVER_ERROR_CODE } from '../../constants/statusCode'
 import pdf from 'html-pdf'
 import generateAppointmentSlip from '../../documents/AppointmentSlip'
 import path from 'path'
+import Patient from '../../models/patient'
 
 const NAMESPACE = "Slot"
 
@@ -48,11 +49,12 @@ const createMedicappSlot = async (req: Request, res: Response, next: NextFunctio
         const newSlot = new Slot({
             from: new Date(from), to: new Date(to), type: SlotTypes.MEDICAPP_PCR, patientId, description, familyMemberId, status: SlotStatus.BOOKED
         })
-        newSlot.save().then(result => {
-            return makeResponse(res, 200, "MEDICAPP Slot Created", result, false)
-        }).catch(err => {
-            return makeResponse(res, 400, "Problem while creating the slot", null, true)
-        })
+
+        await Patient.findOneAndUpdate({ _id: patientId }, { $inc: { points: 20 } }, { new: true })
+
+        const result = await newSlot.save();
+
+        return makeResponse(res, 200, "MEDICAPP Slot Created", result, false)
     } catch (err) {
         // @ts-ignore
         return makeResponse(res, 400, err.message, null, true)
@@ -264,6 +266,10 @@ const cancelMedicappAppointment = async (req: Request, res: Response, next: Next
 
     try {
         const slot = await Slot.deleteOne({ _id: id });
+
+        // @ts-ignore
+        await Patient.findOneAndUpdate({ _id: slot.patientId }, { $inc: { points: 20 } }, { new: true })
+
         return makeResponse(res, 200, "Appointment cancelled successfully", slot, false)
     } catch (err) {
         // @ts-ignore
@@ -273,7 +279,7 @@ const cancelMedicappAppointment = async (req: Request, res: Response, next: Next
 
 const getAllMedicappBookedAppointments = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const slots = await Slot.find({ type: SlotTypes.MEDICAPP_PCR, status: SlotStatus.BOOKED });
+        const slots = await Slot.find({ type: SlotTypes.MEDICAPP_PCR, status: SlotStatus.BOOKED }).populate("patientId");
         return makeResponse(res, 200, "Appointment cancelled successfully", slots, false)
     } catch (err) {
         // @ts-ignore

@@ -10,5 +10,6 @@ router.get('/', isHospital, controller.getAllPromos);
 router.get('/all', extractJWT, controller.getAllPromoVideos);
 router.post('/', isHospital, upload.single("video"), controller.createPromo);
 router.delete('/:id', isHospital, controller.deletePromo);
+router.put('/like/:id', extractJWT, controller.likePromo)
 
 export = router;

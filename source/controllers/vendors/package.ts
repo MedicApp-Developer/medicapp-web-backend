@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import makeResponse from '../../functions/makeResponse'
 import Package from '../../models/vendors/package'
+import cloudinary from 'cloudinary'
+import config from '../../config/config'
 
 const NAMESPACE = "Package"
 
@@ -8,11 +10,21 @@ const createPackage = async (req: Request, res: Response, next: NextFunction) =>
 	try {
 		const { type, points, buyQuantity, getQuantity, off, vendorId, category, about, termsAndConditions } = req.body;
 
-		const newPackage = { type, points, buyQuantity, getQuantity, off, vendorId, category, about, termsAndConditions };
+		// @ts-ignore
+		cloudinary.v2.config({
+			cloud_name: config.cloudinary.name,
+			api_key: config.cloudinary.apiKey,
+			api_secret: config.cloudinary.secretKey
+		})
 
-		const result = await new Package(newPackage).save().then(t => t.populate('vendorId').execPopulate());
+		// @ts-ignore
+		const result = await cloudinary.uploader.upload(req.file.path)
 
-		return makeResponse(res, 200, "Package Created Successfully", result, false)
+		const newPackage = { images: [result.url], type, points, buyQuantity, getQuantity, off, vendorId, category, about, termsAndConditions };
+
+		const packge = await new Package(newPackage).save().then(t => t.populate('vendorId').execPopulate());
+
+		return makeResponse(res, 200, "Package Created Successfully", packge, false)
 
 	} catch (err: any) {
 		return makeResponse(res, 400, err.message, null, true)
@@ -31,11 +43,25 @@ const getAllPackages = async (req: Request, res: Response, next: NextFunction) =
 
 const updatePackage = async (req: Request, res: Response, next: NextFunction) => {
 	const { id } = req.params
-
+	console.log("GOING Safely");
 	try {
-		const update = JSON.parse(JSON.stringify({ ...req.body }))
+		let update = JSON.parse(JSON.stringify({ ...req.body }))
 
 		const filter = { _id: id };
+
+		// @ts-ignore
+		if (req?.file?.path) {
+			// @ts-ignore
+			cloudinary.v2.config({
+				cloud_name: config.cloudinary.name,
+				api_key: config.cloudinary.apiKey,
+				api_secret: config.cloudinary.secretKey
+			})
+
+			// @ts-ignore
+			const result = await cloudinary.uploader.upload(req.file.path)
+			update = { ...update, images: [result.url] }
+		}
 
 		await Package.findOneAndUpdate(filter, update);
 

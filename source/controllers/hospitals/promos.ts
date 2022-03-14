@@ -74,28 +74,48 @@ const getAllPromos = async (req: Request, res: Response, next: NextFunction) => 
 
 const getAllPromoVideos = async (req: Request, res: Response, next: NextFunction) => {
   // @ts-ignore
-  const page = parseInt(req.query.page || "0");
+  const getAll = req.query.getAll;
 
-  // @ts-ignore
-  const limit = parseInt(req.query.limit || "4")
+  if (getAll) {
+    Promos.find({})
+      .populate({
+        path: 'hospitalId',
+        populate: [
+          { path: 'category' },
+          { path: 'services' }
+        ]
+      })
+      .then((result: any) => {
+        return makeResponse(res, 200, "All Promo Videos", result, false);
+      })
+      .catch((err: any) => {
+        return makeResponse(res, 400, err.message, null, true);
+      })
+  } else {
+    // @ts-ignore
+    const page = parseInt(req.query.page || "0");
 
-  const total = await Promos.find({}).countDocuments({});
+    // @ts-ignore
+    const limit = parseInt(req.query.limit || "4")
 
-  Promos.find({})
-    .populate({
-      path: 'hospitalId',
-      populate: [
-        { path: 'category' },
-        { path: 'services' }
-      ]
-    })
-    .limit(Pagination.PAGE_SIZE).skip(limit * page)
-    .then((result: any) => {
-      return makeResponse(res, 200, "All Promo Videos", { totalItems: total, totalPages: Math.ceil(total / limit), videos: result }, false);
-    })
-    .catch((err: any) => {
-      return makeResponse(res, 400, err.message, null, true);
-    })
+    const total = await Promos.find({}).countDocuments({});
+
+    Promos.find({})
+      .populate({
+        path: 'hospitalId',
+        populate: [
+          { path: 'category' },
+          { path: 'services' }
+        ]
+      })
+      .limit(Pagination.PAGE_SIZE).skip(limit * page)
+      .then((result: any) => {
+        return makeResponse(res, 200, "All Promo Videos", { totalItems: total, totalPages: Math.ceil(total / limit), videos: result }, false);
+      })
+      .catch((err: any) => {
+        return makeResponse(res, 400, err.message, null, true);
+      })
+  }
 };
 
 const deletePromo = async (req: Request, res: Response, next: NextFunction) => {
@@ -109,9 +129,22 @@ const deletePromo = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const likePromo = async (req: Request, res: Response, next: NextFunction) => {
+  const _id = req.params.id;
+  try {
+    // @ts-ignore
+    const result = await Promos.findOneAndUpdate({ _id }, { $inc: { likes: +1 } }, { new: true })
+
+    return makeResponse(res, 200, "Promo Liked Successfully", result, false);
+  } catch (e) {
+    return res.sendStatus(400);
+  }
+};
+
 export default {
   createPromo,
   getAllPromos,
   deletePromo,
-  getAllPromoVideos
+  getAllPromoVideos,
+  likePromo
 };
