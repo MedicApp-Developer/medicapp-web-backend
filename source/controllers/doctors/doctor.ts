@@ -311,7 +311,7 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
             .populate("gender")
             .populate("language")
 
-        if (searchedDoctors.length === 0) {
+        if (searchedDoctors.length === 0 && text) {
             const specialitySearchQuery = [
                 { name: searchedTextRegex },
                 { tags: searchedTextRegex },
