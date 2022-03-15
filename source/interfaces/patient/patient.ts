@@ -25,4 +25,5 @@ export default interface IPatient extends Document {
     doctors?: string;
     image: string;
     points: number;
+    likedPromos: string[];
 }

@@ -5,6 +5,7 @@ import { Pagination } from '../../constants/pagination';
 import { uploadsOnlyVideo } from '../../functions/uploadS3';
 import config from '../../config/config'
 import cloudinary from 'cloudinary'
+import Patient from '../../models/patient';
 
 const NAMESPACE = "Promos";
 
@@ -130,10 +131,19 @@ const deletePromo = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const likePromo = async (req: Request, res: Response, next: NextFunction) => {
-  const _id = req.params.id;
+  const _id = req.params.promoId;
+  const patientId = req.params.patientId;
+
   try {
     // @ts-ignore
     const result = await Promos.findOneAndUpdate({ _id }, { $inc: { likes: +1 } }, { new: true })
+
+    const filter = { _id: patientId }
+
+    // @ts-ignore
+    let update = { $push: { likedPromos: [_id] } }
+
+    Patient.update(filter, update);
 
     return makeResponse(res, 200, "Promo Liked Successfully", result, false);
   } catch (e) {

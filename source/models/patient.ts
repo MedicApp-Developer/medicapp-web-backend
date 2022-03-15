@@ -80,6 +80,10 @@ const PatientSchema: Schema = new Schema(
             required: false,
             default: null
         },
+        likedPromos: {
+            type: [String],
+            required: false
+        },
         height: {
             type: String,
             required: false,
