@@ -143,7 +143,7 @@ const likePromo = async (req: Request, res: Response, next: NextFunction) => {
     // @ts-ignore
     let update = { $push: { likedPromos: [_id] } }
 
-    Patient.update(filter, update);
+    await Patient.findOneAndUpdate(filter, update);
 
     return makeResponse(res, 200, "Promo Liked Successfully", result, false);
   } catch (e) {
