@@ -245,6 +245,7 @@ export const approvePatientAppointment = async (req: Request, res: Response, nex
     // @ts-ignore
 
     if (slotId && patientId) {
+
         try {
             const filter = { _id: slotId }
             let update = { status: SlotStatus.APPROVED }
@@ -258,6 +259,7 @@ export const approvePatientAppointment = async (req: Request, res: Response, nex
         } catch (err) {
             return sendErrorResponse(res, 400, "Validation Failed Error", SERVER_ERROR_CODE)
         }
+
     } else {
         return sendErrorResponse(res, 400, "Parameter missing", PARAMETER_MISSING_CODE)
     }
