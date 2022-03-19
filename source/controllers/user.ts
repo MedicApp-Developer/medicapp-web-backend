@@ -251,6 +251,17 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
+const getSingleUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.body;
+
+    try {
+        const user = await User.find({ _id: id });
+        return makeResponse(res, 200, "User", user, false);
+    } catch (err) {
+        return sendErrorResponse(res, 400, "Error", SERVER_ERROR_CODE);
+    }
+}
+
 export default {
     validateToken,
     login,
@@ -261,5 +272,6 @@ export default {
     createPatientUserFromEmailAndPassword,
     deleteUserWithEmail,
     updateUser,
-    resetPassword
+    resetPassword,
+    getSingleUser
 };
