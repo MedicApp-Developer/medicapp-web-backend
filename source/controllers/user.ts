@@ -229,7 +229,7 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
         // @ts-ignore
         const update = {
             // @ts-ignore
-            expiresAt: moment(new Date(clientDate)).add(2, 'hours').format('hh:mm A'),
+            expiresAt: moment(new Date(clientDate)).add(2, 'hours').format('MMMM Do YYYY, h:mm:ss a'),
             valid: true
         }
 
