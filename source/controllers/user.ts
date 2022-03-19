@@ -221,7 +221,7 @@ const updateUser = async (req: Request, res: Response, id: string, user: any) =>
 }
 
 const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
-    const { email } = req.body;
+    const { email, clientDate } = req.body;
 
     try {
 
@@ -229,7 +229,7 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
         // @ts-ignore
         const update = {
             // @ts-ignore
-            expiresAt: moment(new Date()).add(2, 'hours').format('hh:mm A'),
+            expiresAt: moment(new Date(clientDate)).add(2, 'hours').format('hh:mm A'),
             valid: true
         }
 
