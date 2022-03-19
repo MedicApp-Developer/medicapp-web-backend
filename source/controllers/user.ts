@@ -229,7 +229,7 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
         Date.prototype.addHours = function (h) { this.setHours(this.getHours() + h); return this; }
         const update = {
             // @ts-ignore
-            expiresAt: new Date().addHours(4),
+            expiresAt: new Date().addHours(10),
             valid: true
         }
 
