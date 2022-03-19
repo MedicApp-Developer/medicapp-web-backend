@@ -242,7 +242,7 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
             to: user?.email,
             subject: "Reset Password",
             // @ts-ignore
-            text: `http://localhost:3000/forget-password/${user._id}}`
+            text: `http://localhost:3000/reset-password/${user._id}}`
         }
 
         sendEmail(options)
