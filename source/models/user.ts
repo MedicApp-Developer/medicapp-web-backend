@@ -19,7 +19,7 @@ const UserSchema: Schema = new Schema(
             type: String,
             required: false
         },
-        password: { 
+        password: {
             type: String,
             required: true
         },
@@ -34,6 +34,14 @@ const UserSchema: Schema = new Schema(
         referenceId: {
             type: String,
             required: false
+        },
+        expiresAt: {
+            type: String,
+            default: null
+        },
+        valid: {
+            type: Boolean,
+            default: false
         }
     },
     {

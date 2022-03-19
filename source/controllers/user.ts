@@ -6,12 +6,15 @@ import User from '../models/user';
 import signJWT from '../functions/signJWT';
 import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import validateLoginInput from '../validation/login';
-import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE, INVALID_VALUE_CODE, DUPLICATE_VALUE_CODE } from '../constants/statusCode';
+import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE, INVALID_VALUE_CODE, DUPLICATE_VALUE_CODE, SERVER_ERROR_CODE } from '../constants/statusCode';
 import { Roles } from '../constants/roles';
 import Patient from '../models/patient';
 import Bookmark from '../models/bookmark';
 import Family from '../models/family';
 import Hospital from '../models/hospital/hospital';
+import { sendEmail } from '../functions/mailer'
+import config from '../config/config'
+import Cryptr from 'cryptr'
 
 const NAMESPACE = "User";
 
@@ -217,6 +220,38 @@ const updateUser = async (req: Request, res: Response, id: string, user: any) =>
     });
 }
 
+const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
+    try {
+
+        const filter = { email };
+        // @ts-ignore
+        Date.prototype.addHours = function (h) { this.setHours(this.getHours() + h); return this; }
+        const update = {
+            // @ts-ignore
+            expiresAt: new Date().addHours(4),
+            valid: true
+        }
+
+        const user = await User.findOneAndUpdate(filter, update, { upsert: true }).select(['_id', 'email', 'password', 'role'])
+
+        const cryptr = new Cryptr('medicapp-reset-password');
+
+        const options = {
+            from: config.mailer.user,
+            to: user?.email,
+            subject: "Reset Password",
+            // @ts-ignore
+            text: `http://localhost:3000/${cryptr.encrypt(user)}`
+        }
+
+        sendEmail(options)
+    } catch (err) {
+        return sendErrorResponse(res, 400, "Error while reseting password", SERVER_ERROR_CODE);
+    }
+}
+
 export default {
     validateToken,
     login,
@@ -226,5 +261,6 @@ export default {
     createUserFromEmailAndPassword,
     createPatientUserFromEmailAndPassword,
     deleteUserWithEmail,
-    updateUser
+    updateUser,
+    resetPassword
 };
