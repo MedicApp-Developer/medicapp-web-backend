@@ -235,14 +235,12 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
 
         const user = await User.findOneAndUpdate(filter, update, { upsert: true }).select(['_id', 'email', 'password', 'role'])
 
-        const cryptr = new Cryptr('medicapp-reset-password');
-
         const options = {
             from: config.mailer.user,
             to: user?.email,
             subject: "Reset Password",
             // @ts-ignore
-            text: `http://localhost:3000/reset-password/${user._id}}`
+            text: `http://localhost:3000/reset-password/${JSON.stringify(user)}}`
         }
 
         sendEmail(options)
