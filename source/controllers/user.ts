@@ -14,7 +14,6 @@ import Family from '../models/family';
 import Hospital from '../models/hospital/hospital';
 import { sendEmail } from '../functions/mailer'
 import config from '../config/config'
-import Cryptr from 'cryptr'
 
 const NAMESPACE = "User";
 
@@ -243,7 +242,7 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
             to: user?.email,
             subject: "Reset Password",
             // @ts-ignore
-            text: `http://localhost:3000/forget-password/${cryptr.encrypt(user)}`
+            text: `http://localhost:3000/forget-password/${user._id}}`
         }
 
         sendEmail(options)
