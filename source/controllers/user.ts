@@ -247,6 +247,8 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
         }
 
         sendEmail(options)
+
+        return makeResponse(res, 200, "Reset password email has been sent", null, false);
     } catch (err) {
         return sendErrorResponse(res, 400, "Error while reseting password", SERVER_ERROR_CODE);
     }
