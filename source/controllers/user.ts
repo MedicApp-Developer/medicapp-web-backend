@@ -252,7 +252,7 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 const getSingleUser = async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.body;
+    const { id } = req.params;
 
     try {
         const user = await User.find({ _id: id });
