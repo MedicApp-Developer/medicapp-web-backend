@@ -243,7 +243,7 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
             to: user?.email,
             subject: "Reset Password",
             // @ts-ignore
-            text: `http://localhost:3000/${cryptr.encrypt(user)}`
+            text: `http://localhost:3000/forget-password/${cryptr.encrypt(user)}`
         }
 
         sendEmail(options)
