@@ -14,6 +14,7 @@ import Family from '../models/family';
 import Hospital from '../models/hospital/hospital';
 import { sendEmail } from '../functions/mailer'
 import config from '../config/config'
+import moment from 'moment';
 
 const NAMESPACE = "User";
 
@@ -226,13 +227,13 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
 
         const filter = { email };
         // @ts-ignore
-        Date.prototype.addHours = function (h) { this.setHours(this.getHours() + h); return this; }
         const update = {
             // @ts-ignore
-            expiresAt: new Date().addHours(10),
+            expiresAt: moment(new Date()).add(2, 'hours'),
             valid: true
         }
 
+        // @ts-ignore
         const user = await User.findOneAndUpdate(filter, update, { upsert: true }).select(['_id', 'email', 'password', 'role'])
 
         const options = {
