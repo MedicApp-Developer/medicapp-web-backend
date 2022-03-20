@@ -16,6 +16,7 @@ import { sendEmail } from '../functions/mailer'
 import config from '../config/config'
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
+import _ from 'lodash';
 
 const NAMESPACE = "User";
 
@@ -221,7 +222,7 @@ const updateUser = async (req: Request, res: Response, id: string, user: any) =>
     });
 }
 
-const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+const forgetPassword = async (req: Request, res: Response, next: NextFunction) => {
     const { email } = req.body;
 
     try {
@@ -261,6 +262,35 @@ const getSingleUser = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
+const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    const { resetLink, newPass } = req.body;
+
+    if (resetLink) {
+        jwt.verify(resetLink, "medicapp_reset_password_key", function (error: any, decodedData: any) {
+            if (error) {
+                return sendErrorResponse(res, 400, "Reset Password link has expired", SERVER_ERROR_CODE);
+            }
+            User.findOne({ resetLink }, (err: any, user: any) => {
+                if (err || !user) {
+                    return sendErrorResponse(res, 400, "User with this token does not exists", SERVER_ERROR_CODE);
+                }
+                const update = { password: newPass };
+                user = _.extend(user, update);
+                user.save((err: any, result: any) => {
+                    if (err) {
+                        return sendErrorResponse(res, 400, "Error while updating the password", SERVER_ERROR_CODE);
+                    } else {
+                        return makeResponse(res, 200, "User password updated successfully", user, false);
+                    }
+                });
+            })
+        })
+    } else {
+        return sendErrorResponse(res, 400, "Reset Password link has expired", SERVER_ERROR_CODE);
+    }
+
+}
+
 export default {
     validateToken,
     login,
@@ -272,5 +302,6 @@ export default {
     deleteUserWithEmail,
     updateUser,
     resetPassword,
-    getSingleUser
+    getSingleUser,
+    forgetPassword
 };

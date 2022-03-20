@@ -9,7 +9,8 @@ router.post('/register-admin', controller.register);
 router.post('/login', controller.login);
 router.get('/get/all', extractJWT, controller.getAllUsers);
 router.delete('/delete/:id', extractJWT, controller.deleteUser);
-router.post('/resetPassword', controller.resetPassword);
+router.put('/forget-password', controller.forgetPassword);
+router.put('/reset-password', controller.resetPassword);
 router.get('/:id', controller.getSingleUser);
 
 export = router;
