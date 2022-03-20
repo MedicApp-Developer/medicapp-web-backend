@@ -15,6 +15,7 @@ import Hospital from '../models/hospital/hospital';
 import { sendEmail } from '../functions/mailer'
 import config from '../config/config'
 import moment from 'moment';
+import jwt from 'jsonwebtoken';
 
 const NAMESPACE = "User";
 
@@ -221,32 +222,29 @@ const updateUser = async (req: Request, res: Response, id: string, user: any) =>
 }
 
 const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
-    const { email, clientDate } = req.body;
+    const { email } = req.body;
 
     try {
 
-        const filter = { email };
-        // @ts-ignore
-        const update = {
-            // @ts-ignore
-            expiresAt: moment(clientDate).add(2, 'hours').format('MMMM Do YYYY, h:mm:ss a'),
-            valid: true
+        const user = await User.findOne({ email });
+
+        if (user) {
+            const token = jwt.sign({ _id: user._id }, "medicapp_reset_password_key", { expiresIn: '20m' });
+            const options = {
+                from: config.mailer.user,
+                to: user?.email,
+                subject: "Reset Password",
+                // @ts-ignore
+                text: `http://localhost:3000/reset-password/${token}`
+            }
+
+            await User.updateOne({ resetLink: token });
+
+            sendEmail(options)
+            return makeResponse(res, 200, "Reset password email has been sent", null, false);
+        } else {
+            return sendErrorResponse(res, 400, "Email not present", SERVER_ERROR_CODE);
         }
-
-        // @ts-ignore
-        const user = await User.findOneAndUpdate(filter, update, { upsert: true }).select(['_id', 'email', 'password', 'role'])
-
-        const options = {
-            from: config.mailer.user,
-            to: user?.email,
-            subject: "Reset Password",
-            // @ts-ignore
-            text: `http://localhost:3000/reset-password/${user._id}`
-        }
-
-        sendEmail(options)
-
-        return makeResponse(res, 200, "Reset password email has been sent", null, false);
     } catch (err) {
         return sendErrorResponse(res, 400, "Error while reseting password", SERVER_ERROR_CODE);
     }

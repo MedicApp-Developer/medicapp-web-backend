@@ -9,6 +9,5 @@ export default interface IUser extends Document {
     role: string;
     emiratesId: string;
     referenceId: string;
-    expiresAt: string;
-    valid: boolean;
+    resetLink: string;
 }

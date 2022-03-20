@@ -35,13 +35,9 @@ const UserSchema: Schema = new Schema(
             type: String,
             required: false
         },
-        expiresAt: {
-            type: String,
-            default: null
-        },
-        valid: {
-            type: Boolean,
-            default: false
+        resetLink: {
+            data: String,
+            default: ''
         }
     },
     {
