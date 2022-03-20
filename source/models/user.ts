@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { UserStatus } from '../constants/roles';
 import IUser from '../interfaces/user';
 
 const UserSchema: Schema = new Schema(
@@ -38,6 +39,10 @@ const UserSchema: Schema = new Schema(
         resetLink: {
             data: String,
             default: ''
+        },
+        status: {
+            type: String,
+            default: UserStatus.APPROVED
         }
     },
     {

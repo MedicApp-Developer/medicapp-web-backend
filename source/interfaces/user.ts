@@ -10,4 +10,5 @@ export default interface IUser extends Document {
     emiratesId: string;
     referenceId: string;
     resetLink: string;
+    status: string;
 }

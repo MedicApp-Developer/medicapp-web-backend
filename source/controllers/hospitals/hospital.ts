@@ -4,7 +4,7 @@ import Hospital from '../../models/hospital/hospital'
 import User from '../../models/user'
 import makeResponse, { sendErrorResponse } from '../../functions/makeResponse'
 import UserController from '../user'
-import { Roles } from '../../constants/roles'
+import { Roles, UserStatus } from '../../constants/roles'
 import { HospitalType } from '../../constants/hospital'
 import config from '../../config/config'
 import { uploadsOnlyVideo } from '../../functions/uploadS3'
@@ -56,7 +56,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
 
             return newHospital.save()
                 .then(async (result: any) => {
-                    await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", "", Roles.HOSPITAL, result._id)
+                    await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", "", Roles.HOSPITAL, result._id, UserStatus.PENDING)
                     return makeResponse(res, 201, "Hospital Created Successfully", result, false)
 
                     // if(){

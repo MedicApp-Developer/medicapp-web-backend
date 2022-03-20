@@ -7,7 +7,7 @@ import signJWT from '../functions/signJWT';
 import makeResponse, { sendErrorResponse } from '../functions/makeResponse';
 import validateLoginInput from '../validation/login';
 import { PARAMETER_MISSING_CODE, UNAUTHORIZED_CODE, INVALID_VALUE_CODE, DUPLICATE_VALUE_CODE, SERVER_ERROR_CODE } from '../constants/statusCode';
-import { Roles } from '../constants/roles';
+import { Roles, UserStatus } from '../constants/roles';
 import Patient from '../models/patient';
 import Bookmark from '../models/bookmark';
 import Family from '../models/family';
@@ -98,7 +98,11 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                                 return makeResponse(res, 200, "Authentication Successful", { bookmarks: bookmarks.length > 0 ? bookmarks[0] : { doctorIds: [], hospitalIds: [] }, user: patient, familyMembers: familyMembers.length > 0 ? familyMembers : [], token: token }, false);
                             } else if (users[0].role === Roles.HOSPITAL) {
                                 const hospital = await Hospital.findById(users[0].referenceId);
-                                return makeResponse(res, 200, "Authentication Successful", { user: users[0], hospital, token: token }, false);
+                                if (users[0].status === UserStatus.APPROVED) {
+                                    return makeResponse(res, 200, "Authentication Successful", { user: users[0], hospital, token: token }, false);
+                                } else {
+                                    return sendErrorResponse(res, 400, "Your status is still Pending, contact Medicapp Admin to get approved", UNAUTHORIZED_CODE);
+                                }
                             } else {
                                 return makeResponse(res, 200, "Authentication Successful", { user: users[0], token: token }, false);
                             }
@@ -129,7 +133,7 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, emiratesId: string, role: string, referenceId: string) => {
+const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, emiratesId: string, role: string, referenceId: string, status: string) => {
     await User.find({ email }).exec().then(user => {
         if (user.length > 0) {
             return false;
@@ -149,7 +153,8 @@ const createUserFromEmailAndPassword = async (req: Request, res: Response, email
                 password: hash,
                 role,
                 emiratesId,
-                referenceId
+                referenceId,
+                status: status || UserStatus.APPROVED
             });
 
             return _user.save();
