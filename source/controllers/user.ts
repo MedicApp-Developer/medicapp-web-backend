@@ -101,7 +101,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                                 if (users[0].status === UserStatus.APPROVED) {
                                     return makeResponse(res, 200, "Authentication Successful", { user: users[0], hospital, token: token }, false);
                                 } else {
-                                    return sendErrorResponse(res, 400, "Your status is still Pending, contact Medicapp Admin to get approved", UNAUTHORIZED_CODE);
+                                    return makeResponse(res, 400, "Your status is still Pending, contact Medicapp Admin to get approved", null, true)
                                 }
                             } else {
                                 return makeResponse(res, 200, "Authentication Successful", { user: users[0], token: token }, false);
