@@ -239,7 +239,8 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
                 text: `http://localhost:3000/reset-password/${token}`
             }
 
-            await User.updateOne({ resetLink: token });
+            // @ts-ignore
+            await User.findOneAndUpdate({ _id: user._id }, { resetLink: token });
 
             sendEmail(options)
             return makeResponse(res, 200, "Reset password email has been sent", null, false);
