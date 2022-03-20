@@ -235,8 +235,8 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
                 from: config.mailer.user,
                 to: user?.email,
                 subject: "Reset Password",
-                // @ts-ignore
-                text: `http://localhost:3000/reset-password/${token}`
+                // @ts-ignore,
+                html: `<p>Reset your password with below link</p><br/><a href='http://localhost:3000/reset-password/${token}'>Reset Password<a/>`
             }
 
             // @ts-ignore
