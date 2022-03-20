@@ -17,5 +17,7 @@ router.post('/filter', extractJWT, controller.filterHospital);
 router.get('/doctors/:hospitalId', extractJWT, controller.getHospitalDoctors);
 router.get('/finance/:hospitalId', extractJWT, controller.getHospitalFinanceData);
 router.post('/finance/report', extractJWT, controller.getHospitalFinanceReport);
+router.get('/pendingHospitals', extractJWT, controller.getPendingHospitals);
+router.put('/approveHospital/:id', extractJWT, controller.approveHospital);
 
 export = router;

@@ -314,6 +314,27 @@ const getHospitalFinanceReport = async (req: Request, res: Response, next: NextF
     }
 }
 
+const getPendingHospitals = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const users = User.find({ status: UserStatus.PENDING });
+        return makeResponse(res, 200, "Pending hospitals", users, false)
+    } catch (err) {
+        return sendErrorResponse(res, 400, "Error while getting pending hospitals", SERVER_ERROR_CODE)
+    }
+}
+
+const approveHospital = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    try {
+        const filter = { _id: id };
+        const update = { status: UserStatus.APPROVED };
+        await User.findOneAndUpdate(filter, update);
+        return makeResponse(res, 200, "Hospital Approved Successfully", null, false)
+    } catch (err) {
+        return sendErrorResponse(res, 400, "Error while approving pending hospital", SERVER_ERROR_CODE)
+    }
+}
+
 export default {
     createHospital,
     getAllHospitals,
@@ -326,5 +347,7 @@ export default {
     getHospitalDetail,
     getHospitalDoctors,
     getHospitalFinanceData,
-    getHospitalFinanceReport
+    getHospitalFinanceReport,
+    getPendingHospitals,
+    approveHospital
 }
