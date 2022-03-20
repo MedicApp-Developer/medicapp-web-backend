@@ -274,15 +274,24 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
                 if (err || !user) {
                     return sendErrorResponse(res, 400, "User with this token does not exists", SERVER_ERROR_CODE);
                 }
-                const update = { password: newPass };
-                user = _.extend(user, update);
-                user.save((err: any, result: any) => {
-                    if (err) {
-                        return sendErrorResponse(res, 400, "Error while updating the password", SERVER_ERROR_CODE);
-                    } else {
-                        return makeResponse(res, 200, "User password updated successfully", user, false);
-                    }
-                });
+
+                try {
+                    bcryptjs.hash(newPass, 10, async (hashError, hash) => {
+                        if (hashError) {
+                            return false;
+                        }
+
+                        const userFilter = { resetLink: resetLink };
+                        const update = {
+                            password: hash
+                        }
+
+                        await User.findOneAndUpdate(userFilter, update);
+                        return makeResponse(res, 200, "User password reset successfully", user, false);
+                    })
+                } catch (err) {
+                    return sendErrorResponse(res, 400, "Problem while reseting password", SERVER_ERROR_CODE);
+                }
             })
         })
     } else {
