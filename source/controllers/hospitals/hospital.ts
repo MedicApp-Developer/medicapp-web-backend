@@ -316,7 +316,7 @@ const getHospitalFinanceReport = async (req: Request, res: Response, next: NextF
 
 const getPendingHospitals = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const users = User.find({ status: UserStatus.PENDING });
+        const users = await User.find({ status: UserStatus.PENDING });
         return makeResponse(res, 200, "Pending hospitals", users, false)
     } catch (err) {
         return sendErrorResponse(res, 400, "Error while getting pending hospitals", SERVER_ERROR_CODE)
