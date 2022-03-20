@@ -133,7 +133,7 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, emiratesId: string, role: string, referenceId: string, status: string) => {
+const createUserFromEmailAndPassword = async (req: Request, res: Response, email: string, password: string, firstName: string, lastName: string, emiratesId: string, role: string, referenceId: string, status: string = UserStatus.APPROVED) => {
     await User.find({ email }).exec().then(user => {
         if (user.length > 0) {
             return false;
