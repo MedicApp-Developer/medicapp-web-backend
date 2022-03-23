@@ -18,6 +18,7 @@ import path from 'path'
 import pdf from 'html-pdf'
 import generateHospitalFinanceReport from '../../documents/HospitalFinanceReport'
 import { SlotStatus } from '../../constants/slot'
+import { sendEmail } from '../../functions/mailer'
 
 const NAMESPACE = "Hospital"
 
@@ -53,7 +54,14 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                     "coordinates": location
                 }
             })
+            const options = {
+                from: config.mailer.user,
+                to: email,
+                subject: "Welcome to Medicapp",
+                text: `Your account account has been created as a hospital and status of your account is Pending for now, contact Medicapp Admin to get approved`
+            }
 
+            sendEmail(options)
             return newHospital.save()
                 .then(async (result: any) => {
                     await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", "", Roles.HOSPITAL, result._id, UserStatus.PENDING)
@@ -314,6 +322,7 @@ const getHospitalFinanceReport = async (req: Request, res: Response, next: NextF
     }
 }
 
+
 const getPendingHospitals = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const users = await User.find({ status: UserStatus.PENDING });
@@ -328,7 +337,17 @@ const approveHospital = async (req: Request, res: Response, next: NextFunction) 
     try {
         const filter = { _id: id };
         const update = { status: UserStatus.APPROVED };
-        await User.findOneAndUpdate(filter, update);
+        const user = await User.findOneAndUpdate(filter, update);
+
+        const options = {
+            from: config.mailer.user,
+            to: user?.email,
+            subject: "Account Approved",
+            text: `Your account has been approved, now you can login to Medicapp System`
+        }
+
+        await sendEmail(options)
+
         return makeResponse(res, 200, "Hospital Approved Successfully", null, false)
     } catch (err) {
         return sendErrorResponse(res, 400, "Error while approving pending hospital", SERVER_ERROR_CODE)
