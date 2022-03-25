@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', extractJWT, controller.getAllHospitals);
 router.get('/:id', extractJWT, controller.getSingleHospital);
 router.get('/details/:id', extractJWT, controller.getHospitalDetail);
-router.post('/', controller.createHospital);
+router.post('/', upload.single("tradeLicenseFile"), controller.createHospital);
 router.put('/:id', extractJWT, controller.updateHospital);
 router.delete('/:id', extractJWT, controller.deleteHospital);
 router.get('/search/:searchedText', extractJWT, controller.searchHospital);
@@ -19,5 +19,6 @@ router.get('/finance/:hospitalId', extractJWT, controller.getHospitalFinanceData
 router.post('/finance/report', extractJWT, controller.getHospitalFinanceReport);
 router.get('/get/pending', controller.getPendingHospitals);
 router.put('/approveHospital/:id', extractJWT, controller.approveHospital);
+router.get('/getTradeLicenseFile/:id', extractJWT, controller.getTradeLicenseFile);
 
 export = router;

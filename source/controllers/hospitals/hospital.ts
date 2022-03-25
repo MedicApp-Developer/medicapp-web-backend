@@ -23,17 +23,7 @@ import { sendEmail } from '../../functions/mailer'
 const NAMESPACE = "Hospital"
 
 const createHospital = async (req: Request, res: Response, next: NextFunction) => {
-    // uploadsOnlyVideo(req, res, async (error: any) => {
-    //     if (error) {
-    //       res.json({ error: error });
-    //       return makeResponse(res, 400, "Error in uploading image", null, true);
-    //     } else {
-    //       // If File not found
-    //       // console.log("Ressss => ", req.files);
-    //       if (req.file === undefined) {
-    //         return makeResponse(res, 400, "No File Selected", null, true);
-    //       } else {
-
+    console.log("Request Body => ", req.body);
     const { errors, isValid } = validateHospitalRegisteration(req.body)
     // Check validation
     if (!isValid) {
@@ -42,16 +32,25 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
 
     const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location, address, state, type } = req.body
 
-    await User.find({ email }).then((result: any) => {
+    await User.find({ email }).then(async (result: any) => {
         if (result.length === 0) {
             // @ts-ignore
+            cloudinary.v2.config({
+                cloud_name: config.cloudinary.name,
+                api_key: config.cloudinary.apiKey,
+                api_secret: config.cloudinary.secretKey
+            })
+
+            // @ts-ignore
+            const result = await cloudinary.uploader.upload(req.file.path)
+
             const newHospital = new Hospital({
                 _id: new mongoose.Types.ObjectId(),
-                type, category: null, addons: [], phoneNo,
+                type, category: null, addons: [], phoneNo, tradeLicenseFile: result.url,
                 email, name, tradeLicenseNo, issueDate, expiryDate, address, state,
                 location: {
                     "type": "Point",
-                    "coordinates": location
+                    "coordinates": JSON.parse(location)
                 }
             })
             const options = {
@@ -80,10 +79,6 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
             return makeResponse(res, 400, "Email already exists", null, true)
         }
     })
-
-    //       }
-    //     }
-    //   });
 }
 
 const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
@@ -354,6 +349,16 @@ const approveHospital = async (req: Request, res: Response, next: NextFunction) 
     }
 }
 
+const getTradeLicenseFile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const result = await Hospital.findById({ _id: id }).select(['tradeLicenseFile']);
+        return makeResponse(res, 200, "TradeLicenseFile", result, false)
+    } catch (err) {
+        return sendErrorResponse(res, 400, "Error while getting tradeLisenceFile", SERVER_ERROR_CODE)
+    }
+}
+
 export default {
     createHospital,
     getAllHospitals,
@@ -368,5 +373,6 @@ export default {
     getHospitalFinanceData,
     getHospitalFinanceReport,
     getPendingHospitals,
-    approveHospital
+    approveHospital,
+    getTradeLicenseFile
 }
