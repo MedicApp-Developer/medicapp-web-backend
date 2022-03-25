@@ -4,7 +4,7 @@ import Doctor from '../../models/doctors/doctor'
 import User from '../../models/user'
 import makeResponse, { sendErrorResponse } from '../../functions/makeResponse'
 import UserController from '../user'
-import { Roles } from '../../constants/roles'
+import { Roles, UserStatus } from '../../constants/roles'
 import { sendEmail } from '../../functions/mailer'
 import { getRandomPassword } from '../../functions/utilities'
 import config from '../../config/config'
@@ -285,13 +285,13 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
     let searchedDoctors = null
 
     if (searchFor === Roles.HOSPITAL) {
-
         const filterQuery = {
             $and: [
                 text !== "" ? { $or: hospitalSearchQuery } : {},
                 checkedCategories?.length > 0 ? { 'category': { $in: checkedCategories } } : {},
                 hospitalTypes?.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
-                checkedAddons?.length > 0 ? { 'services': { $in: checkedAddons } } : {}
+                checkedAddons?.length > 0 ? { 'services': { $in: checkedAddons } } : {},
+                { status: UserStatus.APPROVED }
             ]
         }
         searchedHospitals = await Hospital.find(filterQuery).populate("category")
@@ -325,7 +325,8 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
                 .populate("language")
         }
     } else {
-        searchedHospitals = await Hospital.find({ $or: hospitalSearchQuery }).populate("category")
+
+        searchedHospitals = await Hospital.find({ $and: [{ $or: hospitalSearchQuery }, { status: UserStatus.APPROVED }] }).populate("category")
         // @ts-ignore
         searchedDoctors = await Doctor.find({ $or: doctorSearchQuery }).populate('specialityId', null, { name: "One" }).populate("hospitalId").populate("country")
             .populate("gender")

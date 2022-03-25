@@ -23,7 +23,6 @@ import { sendEmail } from '../../functions/mailer'
 const NAMESPACE = "Hospital"
 
 const createHospital = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("Request Body => ", req.body);
     const { errors, isValid } = validateHospitalRegisteration(req.body)
     // Check validation
     if (!isValid) {
@@ -82,7 +81,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
 }
 
 const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
-    Hospital.find({})
+    Hospital.find({ status: UserStatus.APPROVED })
         .then((result: any) => {
             return makeResponse(res, 200, "All Hospitals", result, false)
         })
@@ -94,7 +93,7 @@ const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
 const getSingleHospital = async (req: Request, res: Response, next: NextFunction) => {
     const doctors = await Doctor.find({ hospitalId: req.params.id }).populate('hospitalId')
 
-    Hospital.findById({ _id: req.params.id }).populate("services")
+    Hospital.findById({ _id: req.params.id, status: UserStatus.APPROVED }).populate("services")
         .then((data: any) => {
             return makeResponse(res, 200, "Hospital", { hospital: data, doctors }, false)
         }).catch((err: any) => {
@@ -191,7 +190,7 @@ const searchHospital = async (req: Request, res: Response, next: NextFunction) =
 
     try {
 
-        const searchedHospitalList = await Hospital.find({ $or: searchQuery })
+        const searchedHospitalList = await Hospital.find({ $and: [{ $or: searchQuery }, { status: UserStatus.APPROVED }] })
 
         if (searchedHospitalList.length === 0) {
             const specialitySearchQuery = [
@@ -250,7 +249,8 @@ const filterHospital = async (req: Request, res: Response, next: NextFunction) =
         $and: [
             checkedCategories.length > 0 ? { 'category': { $in: checkedCategories } } : {},
             hospitalTypes.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
-            checkedAddons.length > 0 ? { 'services': { $in: checkedAddons } } : {}
+            checkedAddons.length > 0 ? { 'services': { $in: checkedAddons } } : {},
+            { status: UserStatus.APPROVED }
         ]
     }
 
@@ -333,6 +333,8 @@ const approveHospital = async (req: Request, res: Response, next: NextFunction) 
         const filter = { _id: id };
         const update = { status: UserStatus.APPROVED };
         const user = await User.findOneAndUpdate(filter, update);
+
+        await Hospital.findOneAndUpdate({ _id: user?.referenceId }, { status: UserStatus.APPROVED });
 
         const options = {
             from: config.mailer.user,

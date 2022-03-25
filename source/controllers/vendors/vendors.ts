@@ -15,17 +15,17 @@ import cloudinary from 'cloudinary'
 const NAMESPACE = "Doctor"
 
 const registerVendor = async (req: Request, res: Response, next: NextFunction) => {
-	const { email, firstName, lastName, phoneNo, about, address } = req.body
+	const { email, firstName, lastName, phoneNo, about, address, branch_name } = req.body
 	const password = getRandomPassword()
 
-	if (email && firstName && lastName && phoneNo && address) {
+	if (email && firstName && lastName && phoneNo && address && branch_name) {
 		await User.find({ email }).then((result: any) => {
 			if (result.length === 0) {
 
 				if (email && firstName && lastName && phoneNo) {
 					const newVendor = new Vendor({
 						_id: new mongoose.Types.ObjectId(),
-						address, email, password, firstName, lastName, phoneNo, role: Roles.VENDOR, about
+						address, email, password, firstName, lastName, phoneNo, role: Roles.VENDOR, about, branch_name
 					})
 
 					const options = {

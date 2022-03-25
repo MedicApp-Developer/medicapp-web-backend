@@ -12,4 +12,6 @@ export default interface IVendor extends Document {
 	images: string[];
 	referenceId: string;
 	vendorId: string;
+	location: string;
+	branch_name: string;
 }

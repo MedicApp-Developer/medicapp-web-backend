@@ -17,4 +17,5 @@ export default interface IHospital extends Document {
     openingTime: string
     closingTime: string
     PCRDPI: boolean
+    status: string
 }

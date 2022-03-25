@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-import { Roles } from '../../constants/roles'
+import { Roles, UserStatus } from '../../constants/roles'
 import IHospital from '../../interfaces/hospitals/hospital'
 
 const HospitalSchema: Schema = new Schema(
@@ -87,6 +87,10 @@ const HospitalSchema: Schema = new Schema(
         },
         PCRDPI: {
             type: Boolean
+        },
+        status: {
+            type: String,
+            default: UserStatus.PENDING
         }
     },
     {
