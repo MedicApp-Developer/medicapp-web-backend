@@ -137,7 +137,7 @@ const getAllPatients = async (req: Request, res: Response, next: NextFunction) =
     }
 
     if (role === Roles.DOCTOR) {
-        Slot.find({ doctorId: reference_id, status: SlotStatus.APPROVED })
+        Slot.find({ doctorId: reference_id, status: SlotStatus.BOOKED })
             .then(async result => {
                 const patients = result.map(item => (item.patientId))
 

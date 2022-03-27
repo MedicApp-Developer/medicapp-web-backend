@@ -7,6 +7,7 @@ import { RewardStatus } from '../constants/rewards';
 import Package from '../models/vendors/package';
 import config from '../config/config';
 import { sendEmail } from '../functions/mailer'
+import PackageCategory from '../models/vendors/packageCategory';
 const NAMESPACE = "Rewards";
 
 const subscribePackage = async (req: Request, res: Response, next: NextFunction) => {
@@ -89,12 +90,7 @@ const getAllVendorRewards = async (req: Request, res: Response, next: NextFuncti
 
 const getPatientRewardsHomeData = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const packageCategories = [
-			"RESTAURANT",
-			"WELLNESS",
-			"HOTEL",
-			"RETAIL"
-		];
+		const packageCategories = await PackageCategory.find({});
 		const popularPackages = await Package.find({ "subscribedCount": { $gt: 0 } }).sort('-subscribedCount').populate("packageId").populate("patientId").populate("vendorId");
 		const recommendedPackages = await Package.find({ "subscribedCount": { $lt: 1 } }).sort("-off").populate("packageId").populate("patientId").populate("vendorId");
 		return makeResponse(res, 200, "Rewards Home Data", { categories: packageCategories, popular: popularPackages, recommended: recommendedPackages }, false)

@@ -175,8 +175,8 @@ const getDoctorApprovedSlots = async (req: Request, res: Response, next: NextFun
     const { doctorId } = req.params
 
     try {
-        const slots = await Slot.find({ doctorId, status: SlotStatus.APPROVED }).populate('doctorId').populate('hospitalId').populate('patientId').populate('familyMemberId')
-        return makeResponse(res, 201, "Doctor's Approved Slots", slots, false)
+        const slots = await Slot.find({ doctorId, status: SlotStatus.BOOKED }).populate('doctorId').populate('hospitalId').populate('patientId').populate('familyMemberId')
+        return makeResponse(res, 201, "Doctor's BOOKED Slots", slots, false)
 
     } catch (err) {
         // @ts-ignore

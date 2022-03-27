@@ -30,6 +30,8 @@ import leavesRoutes from './routes/leaves'
 import vendorsRoutes from './routes/vendors/vendors'
 import packagesRoutes from './routes/vendors/packages'
 import rewardsRoutes from './routes/rewards'
+import pointCodeRoutes from './routes/pointsCode'
+import packageCategoryRoutes from './routes/vendors/packageCategory'
 import cors from 'cors'
 
 const NAMESPACE = 'Server'
@@ -109,6 +111,8 @@ router.use('/api/leaves', leavesRoutes)
 router.use('/api/vendors', vendorsRoutes)
 router.use('/api/packages', packagesRoutes)
 router.use('/api/rewards', rewardsRoutes)
+router.use('/api/codes', pointCodeRoutes)
+router.use('/api/packageCategories', packageCategoryRoutes)
 
 // Simple Root Message
 router.get('/', (req, res) => {

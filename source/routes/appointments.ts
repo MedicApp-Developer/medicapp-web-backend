@@ -12,6 +12,7 @@ router.post('/', extractJWT, controller.createAppointment);
 router.delete('/cancel/:slotId', extractJWT, controller.cancelAppointment);
 router.put('/:id', extractJWT, controller.updateAppointment);
 router.delete('/:id', extractJWT, controller.deleteAppointment);
+
 router.delete('/:id/:patientId', extractJWT, controller.deletePatientAppointment);
 router.get('/hospitalAppointments/:hospitalId', isHospital, controller.getHospitalAppointments)
 router.get('/doctorApprovedAppointments/:doctorId', isHospitalOrDoctor, controller.getDoctorApprovedAppointments);

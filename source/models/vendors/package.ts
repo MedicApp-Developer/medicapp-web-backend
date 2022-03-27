@@ -25,8 +25,10 @@ const PackageSchema: Schema = new Schema(
 		off: {
 			type: String
 		},
-		category: {
-			type: String
+		category_id: {
+			type: Schema.Types.ObjectId,
+			ref: "PackageCategory",
+			index: false
 		},
 		termsAndConditions: {
 			type: String

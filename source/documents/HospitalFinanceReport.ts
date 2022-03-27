@@ -6,7 +6,7 @@ const generateHospitalFinanceReport = (hospital: any, appointments: any, fromDat
 
 	const appointmentToDate = moment(toDate).format("YYYY/MM/DD")
 	const appointmentToTime = moment(toDate).format('HH:mm a')
-	console.log("appoin => ", appointments);
+
 	return `
 		<!DOCTYPE html>
 		<html>
@@ -74,7 +74,7 @@ const generateHospitalFinanceReport = (hospital: any, appointments: any, fromDat
 			<br />
 			<p>From: ${appointmentFromDate}</p>
 			<p>To: ${appointmentToDate}</p>
-			<p class="clinicName">${hospital?.name}</p>
+			<p class="clinicName">${hospital?.name || "MEDICAPP"}</p>
 			<div>
 				<br /><br />
 				<p> Appointment List </p>

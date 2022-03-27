@@ -6,7 +6,7 @@ export default interface IPackage extends Document {
 	buyQuantity: string;
 	getQuantity: string;
 	off: string;
-	category: string;
+	category_id: string;
 	about: string;
 	termsAndConditions: string;
 	images: string[];

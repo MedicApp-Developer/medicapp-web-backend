@@ -6,6 +6,8 @@ import { PARAMETER_MISSING_CODE, RECORD_NOT_FOUND, SERVER_ERROR_CODE } from '../
 import Slot from '../models/doctors/slot'
 import { SlotStatus, SlotTypes } from '../constants/slot'
 import Patient from '../models/patient'
+import PointsCode from '../models/pointsCode'
+import { POINTS_CODE } from '../constants/rewards'
 
 const NAMESPACE = "Appointment"
 
@@ -18,7 +20,15 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
             const filter = { _id: slotId }
             let update = { patientId, status: SlotStatus.BOOKED, description, familyMemberId }
 
-            Slot.findOneAndUpdate(filter, update, { upsert: true }).then(updatedSlot => {
+            Slot.findOneAndUpdate(filter, update, { upsert: true }).then(async updatedSlot => {
+
+                await new PointsCode({
+                    code: Math.floor(Math.random() * 10000000) + 1,
+                    patientId,
+                    // @ts-ignore
+                    hospitalId: updatedSlot.hospitalId, slotId
+                }).save();
+
                 return makeResponse(res, 200, "Updated Slot", updatedSlot, false)
             }).catch(err => {
                 return sendErrorResponse(res, 400, "No slot with this ID", RECORD_NOT_FOUND)
@@ -119,10 +129,15 @@ const deletePatientAppointment = async (req: Request, res: Response, next: NextF
 
         const slot = await Slot.findById({ _id });
 
+        const pointsCodeCount = await PointsCode.find({ slotId: slot?._id, status: POINTS_CODE.TAKEN }).countDocuments();
+
+        let newPatient: any = null;
         // @ts-ignore
-        if (slot.status === SlotStatus.APPROVED) {
-            await Patient.findOneAndUpdate({ _id: patientId }, { $inc: { points: -20 } }, { new: true })
+        if (pointsCodeCount > 0) {
+            newPatient = await Patient.findOneAndUpdate({ _id: patientId }, { $inc: { points: -20 } }, { new: true })
         }
+
+        await PointsCode.deleteOne({ slotId: _id });
 
         const filter = { _id }
         let update = { patientId: null, status: SlotStatus.AVAILABLE, description: "", familyMemberId: null }
@@ -142,7 +157,7 @@ const deletePatientAppointment = async (req: Request, res: Response, next: NextF
                         { path: 'hospitalId' }
                     ]
                 }).then(upcommingAppointments => {
-                    return makeResponse(res, 200, "Patient Appointments", upcommingAppointments, false)
+                    return makeResponse(res, 200, "Patient Appointments", { upcommingAppointments, newPatient }, false)
                 })
         })
     } catch (err) {
@@ -206,16 +221,16 @@ export const getDoctorApprovedAppointments = async (req: Request, res: Response,
     const { doctorId } = req.params
     // @ts-ignore
     const page = parseInt(req.query.page || "0")
-    const total = await Slot.find({ doctorId, status: SlotStatus.APPROVED }).countDocuments({})
+    const total = await Slot.find({ doctorId, status: SlotStatus.BOOKED }).countDocuments({})
 
-    Slot.find({ doctorId, status: SlotStatus.APPROVED })
+    Slot.find({ doctorId, status: SlotStatus.BOOKED })
         .populate("patientId")
         .populate("familyMemberId")
         .populate("doctorId")
         .limit(Pagination.PAGE_SIZE)
         .skip(Pagination.PAGE_SIZE * page)
         .then(appointments => {
-            return makeResponse(res, 200, "Doctor Approved Appointments", { totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), appointments }, false)
+            return makeResponse(res, 200, "Doctor BOOKED Appointments", { totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), appointments }, false)
         }).catch(err => {
             return res.sendStatus(400)
         })

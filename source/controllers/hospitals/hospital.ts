@@ -17,7 +17,7 @@ import Slot from '../../models/doctors/slot'
 import path from 'path'
 import pdf from 'html-pdf'
 import generateHospitalFinanceReport from '../../documents/HospitalFinanceReport'
-import { SlotStatus } from '../../constants/slot'
+import { SlotStatus, SlotTypes } from '../../constants/slot'
 import { sendEmail } from '../../functions/mailer'
 
 const NAMESPACE = "Hospital"
@@ -361,6 +361,81 @@ const getTradeLicenseFile = async (req: Request, res: Response, next: NextFuncti
     }
 }
 
+const getHospitalFinanceStatistics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { fromDate, toDate, hospitalId } = req.body;
+
+        const appointments = await Slot.find({
+            // @ts-ignore
+            hospitalId,
+            from: {
+                $gte: new Date(new Date(fromDate).setHours(0o0, 0o0, 0o0)),
+                $lt: new Date(new Date(toDate).setHours(23, 59, 59))
+            },
+            status: SlotStatus.BOOKED
+        }).populate("patientId");
+
+        return makeResponse(res, 200, "Hospital Finance Statistics", appointments, false)
+
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
+const getMedicappPCRFinanceReport = async (req: Request, res: Response, next: NextFunction) => {
+    // type: SlotTypes.MEDICAPP_PCR
+    try {
+        const { fromDate, toDate } = req.body;
+
+        const appointments = await Slot.find({
+            // @ts-ignore
+            from: {
+                $gte: new Date(new Date(fromDate).setHours(0o0, 0o0, 0o0)),
+                $lt: new Date(new Date(toDate).setHours(23, 59, 59))
+            },
+            status: SlotStatus.BOOKED,
+            type: SlotTypes.MEDICAPP_PCR
+        }).populate("patientId");
+
+        pdf.create(generateHospitalFinanceReport(null, appointments, fromDate, toDate), {}).toFile('Medicapp PCR Finance Report.pdf', (err) => {
+            if (err) {
+                return Promise.reject()
+            }
+
+            return Promise.resolve().then(result => {
+                res.sendFile(path.resolve('Medicapp PCR Finance Report.pdf'))
+            })
+        })
+
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
+const getMedicappPCRFinanceStatistics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { fromDate, toDate } = req.body;
+
+        const appointments = await Slot.find({
+            // @ts-ignore
+            from: {
+                $gte: new Date(new Date(fromDate).setHours(0o0, 0o0, 0o0)),
+                $lt: new Date(new Date(toDate).setHours(23, 59, 59))
+            },
+            status: SlotStatus.BOOKED,
+            type: SlotTypes.MEDICAPP_PCR
+        }).populate("patientId");
+
+        return makeResponse(res, 200, "Medicapp PCR Finance Statistics", appointments, false)
+
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
 export default {
     createHospital,
     getAllHospitals,
@@ -376,5 +451,8 @@ export default {
     getHospitalFinanceReport,
     getPendingHospitals,
     approveHospital,
-    getTradeLicenseFile
+    getTradeLicenseFile,
+    getHospitalFinanceStatistics,
+    getMedicappPCRFinanceReport,
+    getMedicappPCRFinanceStatistics,
 }
