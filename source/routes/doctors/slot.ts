@@ -5,7 +5,7 @@ import extractJWT from '../../middleware/extractJWT'
 const router = express.Router()
 
 router.post('/', extractJWT, controller.createSlot)
-router.post('/all/doctor/:doctorId', extractJWT, controller.getDoctorAllSlots)
+router.post('/all/doctor/:doctorId', controller.getDoctorAllSlots)
 router.get('/approved/doctor/:doctorId', extractJWT, controller.getDoctorApprovedSlots)
 router.post('/available/doctor/:doctorId', extractJWT, controller.getDoctorAvailableSlots)
 router.post('/booked/doctor/:doctorId', extractJWT, controller.getDoctorBookedSlots)

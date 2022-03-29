@@ -7,9 +7,9 @@ import extractJWT from '../../middleware/extractJWT';
 const router = express.Router();
 
 router.get('/', isHospital, controller.getAllPromos);
-router.get('/all', extractJWT, controller.getAllPromoVideos);
+router.get('/all', controller.getAllPromoVideos);
 router.post('/', isHospital, upload.single("video"), controller.createPromo);
 router.delete('/:id', isHospital, controller.deletePromo);
-router.put('/like/:promoId/:patientId', extractJWT, controller.likePromo)
+router.put('/like/:promoId/:patientId', controller.likePromo)
 
 export = router;

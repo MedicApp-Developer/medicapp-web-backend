@@ -5,9 +5,9 @@ import extractJWT from '../middleware/extractJWT';
 const router = express.Router();
 
 router.post('/', controller.subscribePackage);
-router.put('/:id', extractJWT, controller.approvePackage);
-router.get('/:patientId', extractJWT, controller.getAllPatientRewards);
+router.put('/:id', controller.approvePackage);
+router.get('/:patientId', controller.getAllPatientRewards);
 router.get('/', controller.getPatientRewardsHomeData);
-router.get('/vendor/:vendorId', extractJWT, controller.getAllVendorRewards);
+router.get('/vendor/:vendorId', controller.getAllVendorRewards);
 
 export = router;

@@ -5,6 +5,6 @@ import extractJWT from '../middleware/extractJWT'
 const router = express.Router()
 
 router.post('/', extractJWT, controller.getHomeData)
-router.get('/filters', extractJWT, controller.getFilters)
+router.get('/filters', controller.getFilters)
 
 export = router
