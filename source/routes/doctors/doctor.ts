@@ -8,6 +8,7 @@ import upload from '../../functions/multerCloudinary';
 const router = express.Router();
 
 router.get('/', extractJWT, controller.getAllDoctors);
+router.get('/all', controller.getAllPatientDoctors);
 router.get('/:id', controller.getSingleDoctor);
 router.post('/', isHospital, controller.createDoctor);
 router.put('/:id', controller.updateDoctor);

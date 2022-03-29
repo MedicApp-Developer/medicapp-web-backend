@@ -141,6 +141,25 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
 
 }
 
+const getAllPatientDoctors = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        Doctor.find({})
+            .populate("specialityId")
+            .populate("hospitalId")
+            .populate("country")
+            .populate("gender")
+            .populate("language")
+            .then(doctors => {
+                return makeResponse(res, 200, "All Doctors", { doctors }, false)
+            }).catch(err => {
+                return makeResponse(res, 400, err.message, null, true)
+            })
+    } catch (err) {
+        // @ts-ignore
+        return makeResponse(res, 400, err.message, null, true)
+    }
+}
+
 const getSingleDoctor = (req: Request, res: Response, next: NextFunction) => {
     Doctor.findById({ _id: req.params.id })
         .populate('hospitalId')
@@ -385,6 +404,7 @@ const filterDoctors = async (req: Request, res: Response, next: NextFunction) =>
 export default {
     createDoctor,
     getAllDoctors,
+    getAllPatientDoctors,
     getSingleDoctor,
     updateDoctor,
     deleteDoctor,
