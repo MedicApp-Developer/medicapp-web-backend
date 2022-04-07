@@ -241,7 +241,7 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
                 to: user?.email,
                 subject: "Reset Password",
                 // @ts-ignore,
-                html: `<p>Reset your password with below link</p><a href='https://infinite-crag-81021.herokuapp.com/reset-password/${token}'>Reset Password<a/>`
+                html: `<p>Reset your password with below link</p><a href='https://www.medicappae.com/reset-password/${token}'>Reset Password<a/>`
             }
 
             // @ts-ignore
