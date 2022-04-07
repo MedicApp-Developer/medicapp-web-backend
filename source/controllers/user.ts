@@ -237,7 +237,7 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
         if (user) {
             const token = jwt.sign({ _id: user._id }, "medicapp_reset_password_key", { expiresIn: '20m' });
             const options = {
-                from: config.mailer.user,
+                from: "noreply@medicappae.com",
                 to: user?.email,
                 subject: "Reset Password",
                 // @ts-ignore,
