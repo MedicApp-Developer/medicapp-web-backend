@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get('/', controller.getAllPackageCategories);
 router.get('/:id', controller.getSinglePackageCategory);
+router.get('/offers/:id', controller.getPackageCategoryOffers);
 router.post('/', upload.single("image"), controller.createPackageCategory);
 router.put('/:id', upload.single("image"), controller.updatePackageCategory);
 router.delete('/:id', extractJWT, controller.deletePackageCategory);

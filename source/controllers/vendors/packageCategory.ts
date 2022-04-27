@@ -3,6 +3,7 @@ import PackageCategory from '../../models/vendors/packageCategory'
 import makeResponse from '../../functions/makeResponse'
 import cloudinary from 'cloudinary'
 import config from '../../config/config'
+import Rewards from '../../models/rewards'
 
 const NAMESPACE = "PackageCategory"
 
@@ -89,10 +90,32 @@ const deletePackageCategory = async (req: Request, res: Response, next: NextFunc
 	}
 }
 
+const getPackageCategoryOffers = async (req: Request, res: Response, next: NextFunction) => {
+	const categoryId = req.params.id
+	try {
+		const rewards = await Rewards.find().populate("vendorId").populate("patientId").populate({
+			path: 'packageId',
+			populate: [
+				{ path: 'category_id' }
+			]
+		});
+
+		if (rewards?.length > 0) {
+			// @ts-ignore
+			return makeResponse(res, 200, "Offers on this package", rewards.filter(reward => reward.packageId.category_id._id.toString() === categoryId), false)
+		} else {
+			return makeResponse(res, 400, "No Offers Against this package category", null, true)
+		}
+	} catch (e) {
+		return res.sendStatus(400)
+	}
+}
+
 export default {
 	createPackageCategory,
 	getAllPackageCategories,
 	getSinglePackageCategory,
 	updatePackageCategory,
-	deletePackageCategory
+	deletePackageCategory,
+	getPackageCategoryOffers
 }
