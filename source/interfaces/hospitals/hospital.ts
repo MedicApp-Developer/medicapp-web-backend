@@ -12,6 +12,7 @@ export default interface IHospital extends Document {
     type: string
     category: string[]
     services: string[]
+    image: string
     images: string[]
     about: string
     openingTime: string

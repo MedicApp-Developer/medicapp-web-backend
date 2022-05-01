@@ -209,9 +209,9 @@ const deleteUserWithEmail = async (email: string) => {
     });
 }
 
-const updateUser = async (req: Request, res: Response, id: string, user: any) => {
+const updateUser = async (req: Request, res: Response, id: string, user: any, isHospital: boolean = false) => {
 
-    let update = { ...req.body };
+    let update = isHospital ? { ...user } : { ...req.body };
 
     if (req.body.password) {
         const hash = await bcryptjs.hash(user.password, 10);

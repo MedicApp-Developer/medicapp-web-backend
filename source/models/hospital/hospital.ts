@@ -73,6 +73,9 @@ const HospitalSchema: Schema = new Schema(
         rating: {
             type: Number,
         },
+        image: {
+            type: String
+        },
         images: {
             type: [String]
         },

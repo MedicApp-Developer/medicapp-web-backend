@@ -19,6 +19,7 @@ import pdf from 'html-pdf'
 import generateHospitalFinanceReport from '../../documents/HospitalFinanceReport'
 import { SlotStatus, SlotTypes } from '../../constants/slot'
 import { sendEmail } from '../../functions/mailer'
+import isHospital from '../../middleware/isHospital'
 
 const NAMESPACE = "Hospital"
 
@@ -119,7 +120,9 @@ const getHospitalDetail = async (req: Request, res: Response, next: NextFunction
                 if (specialities.filter(sp => sp.name_en === doctor?.specialityId?.name_en).length === 0) {
                     // @ts-ignore
                     doctor?.specialityId?.forEach((element: any) => {
-                        specialities.push(element)
+                        if (specialities.filter((sp: any) => sp.name_en === element?.name_en).length === 0) {
+                            specialities.push(element)
+                        }
                     })
 
                 }
@@ -147,8 +150,9 @@ const updateHospital = (req: Request, res: Response, next: NextFunction) => {
     update.password && delete update.password
 
     const filter = { _id: id }
+    const updateUser = { ...req.body, firstName: req.body.name }
 
-    UserController.updateUser(req, res, _id, req.body)
+    UserController.updateUser(req, res, _id, updateUser, true)
 
     Hospital.findOneAndUpdate(filter, update).then((updatedHospital: any) => {
         return makeResponse(res, 200, "Hospital updated Successfully", updatedHospital, false)
@@ -436,6 +440,30 @@ const getMedicappPCRFinanceStatistics = async (req: Request, res: Response, next
     }
 }
 
+const uploadProfilePic = async (req: Request, res: Response, next: NextFunction) => {
+    // @ts-ignore
+    cloudinary.v2.config({
+        cloud_name: config.cloudinary.name,
+        api_key: config.cloudinary.apiKey,
+        api_secret: config.cloudinary.secretKey
+    })
+
+    // @ts-ignore
+    const result = await cloudinary.uploader.upload(req.file.path)
+
+    // This id is updated hospital itself id 
+    const { id } = req.params
+
+    const filter = { _id: id }
+
+    // @ts-ignore
+    Hospital.findOneAndUpdate(filter, { image: result.url }).then(updatedHospital => {
+        return makeResponse(res, 200, "Hospital profile picture uploaded Successfully", updatedHospital, false)
+    }).catch(err => {
+        return makeResponse(res, 400, err.message, null, true)
+    })
+}
+
 export default {
     createHospital,
     getAllHospitals,
@@ -455,4 +483,5 @@ export default {
     getHospitalFinanceStatistics,
     getMedicappPCRFinanceReport,
     getMedicappPCRFinanceStatistics,
+    uploadProfilePic
 }

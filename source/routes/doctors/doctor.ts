@@ -11,7 +11,7 @@ router.get('/', extractJWT, controller.getAllDoctors);
 router.get('/all', controller.getAllPatientDoctors);
 router.get('/:id', controller.getSingleDoctor);
 router.post('/', isHospital, controller.createDoctor);
-router.put('/:id', controller.updateDoctor);
+router.put('/:id', extractJWT, controller.updateDoctor);
 router.delete('/:id', isHospital, controller.deleteDoctor);
 router.get('/search/:searchedText', controller.searchDoctor);
 router.post('/searchHospitalAndDoctor', controller.searchHospitalAndDoctor);
