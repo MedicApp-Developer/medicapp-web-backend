@@ -16,7 +16,7 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
   const { lat, lng } = req.body
 
   try {
-    const specialities = await Speciality.find({})
+    const specialities = await Speciality.find({}).sort({ 'order': 1 })
     const hospitals = await Hospital.find({
       location: {
         $near: {
@@ -54,7 +54,7 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
 const getFilters = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
-    const specialities = await Speciality.find({})
+    const specialities = await Speciality.find({}).sort({ 'order': 1 })
     const hospitalCategories = await Category.find({})
     const hospitalServices = await Services.find({})
 
