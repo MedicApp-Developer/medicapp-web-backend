@@ -28,10 +28,10 @@ const createSpeciality = async (req: Request, res: Response, next: NextFunction)
         return makeResponse(res, 400, "Validation Failed", errors, true)
     }
 
-    const { name_en, name_ar, tags } = req.body
+    const { name_en, name_ar, tags, order } = req.body
 
     // @ts-ignore
-    const newSpeciality = new Speciality({ name_en, name_ar, logo: result.url, tags })
+    const newSpeciality = new Speciality({ name_en, name_ar, logo: result.url, tags, order: parseInt(order) })
     newSpeciality.save().then(speciality => {
         return makeResponse(res, 201, "Speciality Created Successfully", speciality, false)
     })
@@ -47,14 +47,14 @@ const getAllSpeciality = async (req: Request, res: Response, next: NextFunction)
         const page = parseInt(req.query.page || "0")
         const total = await Speciality.find({}).countDocuments({})
 
-        Speciality.find({}).limit(6).skip(6 * page).then(specialities => {
+        Speciality.find({}).limit(6).skip(6 * page).sort({ 'order': 1 }).then(specialities => {
             return makeResponse(res, 200, "All Specialities", { totalItems: total, totalPages: Math.ceil(total / 6), specialities }, false)
         })
             .catch(err => {
                 return sendErrorResponse(res, 400, "No Record Found", RECORD_NOT_FOUND)
             })
     } else {
-        Speciality.find({})
+        Speciality.find({}).sort({ order: 1 })
             .then(specialities => {
                 return makeResponse(res, 200, "All Specialities", specialities, false)
             })
@@ -85,11 +85,16 @@ const updateSpeciality = async (req: Request, res: Response, next: NextFunction)
         api_secret: config.cloudinary.secretKey
     })
 
-    // @ts-ignore
-    const result = await cloudinary.uploader.upload(req.file.path)
-
     const filter = { _id: id }
-    let update = { name_en: req.body.name_en, name_ar: req.body.name_ar, tags: req.body.tags, logo: result.url }
+    let update = {};
+    // @ts-ignore
+    if (req?.file?.path) {
+        // @ts-ignore
+        const result = await cloudinary.uploader.upload(req.file.path)
+        update = { name_en: req.body.name_en, name_ar: req.body.name_ar, order: parseInt(req.body.order), tags: req.body.tags, logo: result.url }
+    } else {
+        update = { name_en: req.body.name_en, name_ar: req.body.name_ar, order: parseInt(req.body.order), tags: req.body.tags }
+    }
 
     Speciality.findOneAndUpdate(filter, update).then(updatedSpeciality => {
         return makeResponse(res, 200, "Speciality updated Successfully", updatedSpeciality, false)

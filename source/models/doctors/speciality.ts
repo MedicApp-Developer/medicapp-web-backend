@@ -18,6 +18,10 @@ const SpecialitySchema: Schema = new Schema(
         logo: {
             type: String,
             required: false
+        },
+        order: {
+            type: Number,
+            required: false
         }
     },
     {

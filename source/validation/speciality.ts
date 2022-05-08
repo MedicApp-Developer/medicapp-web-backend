@@ -7,6 +7,7 @@ const validateSpecialityInput = (data: any) => {
   data.name_en = !isEmpty(data.name_en) ? data.name_en : ""
   data.name_ar = !isEmpty(data.name_ar) ? data.name_ar : ""
   data.tags = !isEmpty(data.tags) ? data.tags : ""
+  data.order = !isEmpty(data.order) ? data.order : ""
 
   if (Validator.isEmpty(data.name_en)) {
     errors.name_en = "English Name field is required"
@@ -14,6 +15,10 @@ const validateSpecialityInput = (data: any) => {
 
   if (Validator.isEmpty(data.name_ar)) {
     errors.name_ar = "Arabic Name field is required"
+  }
+
+  if (Validator.isEmpty(data.order)) {
+    errors.order = "Order field is required"
   }
 
   if (Validator.isEmpty(data.tags)) {
