@@ -138,6 +138,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
                 return makeResponse(res, 400, err.message, null, true)
             })
     }
+
 }
 
 const getAllPatientDoctors = async (req: Request, res: Response, next: NextFunction) => {
