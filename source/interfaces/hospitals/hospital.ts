@@ -15,6 +15,7 @@ export default interface IHospital extends Document {
     image: string
     images: string[]
     about: string
+    address: string
     openingTime: string
     closingTime: string
     PCRDPI: boolean

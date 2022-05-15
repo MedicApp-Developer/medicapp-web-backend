@@ -21,7 +21,8 @@ import Slot from '../models/doctors/slot';
 import { SlotStatus } from '../constants/slot';
 import Family from '../models/family';
 import cloudinary from 'cloudinary';
-
+import fs from 'fs';
+import path from 'path';
 
 const NAMESPACE = "Patient";
 
@@ -60,12 +61,19 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                             if (_error) {
                                 return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                             } else if (token) {
+                                console.log(path.join((`${__dirname}`)));
+                                const content = fs.readFileSync(path.join((`${__dirname}/../email-templates/RegisterationEmail.html`)));
+
+                                let final_template = content.toString().replace('[name]', firstName + " " + lastName).toString().replace('[username]', email).toString().replace('[password]', password);
+
+
                                 const options = {
                                     from: config.mailer.user,
                                     to: email,
                                     subject: "Welcome to Medicapp",
-                                    text: `Your account account has been created as a patient, and your password is ${password}`
+                                    html: final_template
                                 }
+
                                 sendEmail(options);
                                 return makeResponse(res, 200, "Patient registered successfully", { bookmarks: { doctorIds: [], hospitalIds: [] }, user: savedPatient, familyMembers: [], token: token }, false);
                             }

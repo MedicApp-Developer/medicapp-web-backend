@@ -8,6 +8,10 @@ import { SlotStatus, SlotTypes } from '../constants/slot'
 import Patient from '../models/patient'
 import PointsCode from '../models/pointsCode'
 import { POINTS_CODE } from '../constants/rewards'
+import sendMessage from '../functions/sendSms'
+import Hospital from '../models/hospital/hospital'
+import Doctor from '../models/doctors/doctor'
+import moment from 'moment'
 
 const NAMESPACE = "Appointment"
 
@@ -29,7 +33,20 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
                     hospitalId: updatedSlot.hospitalId, slotId
                 }).save();
 
-                return makeResponse(res, 200, "Updated Slot", updatedSlot, false)
+                const slotInfo = await Slot.findById(slotId);
+                if (slotInfo) {
+                    const hospitalInfo = await Hospital.findById(slotInfo.hospitalId);
+                    const doctorInfo = await Doctor.findById(slotInfo.doctorId);
+                    const patientInfo = await Patient.findById(slotInfo.patientId);
+
+
+                    // @ts-ignore
+                    const message = `Appointment Confirmed!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment(slotInfo?.from).format('MMMM Do YYYY, h:mm:ss a')}\nClinic Location: ${hospitalInfo?.address}`
+                    // @ts-ignore
+                    sendMessage(patientInfo?.phone.slice(1).replace(/\s+/g, ''), message);
+                }
+
+                return makeResponse(res, 200, "Appointment booked", updatedSlot, false)
             }).catch(err => {
                 return sendErrorResponse(res, 400, "No slot with this ID", RECORD_NOT_FOUND)
             })

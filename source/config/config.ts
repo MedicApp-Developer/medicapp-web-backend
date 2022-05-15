@@ -13,6 +13,8 @@ const SERVER_HOST_URL = process.env.SERVER_HOST_URL;
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+const SMSGLOBAL_API_KEY = process.env.SMSGLOBAL_API_KEY;
+const SMSGLOBAL_API_SECRET = process.env.SMSGLOBAL_API_SECRET;
 
 const SERVER = {
     hostname: SERVER_HOSTNAME,
@@ -86,12 +88,19 @@ const cloudinary = {
     secretKey: CLOUDINARY_API_SECRET
 }
 
+// SMSGlobal (MXT)
+const SMSGlobal = {
+    apiKey: SMSGLOBAL_API_KEY,
+    secretKey: SMSGLOBAL_API_SECRET
+}
+
 const config = {
     server: SERVER,
     mongo: MONGO,
     mailer: NODEMAILER,
     bucket: BUCKET,
-    cloudinary
+    cloudinary,
+    SMSGlobal
 };
 
 // Note: Application URL: https://sheltered-depths-86378.herokuapp.com

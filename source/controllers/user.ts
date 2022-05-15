@@ -17,6 +17,8 @@ import config from '../config/config'
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
+import fs from 'fs';
+import path from 'path';
 
 const NAMESPACE = "User";
 
@@ -236,14 +238,21 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
 
         if (user) {
             const token = jwt.sign({ _id: user._id }, "medicapp_reset_password_key", { expiresIn: '20m' });
+
+            const content = fs.readFileSync(path.join((`${__dirname}/../email-templates/ResetPassword.html`)));
+
+            let final_template = content.toString().replace('[name]', user?.firstName + " " + user?.lastName).toString().replace('[link]', `https://www.medicappae.com/reset-password/${token}`);
+
             const options = {
                 from: "Medicappae <noreply@medicappae.com>",
                 replyTo: 'noreply@medicappae.com',
                 to: user?.email,
                 subject: "Reset Password",
                 // @ts-ignore,
-                html: `<p>Reset your password with below link</p><a href='https://www.medicappae.com/reset-password/${token}'>Reset Password<a/>`
+                html: final_template
             }
+
+            sendEmail(options);
 
             // @ts-ignore
             await User.findOneAndUpdate({ _id: user._id }, { resetLink: token });
