@@ -52,7 +52,6 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                     if (hashError) {
                         return false;
                     }
-
                     // @ts-ignore
                     const _user = new User({ _id: new mongoose.Types.ObjectId(), firstName, lastName, email, phoneNo: phone, password: hash, role: Roles.PATIENT, emiratesId, referenceId: savedPatient._id });
                     _user.save().then(createdUser => {

@@ -122,3 +122,4 @@ router.use(function (req, res, next) {
 });
 var httpServer = http_1.default.createServer(router);
 httpServer.listen(config_1.default.server.port, function () { return logging_1.default.info(NAMESPACE, "Server is running ".concat(config_1.default.server.hostname, ":").concat(config_1.default.server.port)); });
+a;
