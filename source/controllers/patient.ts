@@ -62,7 +62,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                                 return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                             } else if (token) {
                                 console.log(path.join((`${__dirname}`)));
-                                const content = fs.readFileSync(path.join((`${__dirname}/../email-templates/RegisterationEmail.html`)));
+                                const content = fs.readFileSync(path.join((`${__dirname}/../templates/RegisterationEmail.html`)));
 
                                 let final_template = content.toString().replace('[name]', firstName + " " + lastName).toString().replace('[username]', email).toString().replace('[password]', password);
 

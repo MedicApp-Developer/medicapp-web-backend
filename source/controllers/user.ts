@@ -239,7 +239,7 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
         if (user) {
             const token = jwt.sign({ _id: user._id }, "medicapp_reset_password_key", { expiresIn: '20m' });
 
-            const content = fs.readFileSync(path.join((`${__dirname}/../email-templates/ResetPassword.html`)));
+            const content = fs.readFileSync(path.join((`${__dirname}/../templates/ResetPassword.html`)));
 
             let final_template = content.toString().replace('[name]', user?.firstName + " " + user?.lastName).toString().replace('[link]', `https://www.medicappae.com/reset-password/${token}`);
 
