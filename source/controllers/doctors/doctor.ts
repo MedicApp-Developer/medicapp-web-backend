@@ -137,6 +137,7 @@ const getAllDoctors = async (req: Request, res: Response, next: NextFunction) =>
             .catch(err => {
                 return makeResponse(res, 400, err.message, null, true)
             })
+
     }
 
 }
