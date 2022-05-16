@@ -263,7 +263,7 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
             return sendErrorResponse(res, 400, "Email not present", SERVER_ERROR_CODE);
         }
     } catch (err) {
-        return sendErrorResponse(res, 400, "Error while reseting password", SERVER_ERROR_CODE);
+        return sendErrorResponse(res, 400, err, SERVER_ERROR_CODE);
     }
 }
 
