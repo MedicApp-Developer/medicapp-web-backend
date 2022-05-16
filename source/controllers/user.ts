@@ -263,6 +263,7 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
             return sendErrorResponse(res, 400, "Email not present", SERVER_ERROR_CODE);
         }
     } catch (err) {
+        // @ts-ignore
         return sendErrorResponse(res, 400, err, SERVER_ERROR_CODE);
     }
 }
