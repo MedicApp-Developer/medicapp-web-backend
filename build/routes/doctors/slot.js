@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var express_1 = __importDefault(require("express"));
+var slot_1 = __importDefault(require("../../controllers/doctors/slot"));
+var extractJWT_1 = __importDefault(require("../../middleware/extractJWT"));
+var router = express_1.default.Router();
+router.post('/', extractJWT_1.default, slot_1.default.createSlot);
+router.post('/all/doctor/:doctorId', slot_1.default.getDoctorAllSlots);
+router.get('/approved/doctor/:doctorId', extractJWT_1.default, slot_1.default.getDoctorApprovedSlots);
+router.post('/available/doctor/:doctorId', extractJWT_1.default, slot_1.default.getDoctorAvailableSlots);
+router.post('/booked/doctor/:doctorId', extractJWT_1.default, slot_1.default.getDoctorBookedSlots);
+router.post('/PCRTests/hospital/:hospitalId', extractJWT_1.default, slot_1.default.getHospitalPCRTestSlots);
+router.post('/PCRVaccination/hospital/:hospitalId', extractJWT_1.default, slot_1.default.getHospitalPCRVaccinationSlots);
+router.get('/appointmentSlip/:id', extractJWT_1.default, slot_1.default.getAppointmentSlip);
+router.post('/medicapp', extractJWT_1.default, slot_1.default.createMedicappSlot);
+router.post('/patient/booked/:patientId', extractJWT_1.default, slot_1.default.getPatientMedicappBookedSlots);
+router.delete('/medicapp/:id', extractJWT_1.default, slot_1.default.cancelMedicappAppointment);
+router.get('/medicapp', extractJWT_1.default, slot_1.default.getAllMedicappBookedAppointments);
+module.exports = router;

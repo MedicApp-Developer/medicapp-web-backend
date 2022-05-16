@@ -8,8 +8,6 @@ certs/**/*
 *.mobileprovision
 *.orig.*
 
-package-lock.json
 todo.txt
 .env
 .DS_Store
-build

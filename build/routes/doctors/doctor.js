@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var express_1 = __importDefault(require("express"));
+var doctor_1 = __importDefault(require("../../controllers/doctors/doctor"));
+var extractJWT_1 = __importDefault(require("../../middleware/extractJWT"));
+var isHospital_1 = __importDefault(require("../../middleware/isHospital"));
+var multerCloudinary_1 = __importDefault(require("../../functions/multerCloudinary"));
+var router = express_1.default.Router();
+router.get('/', extractJWT_1.default, doctor_1.default.getAllDoctors);
+router.get('/all', doctor_1.default.getAllPatientDoctors);
+router.get('/:id', doctor_1.default.getSingleDoctor);
+router.post('/', isHospital_1.default, doctor_1.default.createDoctor);
+router.put('/:id', extractJWT_1.default, doctor_1.default.updateDoctor);
+router.delete('/:id', isHospital_1.default, doctor_1.default.deleteDoctor);
+router.get('/search/:searchedText', doctor_1.default.searchDoctor);
+router.post('/searchHospitalAndDoctor', doctor_1.default.searchHospitalAndDoctor);
+router.get('/searchDoctorBySpeciality/:specialityId', doctor_1.default.searchDoctorBySpeciality);
+router.put('/uploadProfilePicture/:id', multerCloudinary_1.default.single("image"), doctor_1.default.uploadProfilePic);
+router.post('/filter', doctor_1.default.filterDoctors);
+router.get('/searchAll/:searchedText', doctor_1.default.searchDoctorsOfAllHospitals);
+module.exports = router;
