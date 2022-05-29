@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import { UserStatus } from '../constants/roles';
 import IUser from '../interfaces/user';
-
+ 
 const UserSchema: Schema = new Schema(
     {
         firstName: {

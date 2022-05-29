@@ -464,6 +464,24 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
     })
 }
 
+const deleteGalleryImage = async (req: Request, res: Response, next: NextFunction) => {
+   const { url, hospitalId } = req.body;
+   console.log("----> URL => ", url);
+   console.log("----> hospitalId => ", hospitalId);
+
+   const hospital = await Hospital.findById(hospitalId);
+   // @ts-ignore
+   const images = hospital?.images.length > 0 && hospital?.images.filter(img => img !== url);
+
+   // @ts-ignore   
+   Hospital.findOneAndUpdate({_id: hospitalId}, { images: images }, { new: true }).then(updatedHospital => {
+       return makeResponse(res, 200, "Hospital profile picture uploaded Successfully", updatedHospital, false)
+   }).catch(err => {
+       return makeResponse(res, 400, err.message, null, true)
+   })
+   
+}
+
 export default {
     createHospital,
     getAllHospitals,
@@ -483,5 +501,6 @@ export default {
     getHospitalFinanceStatistics,
     getMedicappPCRFinanceReport,
     getMedicappPCRFinanceStatistics,
-    uploadProfilePic
+    uploadProfilePic,
+    deleteGalleryImage
 }
