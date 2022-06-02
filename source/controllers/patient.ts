@@ -23,6 +23,7 @@ import Family from '../models/family';
 import cloudinary from 'cloudinary';
 import fs from 'fs';
 import path from 'path';
+const schedule = require('node-schedule');
 
 const NAMESPACE = "Patient";
 
@@ -248,6 +249,53 @@ const deletePatient = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
+
+const deleteUserCronJob = async (_id: string, email: string, nextDate: Date) => {
+
+    const job = schedule.scheduleJob(nextDate, async function(){
+        let patient = await Patient.findById(_id);
+        if(patient?.accountDeletionRequest == true){
+            await Patient.findByIdAndDelete(_id);
+            await UserController.deleteUserWithEmail(email)
+            console.log('User Removed! ', _id);
+        }else{
+            console.log( 'Account deletion Action revoked by: ' , _id )
+        }
+    });
+    console.log( "cron job set---" )
+    return true;
+}
+
+// deactive patient by: Umair 
+const deactivePatient = async (req: Request, res: Response, next: NextFunction) => {
+    const _id = req.params.id;
+    try {
+        let patient = await Patient.findOne({ _id });
+        if(!patient) return sendErrorResponse(res, 400, "Patient not found with this ID", SERVER_ERROR_CODE);
+        const today = new Date();
+        const nextDate = new Date();
+    
+        // Add 14 Day // nextDate.setMinutes(today.getMinutes() + 2);
+        nextDate.setMinutes(today.getMinutes() + 5);
+        // nextDate.setDate(today.getDate() + 14);
+        Patient.findOneAndUpdate ( { _id }, 
+            {   accountDeletionRequest: !patient?.accountDeletionRequest, 
+                deletionDate : !patient?.accountDeletionRequest ? nextDate.toISOString(): '' }, { new: true } )
+        .then(async  updatedPatient => {
+            if(updatedPatient?.accountDeletionRequest) {
+                let cronjobset = await deleteUserCronJob(_id, patient?.email ?? '', nextDate)
+                console.log( `cronJobset: ${cronjobset}` )
+            }
+            return makeResponse(res, 200, "Delection Request Submitted", updatedPatient, false);
+        } )
+        .catch(err => {
+            return makeResponse(res, 400, err.message, null, true);
+        });
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
+    }
+};
 const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Get all information of patient
@@ -368,6 +416,7 @@ export default {
     getSinglePatient,
     updatePatient,
     deletePatient,
+    deactivePatient,
     createPatientFromNurse,
     getPatientAccountInfo,
     getLabResults,

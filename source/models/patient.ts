@@ -122,6 +122,18 @@ const PatientSchema: Schema = new Schema(
             type: Number,
             required: false,
             default: 0
+        },
+
+        // account deletion
+        accountDeletionRequest: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
+        deletionDate: {
+            type: String,
+            required: false,
+            default: null
         }
     },
     {

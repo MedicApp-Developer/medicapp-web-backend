@@ -26,4 +26,7 @@ export default interface IPatient extends Document {
     image: string;
     points: number;
     likedPromos: string[];
+
+    accountDeletionRequest: boolean;
+    deletionDate: string;
 }

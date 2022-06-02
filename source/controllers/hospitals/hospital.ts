@@ -464,6 +464,16 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
     })
 }
 
+const deleteGalleryImage = async (req: Request, res: Response, next: NextFunction) => {
+   const { url, hospitalId } = req.params;
+   console.log("----> URL => ", url);
+   console.log("----> hospitalId => ", hospitalId);
+
+   const hospital = await Hospital.findById(hospitalId);
+   console.log("----> Hospital => ", hospital);
+   
+}
+
 export default {
     createHospital,
     getAllHospitals,
@@ -483,5 +493,6 @@ export default {
     getHospitalFinanceStatistics,
     getMedicappPCRFinanceReport,
     getMedicappPCRFinanceStatistics,
-    uploadProfilePic
+    uploadProfilePic,
+    deleteGalleryImage
 }
