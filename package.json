@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "ts-node-dev source/server.ts",
     "start": "node build/server.js",
-    "postinstall": "tsc && copyfiles --error --up 1 source/templates/*.* build",
+    "postinstall": "tsc && copyfiles --error --up 1 source/templates/*.* build && copyfiles --error --up 1 source/functions/*.* build",
     "watch-node": "nodemon build/server.js",
     "watch-ts": "tsc -w",
-    "copyMySpecialFiles": "copyfiles --error --up 1 source/templates/*.* build",
+    "copyMySpecialFiles": "copyfiles --error --up 1 source/templates/*.* build && copyfiles --error --up 1 source/functions/*.* build",
     "deploy": "git add . && git commit -m Heroku && git push heroku main"
   },
   "author": "",
