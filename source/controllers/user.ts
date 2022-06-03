@@ -76,10 +76,11 @@ const login = (req: Request, res: Response, next: NextFunction) => {
     }
 
     let { email, password } = req.body;
-
+    console.log( email, password )
     User.find({ email })
         .exec()
         .then(async users => {
+            console.log( 'users', users )
             if (users.length !== 1) {
                 return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
             }
@@ -329,5 +330,5 @@ export default {
     updateUser,
     resetPassword,
     getSingleUser,
-    forgetPassword
+    forgetPassword,
 };

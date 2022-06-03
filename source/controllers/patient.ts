@@ -23,6 +23,7 @@ import Family from '../models/family';
 import cloudinary from 'cloudinary';
 import fs from 'fs';
 import path from 'path';
+import sendNotification from "../functions/sendNotification";
 const schedule = require('node-schedule');
 
 const NAMESPACE = "Patient";
@@ -43,7 +44,8 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
         if (result.length === 0) {
             const newPatient = new Patient({
                 _id: new mongoose.Types.ObjectId(),
-                firstName, lastName, email, birthday, gender, location, phone, emiratesId
+                firstName, lastName, email, birthday, gender, location, phone, emiratesId,
+                webFctoken: false
             });
 
             const savedPatient = await newPatient.save();
@@ -252,17 +254,35 @@ const deletePatient = async (req: Request, res: Response, next: NextFunction) =>
 
 const deleteUserCronJob = async (_id: string, email: string, nextDate: Date) => {
 
-    const job = schedule.scheduleJob(nextDate, async function(){
+    const job = schedule.scheduleJob(nextDate, async function () {
         let patient = await Patient.findById(_id);
-        if(patient?.accountDeletionRequest == true){
-            await Patient.findByIdAndDelete(_id);
+        if (patient?.accountDeletionRequest == true) {
+            let deleted = await Patient.findByIdAndDelete(_id, { fields: "webFctoken" });
             await UserController.deleteUserWithEmail(email)
+            console.log('deleted: ', deleted)
+
+            let payload = {
+                notification: {
+                    title: "Account Removed",
+                    body: `Your Account has been removed on your request.`,
+                }
+            };
+            // let nTokens = <any>[];
+            // nTokens = patient?.webFctoken ? [patient?.webFctoken] : nTokens
+            // nTokens = patient?.mobileFctoken ? [...nTokens, patient?.webFctoken]: nTokens
+
+            let notifi = await sendNotification(
+                [patient?.webFctoken, patient?.mobileFctoken],
+                // `dhrl20fjSvxmmZXoLinvLl:APA91bFwXX3Ok8fenoNwHsvAsFEoa8ZeB2nlgAYVFC37gy4oQtkcRh8bwfogz6321E0SMWZkEsYyA23m0o5EOhVuXCbuuPcliWOHICnBC-a96vVYb6IktBgBtakpRuptIfT7qSe8sqF9`, 
+                payload);
+
             console.log('User Removed! ', _id);
-        }else{
-            console.log( 'Account deletion Action revoked by: ' , _id )
+
+        } else {
+            console.log('Account deletion Action revoked by: ', _id)
         }
     });
-    console.log( "cron job set---" )
+    console.log("cron job set---")
     return true;
 }
 
@@ -271,26 +291,28 @@ const deactivePatient = async (req: Request, res: Response, next: NextFunction) 
     const _id = req.params.id;
     try {
         let patient = await Patient.findOne({ _id });
-        if(!patient) return sendErrorResponse(res, 400, "Patient not found with this ID", SERVER_ERROR_CODE);
+        if (!patient) return sendErrorResponse(res, 400, "Patient not found with this ID", SERVER_ERROR_CODE);
         const today = new Date();
         const nextDate = new Date();
-    
+
         // Add 14 Day // nextDate.setMinutes(today.getMinutes() + 2);
-        nextDate.setMinutes(today.getMinutes() + 5);
-        // nextDate.setDate(today.getDate() + 14);
-        Patient.findOneAndUpdate ( { _id }, 
-            {   accountDeletionRequest: !patient?.accountDeletionRequest, 
-                deletionDate : !patient?.accountDeletionRequest ? nextDate.toISOString(): '' }, { new: true } )
-        .then(async  updatedPatient => {
-            if(updatedPatient?.accountDeletionRequest) {
-                let cronjobset = await deleteUserCronJob(_id, patient?.email ?? '', nextDate)
-                console.log( `cronJobset: ${cronjobset}` )
-            }
-            return makeResponse(res, 200, "Delection Request Submitted", updatedPatient, false);
-        } )
-        .catch(err => {
-            return makeResponse(res, 400, err.message, null, true);
-        });
+        // nextDate.setMinutes(today.getMinutes() + 5);
+        nextDate.setDate(today.getDate() + 14);
+        Patient.findOneAndUpdate({ _id },
+            {
+                accountDeletionRequest: !patient?.accountDeletionRequest,
+                deletionDate: !patient?.accountDeletionRequest ? nextDate.toISOString() : ''
+            }, { new: true })
+            .then(async updatedPatient => {
+                if (updatedPatient?.accountDeletionRequest) {
+                    let cronjobset = await deleteUserCronJob(_id, patient?.email ?? '', nextDate)
+                    console.log(`cronJobset: ${cronjobset}`)
+                }
+                return makeResponse(res, 200, "Delection Request Submitted", updatedPatient, false);
+            })
+            .catch(err => {
+                return makeResponse(res, 400, err.message, null, true);
+            });
     } catch (err) {
         // @ts-ignore
         return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE);
@@ -410,6 +432,27 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
     });
 }
 
+const updateWebFcToken = async (req: Request, res: Response, next: NextFunction) => {
+    const { id, token } = req.body;
+    Patient.findOneAndUpdate({ _id: id }, { webFctoken: token }, { new: true }).then(updatedPatient => {
+        return makeResponse(res, 200, "Patient Fc token Updated Successfully", updatedPatient, false);
+    }).catch(err => {
+        return makeResponse(res, 400, err.message, null, true);
+    });
+
+}
+
+const updateMobileFcToken = async (req: Request, res: Response, next: NextFunction) => {
+    const { id, token } = req.body;
+    Patient.findOneAndUpdate({ _id: id }, { mobileFctoken: token }, { new: true }).then(updatedPatient => {
+        return makeResponse(res, 200, "Patient Mobile Fc token Updated Successfully", updatedPatient, false);
+    }).catch(err => {
+        return makeResponse(res, 400, err.message, null, true);
+    });
+}
+
+
+
 export default {
     createPatient,
     getAllPatients,
@@ -421,5 +464,7 @@ export default {
     getPatientAccountInfo,
     getLabResults,
     getQRPrescription,
-    uploadProfilePic
+    uploadProfilePic,
+    updateWebFcToken,
+    updateMobileFcToken
 };

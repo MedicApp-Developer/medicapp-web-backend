@@ -134,6 +134,16 @@ const PatientSchema: Schema = new Schema(
             type: String,
             required: false,
             default: null
+        },
+        webFctoken: {
+            type: String,
+            required: false,
+            default: false
+        },
+        mobileFctoken: {
+            type: String,
+            required: false,
+            default: false
         }
     },
     {
