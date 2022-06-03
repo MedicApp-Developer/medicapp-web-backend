@@ -294,7 +294,6 @@ const deactivePatient = async (req: Request, res: Response, next: NextFunction) 
         if (!patient) return sendErrorResponse(res, 400, "Patient not found with this ID", SERVER_ERROR_CODE);
         const today = new Date();
         const nextDate = new Date();
-
         // Add 14 Day // nextDate.setMinutes(today.getMinutes() + 2);
         // nextDate.setMinutes(today.getMinutes() + 5);
         nextDate.setDate(today.getDate() + 14);
