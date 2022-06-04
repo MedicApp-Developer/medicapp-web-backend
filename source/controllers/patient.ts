@@ -305,6 +305,19 @@ const deactivePatient = async (req: Request, res: Response, next: NextFunction) 
                     await dispatchNotification(updatedPatient);
                     let cronjobset = await deleteUserCronJob(_id, patient?.email ?? '', nextDate)
                     console.log(`cronJobset: ${cronjobset}`)
+                    const content = fs.readFileSync(path.join((`${__dirname}/../templates/AccountDeactivate.html`)));
+
+                    let final_template = content.toString().replace('[name]', updatedPatient.firstName + " " + updatedPatient.lastName);
+
+
+                    const options = {
+                        from: config.mailer.user,
+                        to: updatedPatient.email,
+                        subject: "Account Deactivated",
+                        html: final_template
+                    }
+
+                    sendEmail(options);
                 }
                 return makeResponse(res, 200, "Delection Request Submitted", updatedPatient, false);
             })
