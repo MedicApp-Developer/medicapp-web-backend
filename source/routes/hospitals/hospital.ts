@@ -24,6 +24,6 @@ router.get('/get/pending', controller.getPendingHospitals);
 router.put('/approveHospital/:id', extractJWT, controller.approveHospital);
 router.get('/getTradeLicenseFile/:id', extractJWT, controller.getTradeLicenseFile);
 router.put('/uploadProfilePicture/:id', upload.single("image"), controller.uploadProfilePic);
-router.post('/deleteGalleryImage', extractJWT, controller.deleteGalleryImage);
+router.delete('/deleteGalleryImage/:hospitalId/:url', extractJWT, controller.deleteGalleryImage);
 
 export = router;

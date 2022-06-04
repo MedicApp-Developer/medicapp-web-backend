@@ -1,6 +1,5 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("./fir-app-11c19-firebase-adminsdk-jh46b-37c37b7ccc.json");
-// const databaseURL  = "https://pikway-39deb.firebaseio.com";
+const serviceAccount = require("./medicapp-find-doctors-firebase-adminsdk-ps18y-150941073c.json");
 /////
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),

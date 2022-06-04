@@ -76,11 +76,9 @@ const login = (req: Request, res: Response, next: NextFunction) => {
     }
 
     let { email, password } = req.body;
-    console.log( email, password )
     User.find({ email })
         .exec()
         .then(async users => {
-            console.log( 'users', users )
             if (users.length !== 1) {
                 return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
             }
@@ -95,7 +93,12 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                             return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                         } else if (token) {
                             if (users[0].role === Roles.PATIENT) {
-                                const patient = await Patient.findById(users[0].referenceId);
+                                const patient = await Patient.findByIdAndUpdate(users[0].referenceId, {
+                                    accountDeletionRequest: false,
+                                    deletionDate: ''
+                                }, { new: true });
+
+                                // const patient = await Patient.findById(users[0].referenceId);
                                 const familyMembers = await Family.find({ patientId: users[0].referenceId });
                                 const bookmarks = await Bookmark.find({ user: users[0]._id }).select("hospitalIds doctorIds");
                                 return makeResponse(res, 200, "Authentication Successful", { bookmarks: bookmarks.length > 0 ? bookmarks[0] : { doctorIds: [], hospitalIds: [] }, user: patient, familyMembers: familyMembers.length > 0 ? familyMembers : [], token: token }, false);
