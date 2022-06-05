@@ -255,7 +255,8 @@ const dispatchNotification = async (patient: any) => {
     let payload = {
         notification: {
             title: "Account Removed",
-            body: `Your Account has been removed on your request.`,
+            body: "Your Account has been removed on your request.",
+            sound: "default"
         }
     };
 
@@ -311,7 +312,8 @@ const deactivePatient = async (req: Request, res: Response, next: NextFunction) 
 
 
                     const options = {
-                        from: config.mailer.user,
+                        from: "Medicappae <noreply@medicappae.com>",
+                        replyTo: 'noreply@medicappae.com',
                         to: updatedPatient.email,
                         subject: "Account Deactivated",
                         html: final_template
