@@ -260,16 +260,14 @@ const dispatchNotification = async (patient: any) => {
             // content_available: true,
             // priority: "high",
         },
-        data: {
-            
-        }
+        data: {}
     };
 
     let notifi = await sendNotification(
         [patient?.webFctoken, patient?.mobileFctoken],
         payload);
 
-    console.log("Notify:", notifi );
+    console.log("Notify:", notifi);
 }
 const deleteUserCronJob = async (_id: string, email: string, nextDate: Date) => {
 
