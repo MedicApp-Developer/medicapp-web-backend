@@ -199,9 +199,8 @@ const getSinglePatient = async (req: Request, res: Response, next: NextFunction)
 
     let doctors: any = null;
 
-    await Appointment.find({ patientId: req.params.id }).populate('doctorId')
+    await Slot.find({ patientId: req.params.id }).populate('doctorId')
         .then(result => {
-
             doctors = result.map(item => (item.doctorId));
             Patient.findById({ _id: req.params.id })
                 .then((data: any) => {
