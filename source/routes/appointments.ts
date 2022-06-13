@@ -19,4 +19,6 @@ router.get('/doctorApprovedAppointments/:doctorId', isHospitalOrDoctor, controll
 router.get('/hospitalBooked/:hospitalId', extractJWT, controller.getAllHospitalBookedAppointments);
 router.get('/approvePatientAppointment/:slotId/:patientId', extractJWT, controller.approvePatientAppointment);
 
+router.get('/doctorAppointments/:doctorId', extractJWT, controller.getDoctorAppointments);
+
 export = router;

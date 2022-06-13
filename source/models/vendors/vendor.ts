@@ -30,6 +30,10 @@ const VendorSchema: Schema = new Schema(
 		images: {
 			type: [String]
 		},
+		image: {
+			type: String,
+			required: false
+		},
 		address: {
 			type: String,
 			required: true

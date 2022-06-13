@@ -67,6 +67,30 @@ const getAllVendors = async (req: Request, res: Response, next: NextFunction) =>
 		})
 }
 
+const uploadProfilePic = async (req: Request, res: Response, next: NextFunction) => {
+	// @ts-ignore
+	cloudinary.v2.config({
+		cloud_name: config.cloudinary.name,
+		api_key: config.cloudinary.apiKey,
+		api_secret: config.cloudinary.secretKey
+	})
+
+	// @ts-ignore
+	const result = await cloudinary.uploader.upload(req.file.path)
+
+	// This id is updated hospital itself id 
+	const { id } = req.params
+
+	const filter = { _id: id }
+
+	// @ts-ignore
+	Vendor.findOneAndUpdate(filter, { image: result.url }).then(updatedVendor => {
+		return makeResponse(res, 200, "Vendor profile picture uploaded Successfully", updatedVendor, false)
+	}).catch(err => {
+		return makeResponse(res, 400, err.message, null, true)
+	})
+}
+
 const updateVendor = async (req: Request, res: Response, next: NextFunction) => {
 	const { id } = req.params
 
@@ -152,5 +176,6 @@ export default {
 	deleteVendor,
 	updateVendor,
 	getSingleVendors,
-	uploadVendorImages
+	uploadVendorImages,
+	uploadProfilePic
 }

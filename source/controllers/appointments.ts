@@ -225,8 +225,6 @@ export const getDoctorAppointments = async (req: Request, res: Response, next: N
         .populate("patientId")
         .populate("familyMemberId")
         .populate("doctorId")
-        .limit(Pagination.PAGE_SIZE)
-        .skip(Pagination.PAGE_SIZE * page)
         .then(appointments => {
             return makeResponse(res, 200, "Doctor Appointments", { totalItems: total, totalPages: Math.ceil(total / Pagination.PAGE_SIZE), appointments }, false)
         }).catch(err => {

@@ -14,4 +14,5 @@ export default interface IVendor extends Document {
 	vendorId: string;
 	location: string;
 	branch_name: string;
+	image: string
 }
