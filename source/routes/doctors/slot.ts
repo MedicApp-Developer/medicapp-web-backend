@@ -15,6 +15,7 @@ router.get('/appointmentSlip/:id', extractJWT, controller.getAppointmentSlip)
 router.post('/medicapp', extractJWT, controller.createMedicappSlot);
 router.post('/patient/booked/:patientId', extractJWT, controller.getPatientMedicappBookedSlots);
 router.delete('/medicapp/:id', extractJWT, controller.cancelMedicappAppointment);
+router.delete('/delete/:id', extractJWT, controller.deleteDoctorSlot);
 router.get('/medicapp', extractJWT, controller.getAllMedicappBookedAppointments);
 
 export = router

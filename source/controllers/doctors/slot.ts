@@ -277,6 +277,19 @@ const cancelMedicappAppointment = async (req: Request, res: Response, next: Next
     }
 }
 
+const deleteDoctorSlot = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params
+
+    try {
+        const slot = await Slot.deleteOne({ _id: id });
+
+        return makeResponse(res, 200, "Slot deleted successfully", slot, false)
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
 const getAllMedicappBookedAppointments = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const slots = await Slot.find({ type: SlotTypes.MEDICAPP_PCR, status: SlotStatus.BOOKED }).populate("patientId");
@@ -298,6 +311,7 @@ export default {
     createMedicappSlot,
     getPatientMedicappBookedSlots,
     cancelMedicappAppointment,
+    deleteDoctorSlot,
     getAllMedicappBookedAppointments,
     getDoctorApprovedSlots
 }
