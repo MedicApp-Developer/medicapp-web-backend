@@ -4,7 +4,7 @@ import IRewards from '../interfaces/patient/rewards';
 
 const RewardsSchema: Schema = new Schema(
 	{
-		code: {
+		voucherCode: {
 			type: String,
 			required: true
 		},

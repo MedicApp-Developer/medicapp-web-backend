@@ -12,4 +12,5 @@ export default interface IPackage extends Document {
 	images: string[];
 	vendorId: string;
 	subscribedCount: number;
+	voucherCode: String;
 }

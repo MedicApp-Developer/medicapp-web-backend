@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 export default interface IRewards extends Document {
-	code: string;
+	voucherCode: string;
 	patientId: string;
 	packageId: string;
 	status: string;
