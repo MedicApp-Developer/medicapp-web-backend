@@ -39,7 +39,7 @@ const subscribePackage = async (req: Request, res: Response, next: NextFunction)
 			// @ts-ignore
 			text: `You have successfully subscribed to ${packge.type === "ON_PERCENTAGE" ? packge.off + " % " + " off " : "BUY " + packge?.buyQuantity + " GET " + packge?.getQuantity} by ${packge.vendorId.firstName + " " + packge.vendorId.lastName} for ${packge?.points}`
 		}
-		sendEmail(options)
+		sendEmail(options, false)
 
 		return makeResponse(res, 200, "Reward registered successfully", { reward: savedReward }, false);
 

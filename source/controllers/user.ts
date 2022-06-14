@@ -256,12 +256,12 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
                 html: final_template
             }
 
-            sendEmail(options);
+            sendEmail(options, true);
 
             // @ts-ignore
             await User.findOneAndUpdate({ _id: user._id }, { resetLink: token });
 
-            sendEmail(options)
+            // sendEmail(options, true);
             return makeResponse(res, 200, "Reset password email has been sent", null, false);
         } else {
             return sendErrorResponse(res, 400, "Email not present", SERVER_ERROR_CODE);

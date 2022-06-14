@@ -35,7 +35,7 @@ const registerVendor = async (req: Request, res: Response, next: NextFunction) =
 						text: `Your account has been created as a vendor, and your password is ${password}`
 					}
 
-					sendEmail(options)
+					sendEmail(options, false)
 
 					return newVendor.save()
 						.then(async (result: any) => {

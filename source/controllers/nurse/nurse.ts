@@ -32,7 +32,7 @@ const createNurse = async (req: Request, res: Response, next: NextFunction) => {
                         text: `Your account account has been created as a nurse, and your password is ${password}`
                     }
 
-                    sendEmail(options);
+                    sendEmail(options, false);
 
                     return newNurse.save()
                         .then(async result => {

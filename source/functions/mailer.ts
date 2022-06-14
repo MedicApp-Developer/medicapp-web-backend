@@ -5,7 +5,7 @@ import { google } from 'googleapis';
 const oAuth2Client = new google.auth.OAuth2(config.mailer.clientID, config.mailer.secretKey, config.mailer.redirect_uri);
 oAuth2Client.setCredentials({ refresh_token: config.mailer.refresh_token });
 
-export const sendEmail = async (options: any) => {
+export const sendEmail = async (options: any, noReply: any) => {
 
     const accessToken = await oAuth2Client.getAccessToken();
 
@@ -13,6 +13,7 @@ export const sendEmail = async (options: any) => {
         // @ts-ignore
         service: 'gmail',
         auth: {
+        
             type: 'OAuth2',
             user: 'collaborations@medicappae.com',
             clientId: config.mailer.clientID,

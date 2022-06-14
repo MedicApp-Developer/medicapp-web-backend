@@ -33,7 +33,7 @@ const createLabortory = async (req: Request, res: Response, next: NextFunction) 
                         text: `Your account account has been created as a Labortory admin, and your password is ${password}`
                     }
 
-                    sendEmail(options);
+                    sendEmail(options, false);
 
                             return newLabortory.save()
                                 .then(async result => {
