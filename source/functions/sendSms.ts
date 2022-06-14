@@ -3,7 +3,7 @@ const smsglobal = require('smsglobal')(config.SMSGlobal.apiKey, config.SMSGlobal
 
 const sendMessage = (destination: string, message: string) => {
 	var payload = {
-		origin: 'Medicappae',
+		origin: 'MEDICAPP',
 		destination,
 		message: message
 	};
