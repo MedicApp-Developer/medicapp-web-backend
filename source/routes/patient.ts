@@ -23,6 +23,7 @@ router.post('/createNursePatient', isNurse, controller.createPatientFromNurse);
 router.get('/labResults/:id', extractJWT, controller.getLabResults);
 router.get('/qrPrescriptions/:id', extractJWT, controller.getQRPrescription);
 router.put('/uploadProfilePicture/:id', upload.single("image"), controller.uploadProfilePic);
+router.delete('/deleteProfileImage/:patientId', controller.deleteProfileImage);
 
 
 export = router;

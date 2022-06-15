@@ -60,7 +60,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                 text: `Your account account has been created as a hospital and status of your account is Pending for now, contact Medicapp Admin to get approved`
             }
 
-            sendEmail(options)
+            sendEmail(options, false)
             return newHospital.save()
                 .then(async (result: any) => {
                     await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", "", Roles.HOSPITAL, result._id, UserStatus.PENDING)
@@ -347,7 +347,7 @@ const approveHospital = async (req: Request, res: Response, next: NextFunction) 
             text: `Your account has been approved, now you can login to Medicapp System`
         }
 
-        await sendEmail(options)
+        await sendEmail(options, false)
 
         return makeResponse(res, 200, "Hospital Approved Successfully", null, false)
     } catch (err) {
@@ -474,6 +474,20 @@ const deleteGalleryImage = async (req: Request, res: Response, next: NextFunctio
    
 }
 
+const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
+    const { hospitalId } = req.params;
+    console.log("----> hospitalId => ", hospitalId);
+ 
+    Hospital.findOneAndUpdate({ _id: hospitalId }, { image: '' }, {new: true} )
+    .then( updatedHospital => {
+        return makeResponse(res, 200, "Hospital profile picture removed", updatedHospital, false)
+    } )
+    .catch( err => {
+        return makeResponse(res, 400, err.message, null, true)
+    } )
+ }
+
+
 export default {
     createHospital,
     getAllHospitals,
@@ -494,5 +508,6 @@ export default {
     getMedicappPCRFinanceReport,
     getMedicappPCRFinanceStatistics,
     uploadProfilePic,
-    deleteGalleryImage
+    deleteGalleryImage,
+    deleteProfileImage
 }

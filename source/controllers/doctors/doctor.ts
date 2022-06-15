@@ -41,7 +41,7 @@ const createDoctor = async (req: Request, res: Response, next: NextFunction) => 
                         text: `Your account account has been created as a doctor, and your password is ${password}`
                     }
 
-                    sendEmail(options)
+                    sendEmail(options, false)
 
                     return newDoctor.save()
                         .then(async result => {
@@ -402,6 +402,19 @@ const filterDoctors = async (req: Request, res: Response, next: NextFunction) =>
     })
 }
 
+const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
+    const { doctorId } = req.params;
+    console.log("----> doctorId => ", doctorId);
+ 
+    Doctor.findOneAndUpdate({ _id: doctorId }, { image: '' }, {new: true} )
+    .then( updatedDoctor => {
+        return makeResponse(res, 200, "Doctor profile picture removed", updatedDoctor, false)
+    } )
+    .catch( err => {
+        return makeResponse(res, 400, err.message, null, true)
+    } )
+ }
+
 export default {
     createDoctor,
     getAllDoctors,
@@ -414,5 +427,6 @@ export default {
     searchDoctorBySpeciality,
     uploadProfilePic,
     filterDoctors,
-    searchDoctorsOfAllHospitals
+    searchDoctorsOfAllHospitals,
+    deleteProfileImage
 }

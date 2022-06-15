@@ -76,7 +76,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                                     html: final_template
                                 }
 
-                                sendEmail(options);
+                                sendEmail(options, false);
                                 return makeResponse(res, 200, "Patient registered successfully", { bookmarks: { doctorIds: [], hospitalIds: [] }, user: savedPatient, familyMembers: [], token: token }, false);
                             }
                         })
@@ -114,7 +114,7 @@ const createPatientFromNurse = async (req: Request, res: Response, next: NextFun
                     text: `Your account account has been created as a patient, and your password is ${password}`
                 }
 
-                sendEmail(options);
+                sendEmail(options, false);
 
                 return newPatient.save()
                     .then(async result => {
@@ -321,7 +321,7 @@ const deactivePatient = async (req: Request, res: Response, next: NextFunction) 
                         html: final_template
                     }
 
-                    sendEmail(options);
+                    sendEmail(options, true);
                 }
                 return makeResponse(res, 200, "Delection Request Submitted", updatedPatient, false);
             })
@@ -466,6 +466,19 @@ const updateMobileFcToken = async (req: Request, res: Response, next: NextFuncti
     });
 }
 
+const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
+    const { patientId } = req.params;
+    console.log("----> hospitalId => ", patientId);
+ 
+    Patient.findOneAndUpdate({ _id: patientId }, { image: '' }, {new: true} )
+    .then( updatedPatient => {
+        return makeResponse(res, 200, "Patient profile picture removed", updatedPatient, false)
+    } )
+    .catch( err => {
+        return makeResponse(res, 400, err.message, null, true)
+    } )
+ }
+
 
 
 export default {
@@ -481,5 +494,6 @@ export default {
     getQRPrescription,
     uploadProfilePic,
     updateWebFcToken,
-    updateMobileFcToken
+    updateMobileFcToken,
+    deleteProfileImage
 };
