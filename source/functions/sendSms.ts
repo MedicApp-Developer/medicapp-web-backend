@@ -17,7 +17,7 @@ const sendMessage = (destination: string, message: string) => {
 		}
 
 		if (error) {
-			console.log('Error:', error);
+			console.log('Error:', error.data.errors);
 		}
 
 	});

@@ -43,7 +43,7 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
                     // @ts-ignore
                     const message = `Appointment Confirmed!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment(slotInfo?.from).format('MMMM Do YYYY, h:mm:ss a')}\nClinic Location: ${hospitalInfo?.address}`
                     // @ts-ignore
-                    sendMessage(patientInfo?.phone.slice(1).replace(/\s+/g, ''), message);
+                    sendMessage(patientInfo?.phone.slice(1).replace(/\s+/g, '').replace(/-/g, ""), message);
                 }
 
                 return makeResponse(res, 200, "Appointment booked", updatedSlot, false)
