@@ -11,37 +11,45 @@ import PackageCategory from '../models/vendors/packageCategory';
 const NAMESPACE = "Rewards";
 
 const subscribePackage = async (req: Request, res: Response, next: NextFunction) => {
-	const { packageId, patientId, vendorId } = req.body;
-
-	const code = Math.floor(Math.random() * 10000000) + 1;
+	const { packageId, patientId, vendorId, voucherCode } = req.body;
 
 	try {
 		const newReward = new Rewards({
 			_id: new mongoose.Types.ObjectId(),
-			code, packageId, patientId, vendorId
+			voucherCode, packageId, patientId, vendorId
 		});
 
 		// Update Subscribed Count
 		await Package.findOneAndUpdate({ _id: packageId }, { $inc: { subscribedCount: +1 } })
 
 		const packge = await Package.findById({ _id: packageId }).populate("packageId").populate("patientId").populate("vendorId");
+		if (packge) {
+			if (packge.voucherCode === voucherCode) {
+				const savedReward = await newReward.save();
 
-		const savedReward = await newReward.save();
+				// @ts-ignore
+				const patient = await Patient.findOneAndUpdate({ _id: patientId }, { $inc: { points: -packge.points } }, { new: true })
 
-		// @ts-ignore
-		const patient = await Patient.findOneAndUpdate({ _id: patientId }, { $inc: { points: -packge.points } }, { new: true })
+				// const options = {
+				// 	from: config.mailer.user,
+				// 	// @ts-ignore
+				// 	to: patient.email,
+				// 	subject: "Package Subscription",
+				// 	// @ts-ignore
+				// 	text: `You have successfully subscribed to ${packge.type === "ON_PERCENTAGE" ? packge.off + " % " + " off " : "BUY " + packge?.buyQuantity + " GET " + packge?.getQuantity} by ${packge.vendorId.firstName + " " + packge.vendorId.lastName} for ${packge?.points}`
+				// }
+				// sendEmail(options)
 
-		const options = {
-			from: config.mailer.user,
-			// @ts-ignore
-			to: patient.email,
-			subject: "Package Subscription",
-			// @ts-ignore
-			text: `You have successfully subscribed to ${packge.type === "ON_PERCENTAGE" ? packge.off + " % " + " off " : "BUY " + packge?.buyQuantity + " GET " + packge?.getQuantity} by ${packge.vendorId.firstName + " " + packge.vendorId.lastName} for ${packge?.points}`
+				return makeResponse(res, 200, "Reward registered successfully", { reward: savedReward }, false);
+			} else {
+				return sendErrorResponse(res, 400, 'Invalid voucher code', 1);
+			}
+		} else {
+			return sendErrorResponse(res, 400, 'Invalid voucher code', 1);
 		}
-		sendEmail(options)
 
-		return makeResponse(res, 200, "Reward registered successfully", { reward: savedReward }, false);
+
+
 
 	} catch (err) {
 		// @ts-ignore

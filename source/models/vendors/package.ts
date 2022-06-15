@@ -43,6 +43,9 @@ const PackageSchema: Schema = new Schema(
 			type: Schema.Types.ObjectId,
 			ref: "Vendor",
 			index: false
+		},
+		voucherCode: {
+			type: String,
 		}
 	},
 	{
