@@ -98,14 +98,16 @@ const getDoctorAvailableSlots = async (req: Request, res: Response, next: NextFu
             const slots = await Slot.find({ status: SlotStatus.AVAILABLE, doctorId }).populate('doctorId').populate('hospitalId').populate('patientId').populate('familyMemberId')
             return makeResponse(res, 201, "Doctor's Available Slots", slots, false)
         } else {
+            console.log(startDate);
+
             const slots = await Slot.find({
                 // @ts-ignore
                 status: SlotStatus.AVAILABLE,
                 doctorId,
-                to: {
+                from: {
                     // @ts-ignore
-                    $gte: new Date(new Date(startDate).setHours(0o0, 0o0, 0o0)),
-                    $lte: new Date(new Date(endDate).setHours(23, 59, 59))
+                    $gte: startDate,
+                    $lte: endDate
                 }
             }).populate('doctorId').populate('hospitalId').populate('patientId').populate('familyMemberId')
             return makeResponse(res, 201, "Doctor's Available Slots", slots, false)
