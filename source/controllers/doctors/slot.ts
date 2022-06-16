@@ -98,14 +98,16 @@ const getDoctorAvailableSlots = async (req: Request, res: Response, next: NextFu
             const slots = await Slot.find({ status: SlotStatus.AVAILABLE, doctorId }).populate('doctorId').populate('hospitalId').populate('patientId').populate('familyMemberId')
             return makeResponse(res, 201, "Doctor's Available Slots", slots, false)
         } else {
+            console.log(startDate);
+
             const slots = await Slot.find({
                 // @ts-ignore
                 status: SlotStatus.AVAILABLE,
                 doctorId,
-                to: {
+                from: {
                     // @ts-ignore
-                    $gte: new Date(new Date(startDate).setHours(0o0, 0o0, 0o0)),
-                    $lte: new Date(new Date(endDate).setHours(23, 59, 59))
+                    $gte: startDate,
+                    $lte: endDate
                 }
             }).populate('doctorId').populate('hospitalId').populate('patientId').populate('familyMemberId')
             return makeResponse(res, 201, "Doctor's Available Slots", slots, false)
@@ -277,6 +279,19 @@ const cancelMedicappAppointment = async (req: Request, res: Response, next: Next
     }
 }
 
+const deleteDoctorSlot = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params
+
+    try {
+        const slot = await Slot.deleteOne({ _id: id });
+
+        return makeResponse(res, 200, "Slot deleted successfully", slot, false)
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
 const getAllMedicappBookedAppointments = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const slots = await Slot.find({ type: SlotTypes.MEDICAPP_PCR, status: SlotStatus.BOOKED }).populate("patientId");
@@ -298,6 +313,7 @@ export default {
     createMedicappSlot,
     getPatientMedicappBookedSlots,
     cancelMedicappAppointment,
+    deleteDoctorSlot,
     getAllMedicappBookedAppointments,
     getDoctorApprovedSlots
 }

@@ -3,6 +3,7 @@ import makeResponse from '../../functions/makeResponse'
 import Package from '../../models/vendors/package'
 import cloudinary from 'cloudinary'
 import config from '../../config/config'
+const voucher_codes = require('voucher-code-generator');
 
 const NAMESPACE = "Package"
 
@@ -20,7 +21,11 @@ const createPackage = async (req: Request, res: Response, next: NextFunction) =>
 		// @ts-ignore
 		const result = await cloudinary.uploader.upload(req.file.path)
 
-		const newPackage = { images: [result.url], type, points, buyQuantity, getQuantity, off, vendorId, category_id, about, termsAndConditions };
+		const voucherCode = voucher_codes.generate({
+			pattern: "##-###-##",
+		})[0];
+
+		const newPackage = { images: [result.url], type, points, buyQuantity, getQuantity, off, vendorId, category_id, about, termsAndConditions, voucherCode };
 
 		const packge = await new Package(newPackage).save().then(t => t.populate('vendorId').populate('category_id').execPopulate());
 

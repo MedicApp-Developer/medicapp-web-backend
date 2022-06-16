@@ -63,5 +63,4 @@ const generateAppointmentSlip = (slot: any) => {
 		</html>
 	`
 }
-
 export default generateAppointmentSlip
