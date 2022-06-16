@@ -19,6 +19,7 @@ import pdf from 'html-pdf'
 import generateHospitalFinanceReport from '../../documents/HospitalFinanceReport'
 import { SlotStatus, SlotTypes } from '../../constants/slot'
 import { sendEmail } from '../../functions/mailer'
+import { sendSupportEmail } from '../../functions/supportMailer'
 import isHospital from '../../middleware/isHospital'
 
 const NAMESPACE = "Hospital"
@@ -60,7 +61,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                 text: `Your account account has been created as a hospital and status of your account is Pending for now, contact Medicapp Admin to get approved`
             }
 
-            sendEmail(options, false)
+            sendSupportEmail(options, false)
             return newHospital.save()
                 .then(async (result: any) => {
                     await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", "", Roles.HOSPITAL, result._id, UserStatus.PENDING)
@@ -465,27 +466,27 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
 }
 
 const deleteGalleryImage = async (req: Request, res: Response, next: NextFunction) => {
-   const { url, hospitalId } = req.params;
-   console.log("----> URL => ", url);
-   console.log("----> hospitalId => ", hospitalId);
+    const { url, hospitalId } = req.params;
+    console.log("----> URL => ", url);
+    console.log("----> hospitalId => ", hospitalId);
 
-   const hospital = await Hospital.findById(hospitalId);
-   console.log("----> Hospital => ", hospital);
-   
+    const hospital = await Hospital.findById(hospitalId);
+    console.log("----> Hospital => ", hospital);
+
 }
 
 const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
     const { hospitalId } = req.params;
     console.log("----> hospitalId => ", hospitalId);
- 
-    Hospital.findOneAndUpdate({ _id: hospitalId }, { image: '' }, {new: true} )
-    .then( updatedHospital => {
-        return makeResponse(res, 200, "Hospital profile picture removed", updatedHospital, false)
-    } )
-    .catch( err => {
-        return makeResponse(res, 400, err.message, null, true)
-    } )
- }
+
+    Hospital.findOneAndUpdate({ _id: hospitalId }, { image: '' }, { new: true })
+        .then(updatedHospital => {
+            return makeResponse(res, 200, "Hospital profile picture removed", updatedHospital, false)
+        })
+        .catch(err => {
+            return makeResponse(res, 400, err.message, null, true)
+        })
+}
 
 
 export default {

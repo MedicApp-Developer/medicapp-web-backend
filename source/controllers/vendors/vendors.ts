@@ -5,6 +5,7 @@ import makeResponse from '../../functions/makeResponse'
 import UserController from '../user'
 import { Roles } from '../../constants/roles'
 import { sendEmail } from '../../functions/mailer'
+import { sendSupportEmail } from '../../functions/supportMailer'
 import { getRandomPassword } from '../../functions/utilities'
 import config from '../../config/config'
 import { Pagination } from '../../constants/pagination'
@@ -35,7 +36,7 @@ const registerVendor = async (req: Request, res: Response, next: NextFunction) =
 						text: `Your account has been created as a vendor, and your password is ${password}`
 					}
 
-					sendEmail(options, false)
+					sendSupportEmail(options, false)
 
 					return newVendor.save()
 						.then(async (result: any) => {

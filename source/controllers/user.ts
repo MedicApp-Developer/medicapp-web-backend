@@ -13,7 +13,7 @@ import Bookmark from '../models/bookmark';
 import Family from '../models/family';
 import Hospital from '../models/hospital/hospital';
 import { sendEmail } from '../functions/mailer'
-import { sendNoReplyEmail } from '../functions/noReplyMailer'
+import { sendSupportEmail } from '../functions/supportMailer'
 import config from '../config/config'
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
@@ -257,7 +257,7 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
                 html: final_template
             }
 
-            sendNoReplyEmail(options, true);
+            sendSupportEmail(options, true);
 
             // @ts-ignore
             await User.findOneAndUpdate({ _id: user._id }, { resetLink: token });
