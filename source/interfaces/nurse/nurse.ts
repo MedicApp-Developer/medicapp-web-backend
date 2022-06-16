@@ -6,4 +6,5 @@ export default interface INurse extends Document {
     email: string;
     mobile: string;
     hospitalId: string;
+    image: string;
 }

@@ -23,7 +23,11 @@ const LabortorySchema: Schema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Hospital",
             index: false
-        }
+        },
+        image: {
+            type: String,
+            required: false
+        },
     },
     {
         timestamps: true
