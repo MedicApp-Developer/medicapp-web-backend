@@ -9,6 +9,7 @@ import { getRandomPassword } from '../../functions/utilities';
 import config from '../../config/config';
 import { sendEmail } from '../../functions/mailer';
 import { Pagination } from '../../constants/pagination';
+import cloudinary from 'cloudinary'
 
 const NAMESPACE = "Doctor";
 
@@ -154,11 +155,51 @@ const searchNurse = async (req: Request, res: Response, next: NextFunction) => {
 
 };
 
+
+const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
+    const { nurseId } = req.params;
+    console.log("----> nurseId => ", nurseId);
+ 
+    Nurse.findOneAndUpdate({ _id: nurseId }, { image: '' }, {new: true} )
+    .then( updatedNurse => {
+        return makeResponse(res, 200, "Nurse profile picture removed", updatedNurse, false)
+    } )
+    .catch( err => {
+        return makeResponse(res, 400, err.message, null, true)
+    } )
+ }
+
+ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction) => {
+    // @ts-ignore
+    cloudinary.v2.config({
+        cloud_name: config.cloudinary.name,
+        api_key: config.cloudinary.apiKey,
+        api_secret: config.cloudinary.secretKey
+    })
+
+    // @ts-ignore
+    const result = await cloudinary.uploader.upload(req.file.path);
+
+    // This id is updated hospital itself id 
+    const { id } = req.params;
+
+    const filter = { _id: id };
+
+    // @ts-ignore
+    Nurse.findOneAndUpdate(filter, { image: result.url }, { new: true }).then(updatedNurse => {
+        return makeResponse(res, 200, "Nurse profile picture uploaded Successfully", updatedNurse, false);
+    }).catch(err => {
+        return makeResponse(res, 400, err.message, null, true);
+    });
+}
+
 export default { 
     createNurse, 
     getAllNurses,
     getSingleNurse,
     updateNurse,
     deleteNurse,
-    searchNurse
+    searchNurse,
+    deleteProfileImage,
+    uploadProfilePic
 };

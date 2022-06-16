@@ -12,5 +12,5 @@ router.delete('/:id', extractJWT, controller.deleteVendor);
 router.put('/:id', extractJWT, controller.updateVendor);
 router.put('/uploadImage/:id', upload.single("image"), controller.uploadVendorImages);
 router.put('/uploadProfilePicture/:id', upload.single("image"), controller.uploadProfilePic);
-
+router.delete('/deleteProfileImage/:vendorId', controller.deleteProfileImage);
 export = router;

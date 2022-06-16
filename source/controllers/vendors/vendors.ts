@@ -163,12 +163,25 @@ const uploadVendorImages = async (req: Request, res: Response, next: NextFunctio
 	// @ts-ignore
 	let update = { $push: { images: [result.url] } }
 
-	Vendor.update(filter, update).then((updatedVendor: any) => {
+	Vendor.findOneAndUpdate(filter, update).then((updatedVendor: any) => {
 		return makeResponse(res, 200, "Vendor image uploaded Successfully", updatedVendor, false)
 	}).catch((err: any) => {
 		return makeResponse(res, 400, err.message, null, true)
 	})
 }
+
+const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
+    const { vendorId } = req.params;
+    console.log("----> vendorId => ", vendorId);
+ 
+    Vendor.findOneAndUpdate({ _id: vendorId }, { image: '' }, {new: true} )
+    .then( updatedVendor => {
+        return makeResponse(res, 200, "Nurse profile picture removed", updatedVendor, false)
+    } )
+    .catch( err => {
+        return makeResponse(res, 400, err.message, null, true)
+    } )
+ }
 
 export default {
 	registerVendor,
@@ -177,5 +190,6 @@ export default {
 	updateVendor,
 	getSingleVendors,
 	uploadVendorImages,
-	uploadProfilePic
+	uploadProfilePic,
+	deleteProfileImage
 }
