@@ -13,9 +13,8 @@ export const sendEmail = async (options: any, noReply: any) => {
         // @ts-ignore
         service: 'gmail',
         auth: {
-        
             type: 'OAuth2',
-            user: 'collaborations@medicappae.com',
+            user: 'support@medicappae.com',
             clientId: config.mailer.clientID,
             clientSecret: config.mailer.secretKey,
             refreshToken: config.mailer.refresh_token,

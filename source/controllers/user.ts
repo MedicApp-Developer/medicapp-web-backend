@@ -13,6 +13,7 @@ import Bookmark from '../models/bookmark';
 import Family from '../models/family';
 import Hospital from '../models/hospital/hospital';
 import { sendEmail } from '../functions/mailer'
+import { sendNoReplyEmail } from '../functions/noReplyMailer'
 import config from '../config/config'
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
@@ -249,14 +250,14 @@ const forgetPassword = async (req: Request, res: Response, next: NextFunction) =
 
             const options = {
                 from: "Medicappae <noreply@medicappae.com>",
-                replyTo: 'noreply@medicappae.com',
+                replyTo: config.noReplyMailer.user,
                 to: user?.email,
                 subject: "Reset Password",
                 // @ts-ignore,
                 html: final_template
             }
 
-            sendEmail(options, true);
+            sendNoReplyEmail(options, true);
 
             // @ts-ignore
             await User.findOneAndUpdate({ _id: user._id }, { resetLink: token });

@@ -54,6 +54,12 @@ const REDIRECT_URI = process.env.REDIRECT_URI;
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const MEDICAPP_EMAIL = process.env.MEDICAPP_EMAIL;
 
+// NO_REPLY_MAIL_OPTION
+const NO_REPLY_CLIENT_ID = process.env.NO_REPLY_EMAIL_CLIENT_ID;
+const NO_REPLY_CLIENT_SECRET = process.env.NO_REPLY_EMAIL_SECRET_ID;
+const NO_REPLY_REDIRECT_URI = process.env.NO_REPLY_REDIRECT_URI;
+const NO_REPLY_REFRESH_TOKEN = process.env.NO_REPLY_REFRESH_TOKEN;
+const NO_REPLY_MEDICAPP_EMAIL = process.env.NO_REPLY_EMAIL;
 
 // AWS S3 Bucket
 const ACCESSKEYID = process.env.ACCESSKEYID;
@@ -82,6 +88,14 @@ const NODEMAILER = {
     user: MEDICAPP_EMAIL
 }
 
+const NO_REPLY_NODEMAILER = {
+    clientID: NO_REPLY_CLIENT_ID,
+    secretKey: NO_REPLY_CLIENT_SECRET,
+    redirect_uri: NO_REPLY_REDIRECT_URI,
+    refresh_token: NO_REPLY_REFRESH_TOKEN,
+    user: NO_REPLY_MEDICAPP_EMAIL
+}
+
 const cloudinary = {
     name: CLOUDINARY_CLOUD_NAME,
     apiKey: CLOUDINARY_API_KEY,
@@ -98,6 +112,7 @@ const config = {
     server: SERVER,
     mongo: MONGO,
     mailer: NODEMAILER,
+    noReplyMailer: NO_REPLY_NODEMAILER,
     bucket: BUCKET,
     cloudinary,
     SMSGlobal
