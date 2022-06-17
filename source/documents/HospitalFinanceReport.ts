@@ -2,10 +2,10 @@ import moment from 'moment'
 
 const generateHospitalFinanceReport = (hospital: any, appointments: any, fromDate: any, toDate: any) => {
 	const appointmentFromDate = moment(fromDate).format("YYYY/MM/DD")
-	const appointmentFromTime = moment(fromDate).format('HH:mm a')
+	const appointmentFromTime = moment(fromDate).format('hh:mm a')
 
 	const appointmentToDate = moment(toDate).format("YYYY/MM/DD")
-	const appointmentToTime = moment(toDate).format('HH:mm a')
+	const appointmentToTime = moment(toDate).format('hh:mm a')
 
 	return `
 		<!DOCTYPE html>
