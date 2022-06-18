@@ -46,7 +46,7 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
                     console.log(m);
 
                     // @ts-ignore
-                    const message = `Appointment Confirmed!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment.tz(slotInfo?.from, moment.tz.guess()).format('MMMM Do YYYY, hh:mm: a')}\nClinic Location: ${hospitalInfo?.address}\n\nDon't forget to ask the receptionist for your code to CLAIM YOUR POINTS!`
+                    const message = `Appointment Confirmed!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment.tz(slotInfo?.from, moment.tz.guess()).format('DD/MM/YYYY, hh:mm: a')}\nClinic Location: ${hospitalInfo?.address}\n\nDon't forget to ask the receptionist for your code to CLAIM YOUR POINTS!`
                     // @ts-ignore
                     sendMessage(patientInfo?.phone.slice(1).replace(/\s+/g, '').replace(/-/g, ""), message);
                 }
