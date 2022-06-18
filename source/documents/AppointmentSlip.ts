@@ -1,9 +1,9 @@
 import moment from 'moment'
 
 const generateAppointmentSlip = (slot: any) => {
-	const appointmentDate = moment(slot?.from).format("YYYY/MM/DD")
-	const appointmentTime = moment(slot?.from).format('hh:mm a')
-	const todayDate = moment(new Date()).format("YYYY/MM/DD")
+	const appointmentDate = moment.tz(slot?.from, moment.tz.guess()).format("DD/MM/YYYY")
+	const appointmentTime = moment.tz(slot?.from, moment.tz.guess()).format('hh:mm a')
+	const todayDate = moment.tz(new Date(), moment.tz.guess()).format("DD/MM/YYYY")
 	return `
 		<!DOCTYPE html>
 		<html>

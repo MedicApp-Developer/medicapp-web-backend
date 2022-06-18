@@ -27,7 +27,8 @@ const LabortoryRequestSchema: Schema = new Schema(
             type: [{
                 test: String,
                 result: String,
-                range: String
+                range: String,
+                file: { type: String, default: null }
             }],
             required: true
         },

@@ -2,7 +2,8 @@ import moment from 'moment'
 import { getAge } from './SickLeave'
 
 const generatePrescriptionSlip = (prescription: any) => {
-	const prescriptionDate = moment(prescription?.date).format("YYYY/MM/DD")
+	const prescriptionDate = moment.tz(prescription?.date, moment.tz.guess()).format("DD/MM/YYYY")
+
 	return `
 		<!DOCTYPE html>
 		<html>

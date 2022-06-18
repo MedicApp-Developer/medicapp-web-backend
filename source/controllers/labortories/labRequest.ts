@@ -2,7 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { Pagination } from '../../constants/pagination';
 import { Roles } from '../../constants/roles';
 import makeResponse from '../../functions/makeResponse';
+import config from '../../config/config'
+import cloudinary from 'cloudinary'
 import LaboratoryRequest from '../../models/labortories/labRequest';
+import { test } from '../../templates';
 
 const NAMESPACE = "Labortory Request";
 
@@ -57,16 +60,44 @@ const getLabRequests = async (req: Request, res: Response, next: NextFunction) =
 
 const updateLabRequest = async (req: Request, res: Response, next: NextFunction) => {
     // @ts-ignore
-    const { labRequest } = req.params;
+    //console.log(JSON.parse(req.body.data));
+    //console.log(req.body.id);
+    // console.log(req.files);
 
-    const filter = { _id: labRequest };
-    let update = { tests: req.body, status: "completed" };
+    // @ts-ignore
+    cloudinary.v2.config({
+        cloud_name: config.cloudinary.name,
+        api_key: config.cloudinary.apiKey,
+        api_secret: config.cloudinary.secretKey
+    })
+
+    // @ts-ignore
+
+    const tests = JSON.parse(req.body.data)
+
+
+    if (req.files !== undefined) {
+
+        for (var i = 0; i < tests.length; i++) {
+            if (tests[i].file !== undefined) {
+                const files = req.files! as Array<Express.Multer.File>
+                const foundedFile = files.find((foundFile => { return tests[i].file.includes(foundFile.originalname) }))
+                if (foundedFile !== undefined) {
+                    const result = await cloudinary.v2.uploader.upload(foundedFile.path)
+                    tests[i].file = result.url;
+                }
+            }
+        }
+    }
+    const filter = { _id: req.body.id };
+    let update = { tests: tests, status: "completed" };
 
     LaboratoryRequest.findOneAndUpdate(filter, update).then(updatedRequest => {
         return makeResponse(res, 200, "Lab Request updated Successfully", updatedRequest, false);
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true);
     });
+
 };
 
 export default {

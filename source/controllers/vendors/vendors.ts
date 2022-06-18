@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import User from '../../models/user'
-import makeResponse from '../../functions/makeResponse'
+import makeResponse, { sendErrorResponse } from '../../functions/makeResponse'
 import UserController from '../user'
 import { Roles } from '../../constants/roles'
 import { sendEmail } from '../../functions/mailer'
@@ -92,6 +92,46 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
 	})
 }
 
+const deleteGalleryImage = async (req: Request, res: Response, next: NextFunction) => {
+	const { url, vendorId } = req.params;
+	console.log("----> URL => ", url);
+	console.log("----> vendorId => ", vendorId);
+
+	// @ts-ignore
+	cloudinary.v2.config({
+		cloud_name: config.cloudinary.name,
+		api_key: config.cloudinary.apiKey,
+		api_secret: config.cloudinary.secretKey
+	})
+
+	// @ts-ignore
+	const result = await cloudinary.v2.uploader.destroy(url)
+		.then(async result => {
+			if (result.result === "ok") {
+				const vendor = await Vendor.findById(vendorId);
+
+				const updatedVendorImages = vendor?.images?.filter((item) => {
+					return !item.includes(url)
+				}) ?? []
+
+				Vendor.findOneAndUpdate({ _id: vendorId }, { images: updatedVendorImages }, { new: true })
+					.then(updatedVendor => {
+						console.log("----> Hospital Images => ", updatedVendor);
+
+						return makeResponse(res, 200, "Vandor gallery image deleted", updatedVendor, false)
+					})
+					.catch(err => {
+						return sendErrorResponse(res, 400, 'Failed to delete image', 1)
+					})
+			} else {
+				return sendErrorResponse(res, 400, 'Failed to delete image', 1)
+			}
+		})
+		.catch(err => {
+			return sendErrorResponse(res, 400, 'Failed to delete image', 1)
+		});
+}
+
 const updateVendor = async (req: Request, res: Response, next: NextFunction) => {
 	const { id } = req.params
 
@@ -172,17 +212,17 @@ const uploadVendorImages = async (req: Request, res: Response, next: NextFunctio
 }
 
 const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
-    const { vendorId } = req.params;
-    console.log("----> vendorId => ", vendorId);
- 
-    Vendor.findOneAndUpdate({ _id: vendorId }, { image: '' }, {new: true} )
-    .then( updatedVendor => {
-        return makeResponse(res, 200, "Nurse profile picture removed", updatedVendor, false)
-    } )
-    .catch( err => {
-        return makeResponse(res, 400, err.message, null, true)
-    } )
- }
+	const { vendorId } = req.params;
+	console.log("----> vendorId => ", vendorId);
+
+	Vendor.findOneAndUpdate({ _id: vendorId }, { image: '' }, { new: true })
+		.then(updatedVendor => {
+			return makeResponse(res, 200, "Nurse profile picture removed", updatedVendor, false)
+		})
+		.catch(err => {
+			return makeResponse(res, 400, err.message, null, true)
+		})
+}
 
 export default {
 	registerVendor,
@@ -192,5 +232,6 @@ export default {
 	getSingleVendors,
 	uploadVendorImages,
 	uploadProfilePic,
-	deleteProfileImage
+	deleteProfileImage,
+	deleteGalleryImage
 }

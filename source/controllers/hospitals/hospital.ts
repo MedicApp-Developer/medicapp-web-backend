@@ -470,9 +470,39 @@ const deleteGalleryImage = async (req: Request, res: Response, next: NextFunctio
     console.log("----> URL => ", url);
     console.log("----> hospitalId => ", hospitalId);
 
-    const hospital = await Hospital.findById(hospitalId);
-    console.log("----> Hospital => ", hospital);
+    // @ts-ignore
+    cloudinary.v2.config({
+        cloud_name: config.cloudinary.name,
+        api_key: config.cloudinary.apiKey,
+        api_secret: config.cloudinary.secretKey
+    })
 
+    // @ts-ignore
+    const result = await cloudinary.v2.uploader.destroy(url)
+        .then(async result => {
+            if (result.result === "ok") {
+                const hospital = await Hospital.findById(hospitalId);
+
+                const updatedHospitalImages = hospital?.images?.filter((item) => {
+                    return !item.includes(url)
+                }) ?? []
+
+                Hospital.findOneAndUpdate({ _id: hospitalId }, { images: updatedHospitalImages }, { new: true })
+                    .then(updatedHospital => {
+                        console.log("----> Hospital Images => ", updatedHospital);
+
+                        return makeResponse(res, 200, "Hospital gallery image deleted", updatedHospital, false)
+                    })
+                    .catch(err => {
+                        return sendErrorResponse(res, 400, 'Failed to delete image', 1)
+                    })
+            } else {
+                return sendErrorResponse(res, 400, 'Failed to delete image', 1)
+            }
+        })
+        .catch(err => {
+            return sendErrorResponse(res, 400, 'Failed to delete image', 1)
+        });
 }
 
 const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {

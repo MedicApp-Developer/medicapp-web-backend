@@ -13,9 +13,9 @@ export function getAge(dateString: any) {
 
 const generateSickLeaveDocument = (leave: any) => {
 	console.log("leave => ", leave)
-	const todayDate = moment(new Date()).format("YYYY/MM/DD")
-	const fromDate = moment(leave?.from).format("YYYY/MM/DD")
-	const toDate = moment(leave?.to).format("YYYY/MM/DD")
+	const todayDate = moment.tz(new Date(), moment.tz.guess()).format("DD/MM/YYYY")
+	const fromDate = moment.tz(leave?.from, moment.tz.guess()).format("DD/MM/YYYY")
+	const toDate = moment.tz(leave?.to, moment.tz.guess()).format("DD/MM/YYYY")
 	return `
 		<!DOCTYPE html>
 		<html>

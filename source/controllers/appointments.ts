@@ -11,7 +11,7 @@ import { POINTS_CODE } from '../constants/rewards'
 import sendMessage from '../functions/sendSms'
 import Hospital from '../models/hospital/hospital'
 import Doctor from '../models/doctors/doctor'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 const NAMESPACE = "Appointment"
 
@@ -39,10 +39,14 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
                     const doctorInfo = await Doctor.findById(slotInfo.doctorId);
                     const patientInfo = await Patient.findById(slotInfo.patientId);
 
-                    const locationUrl = `https://www.google.com/maps/search/?api=1&`
+
+                    const locationUrl = `https://www.google.com/maps/search/?api=1&` + `${console.log(JSON.parse(JSON.stringify(hospitalInfo?.location)).coordinates[0])},${console.log(JSON.parse(JSON.stringify(hospitalInfo?.location)).coordinates[1])}`
+
+                    var m = moment.tz(slotInfo?.from, moment.tz.guess()).format('MMMM Do YYYY, hh:mm: a');
+                    console.log(m);
 
                     // @ts-ignore
-                    const message = `Appointment Confirmed!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment(slotInfo?.from).format('MMMM Do YYYY, h:mm:ss a')}\nClinic Location: ${hospitalInfo?.address}\n\nDon't forget to ask the receptionist for your code to CLAIM YOUR POINTS!`
+                    const message = `Appointment Confirmed!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment.tz(slotInfo?.from, moment.tz.guess()).format('MMMM Do YYYY, hh:mm: a')}\nClinic Location: ${hospitalInfo?.address}\n\nDon't forget to ask the receptionist for your code to CLAIM YOUR POINTS!`
                     // @ts-ignore
                     sendMessage(patientInfo?.phone.slice(1).replace(/\s+/g, '').replace(/-/g, ""), message);
                 }
