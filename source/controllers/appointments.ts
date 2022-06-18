@@ -13,6 +13,8 @@ import Hospital from '../models/hospital/hospital'
 import Doctor from '../models/doctors/doctor'
 import moment from 'moment-timezone'
 
+const prettylink = require('prettylink');
+
 const NAMESPACE = "Appointment"
 
 const createAppointment = (req: Request, res: Response, next: NextFunction) => {
@@ -40,15 +42,24 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
                     const patientInfo = await Patient.findById(slotInfo.patientId);
 
 
-                    const locationUrl = `https://www.google.com/maps/search/?api=1&` + `${console.log(JSON.parse(JSON.stringify(hospitalInfo?.location)).coordinates[0])},${console.log(JSON.parse(JSON.stringify(hospitalInfo?.location)).coordinates[1])}`
 
-                    // var m = moment.tz(slotInfo?.from, moment.tz.guess()).format('MMMM Do YYYY, hh:mm: a');
-                    // console.log(m);
+                    const locationUrl = `https://www.google.com/maps/search/?api=1&query=${JSON.parse(JSON.stringify(hospitalInfo?.location)).coordinates[0]},${JSON.parse(JSON.stringify(hospitalInfo?.location)).coordinates[1]}`
 
-                    // @ts-ignore
-                    const message = `Appointment Confirmed!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment.tz(slotInfo?.from, moment.tz.guess()).format('DD/MM/YYYY, hh:mm: a')}\nClinic Location: ${hospitalInfo?.address}\n\nDon't forget to ask the receptionist for your code to CLAIM YOUR POINTS!`
-                    // @ts-ignore
-                    sendMessage(patientInfo?.phone.slice(1).replace(/\s+/g, '').replace(/-/g, ""), message);
+
+
+                    // Init Access Token in constructor 
+                    const bitly = new prettylink.Bitly(process.env.BITLY_ACCESS_TOKEN);
+
+                    bitly.short(locationUrl).then((result: any) => {
+                        // @ts-ignore
+                        const message = `Appointment Confirmed!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment.tz(slotInfo?.from, 'Asia/Dubai').format('DD/MM/YYYY, hh:mm: a')}\nClinic Location: ${result.link}\n\nDon't forget to ask the receptionist for your code to CLAIM YOUR POINTS!`
+                        console.log(message);
+                        // @ts-ignore
+                        sendMessage(patientInfo?.phone.slice(1).replace(/\s+/g, '').replace(/-/g, ""), message);
+                    }).catch((err: any) => {
+                        console.log(err);
+                    });
+
                 }
 
                 return makeResponse(res, 200, "Appointment booked", updatedSlot, false)

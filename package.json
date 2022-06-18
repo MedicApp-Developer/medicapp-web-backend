@@ -42,6 +42,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "node-schedule": "^2.1.0",
     "nodemailer": "^6.6.3",
+    "prettylink": "^1.0.0",
     "smsglobal": "^1.2.4",
     "stripe": "^8.154.0",
     "ts-node": "^10.0.0",
