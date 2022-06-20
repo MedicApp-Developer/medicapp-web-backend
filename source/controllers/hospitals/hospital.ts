@@ -241,7 +241,7 @@ const uploadHospitalImages = async (req: Request, res: Response, next: NextFunct
     let update = { $push: { images: [result.url] } }
 
     Hospital.update(filter, update).then((updatedHospital: any) => {
-        return makeResponse(res, 200, "Hospital image uploaded Successfully", updatedHospital, false)
+        return makeResponse(res, 200, "Hospital image uploaded Successfully", { url: result.url }, false)
     }).catch((err: any) => {
         return makeResponse(res, 400, err.message, null, true)
     })

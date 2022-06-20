@@ -78,7 +78,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                                     html: final_template
                                 }
 
-                                sendSupportEmail(options, false);
+                                sendNoReplyEmail(options, false);
                                 return makeResponse(res, 200, "Patient registered successfully", { bookmarks: { doctorIds: [], hospitalIds: [] }, user: savedPatient, familyMembers: [], token: token }, false);
                             }
                         })

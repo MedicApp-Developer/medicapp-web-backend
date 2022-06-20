@@ -205,7 +205,7 @@ const uploadVendorImages = async (req: Request, res: Response, next: NextFunctio
 	let update = { $push: { images: [result.url] } }
 
 	Vendor.findOneAndUpdate(filter, update).then((updatedVendor: any) => {
-		return makeResponse(res, 200, "Vendor image uploaded Successfully", updatedVendor, false)
+		return makeResponse(res, 200, "Vendor image uploaded Successfully", { url: result.url }, false)
 	}).catch((err: any) => {
 		return makeResponse(res, 400, err.message, null, true)
 	})
