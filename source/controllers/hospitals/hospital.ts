@@ -19,7 +19,7 @@ import pdf from 'html-pdf'
 import generateHospitalFinanceReport from '../../documents/HospitalFinanceReport'
 import { SlotStatus, SlotTypes } from '../../constants/slot'
 import { sendEmail } from '../../functions/mailer'
-import { sendSupportEmail } from '../../functions/supportMailer'
+import { sendCollaborationsEmail } from '../../functions/collaborationMailer'
 import isHospital from '../../middleware/isHospital'
 
 const NAMESPACE = "Hospital"
@@ -61,7 +61,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                 text: `Your account account has been created as a hospital and status of your account is Pending for now, contact Medicapp Admin to get approved`
             }
 
-            sendSupportEmail(options, false)
+            sendCollaborationsEmail(options, false)
             return newHospital.save()
                 .then(async (result: any) => {
                     await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", "", Roles.HOSPITAL, result._id, UserStatus.PENDING)
