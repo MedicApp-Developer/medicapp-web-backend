@@ -85,7 +85,7 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
 	const filter = { _id: id }
 
 	// @ts-ignore
-	Vendor.findOneAndUpdate(filter, { image: result.url }).then(updatedVendor => {
+	Vendor.findOneAndUpdate(filter, { image: result.url }, { new: true }).then(updatedVendor => {
 		return makeResponse(res, 200, "Vendor profile picture uploaded Successfully", updatedVendor, false)
 	}).catch(err => {
 		return makeResponse(res, 400, err.message, null, true)
