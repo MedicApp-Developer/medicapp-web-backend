@@ -21,6 +21,8 @@ const NAMESPACE = "Doctor"
 
 const createDoctor = async (req: Request, res: Response, next: NextFunction) => {
     const { email, firstName, lastName, mobile, specialityId, experience, gender, country, language } = req.body
+    console.log(req.body);
+
     const password = getRandomPassword()
 
     if (email && firstName && lastName && mobile && specialityId && experience && gender && country && language) {

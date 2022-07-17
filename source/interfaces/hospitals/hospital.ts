@@ -7,6 +7,7 @@ export default interface IHospital extends Document {
     issueDate: string
     expiryDate: string
     tradeLicenseFile: string
+    insurances: string[]
     location: string
     phoneNo: string
     type: string

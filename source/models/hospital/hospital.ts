@@ -51,6 +51,11 @@ const HospitalSchema: Schema = new Schema(
             type: String,
             required: false
         },
+        insurances: {
+            type: [Schema.Types.ObjectId],
+            ref: "Insurance",
+            index: false
+        },
         location: {
             type: {
                 type: String,

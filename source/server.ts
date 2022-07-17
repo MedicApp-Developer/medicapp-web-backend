@@ -20,6 +20,7 @@ import branchRoutes from './routes/pharmacy/branch'
 import labRequestRoutes from './routes/labortories/labRequest'
 import promoVideoRoutes from './routes/hospitals/promos'
 import specialityRoutes from './routes/doctors/speciality'
+import insuranceRoutes from './routes/insurancesRoutes'
 import qrPrescriptionRoutes from './routes/labortories/QrPrescription'
 import slotRoutes from './routes/doctors/slot'
 import homeRoutes from './routes/home'
@@ -101,6 +102,7 @@ router.use('/api/pharmacy/branch', branchRoutes)
 router.use('/api/labRequests', labRequestRoutes)
 router.use('/api/promos', promoVideoRoutes)
 router.use('/api/speciality', specialityRoutes)
+router.use('/api/insurance', insuranceRoutes)
 router.use('/api/home', homeRoutes)
 router.use('/api/qrprescription', qrPrescriptionRoutes)
 router.use('/api/slots', slotRoutes)

@@ -6,5 +6,6 @@ const router = express.Router()
 router.get('/countries', controller.getCountries)
 router.get('/genders', controller.getGenders)
 router.get('/languages', controller.getLanguages)
+router.get('/insurances', controller.getInsurances)
 
 export = router

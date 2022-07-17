@@ -11,7 +11,7 @@ import { uploadsOnlyVideo } from '../../functions/uploadS3'
 import { validateHospitalRegisteration } from '../../validation/hospitalRegisteration'
 import Doctor from '../../models/doctors/doctor'
 import Speciality from '../../models/doctors/speciality'
-import { SERVER_ERROR_CODE } from '../../constants/statusCode'
+import { SERVER_ERROR_CODE, DUPLICATE_VALUE_CODE } from '../../constants/statusCode'
 import cloudinary from 'cloudinary'
 import Slot from '../../models/doctors/slot'
 import path from 'path'
@@ -31,7 +31,10 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
         return makeResponse(res, 400, "Validation Failed", errors, true)
     }
 
-    const { email, phoneNo, password, name, tradeLicenseNo, issueDate, expiryDate, location, address, state, type } = req.body
+    const { email, phoneNo, password, name, tradeLicenseNo, insurances, issueDate, expiryDate, location, address, state, type } = req.body
+
+    console.log(req.body);
+
 
     await User.find({ email }).then(async (result: any) => {
         if (result.length === 0) {
@@ -48,7 +51,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
             const newHospital = new Hospital({
                 _id: new mongoose.Types.ObjectId(),
                 type, category: null, addons: [], phoneNo, tradeLicenseFile: result.url,
-                email, name, tradeLicenseNo, issueDate, expiryDate, address, state,
+                email, name, tradeLicenseNo, insurances, issueDate, expiryDate, address, state,
                 location: {
                     "type": "Point",
                     "coordinates": JSON.parse(location)
@@ -66,24 +69,20 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                 .then(async (result: any) => {
                     await UserController.createUserFromEmailAndPassword(req, res, email, password, name, "", "", Roles.HOSPITAL, result._id, UserStatus.PENDING)
                     return makeResponse(res, 201, "Hospital Created Successfully", result, false)
-
-                    // if(){
-                    //     return makeResponse(res, 201, "Hospital Created Successfully", result, false);
-                    // }else {
-                    //     return makeResponse(res, 201, "Something went wrong while creating Hospital", result, false);
-                    // };
                 })
                 .catch((err: any) => {
+                    console.log(err);
                     return makeResponse(res, 400, err.message, null, true)
                 })
         } else {
-            return makeResponse(res, 400, "Email already exists", null, true)
+            console.log("Bad Request");
+            return sendErrorResponse(res, 400, "Email already exists", DUPLICATE_VALUE_CODE)
         }
     })
 }
 
 const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
-    Hospital.find({ status: UserStatus.APPROVED })
+    Hospital.find({ status: UserStatus.APPROVED }).populate("insurances")
         .then((result: any) => {
             return makeResponse(res, 200, "All Hospitals", result, false)
         })
@@ -95,7 +94,7 @@ const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
 const getSingleHospital = async (req: Request, res: Response, next: NextFunction) => {
     const doctors = await Doctor.find({ hospitalId: req.params.id }).populate('hospitalId')
 
-    Hospital.findById({ _id: req.params.id, status: UserStatus.APPROVED }).populate("services")
+    Hospital.findById({ _id: req.params.id, status: UserStatus.APPROVED }).populate("services").populate("insurances")
         .then((data: any) => {
             return makeResponse(res, 200, "Hospital", { hospital: data, doctors }, false)
         }).catch((err: any) => {
@@ -108,7 +107,7 @@ const getHospitalDetail = async (req: Request, res: Response, next: NextFunction
     const { id } = req.params
 
     try {
-        const hospitalDetail = await Hospital.findById({ _id: id }).populate("services")
+        const hospitalDetail = await Hospital.findById({ _id: id }).populate("services").populate("insurances")
 
         const hospitalDoctors = await Doctor.find({ hospitalId: id }).populate("specialityId")
         const specialities: any = []
