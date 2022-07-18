@@ -31,7 +31,7 @@ const schedule = require('node-schedule');
 const NAMESPACE = "Patient";
 
 const createPatient = async (req: Request, res: Response, next: NextFunction) => {
-    const { firstName, lastName, email, birthday, emiratesId, gender, location, phone, password } = req.body;
+    const { firstName, lastName, email, birthday, emiratesId, insurances, gender, location, phone, password } = req.body;
 
     const { errors, isValid } = validatePatientRegisteration(req.body);
     // Check validation
@@ -46,7 +46,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
         if (result.length === 0) {
             const newPatient = new Patient({
                 _id: new mongoose.Types.ObjectId(),
-                firstName, lastName, email, birthday, gender, location, phone, emiratesId,
+                firstName, lastName, email, insurances, birthday, gender, location, phone, emiratesId,
                 webFctoken: false
             });
 
@@ -204,7 +204,7 @@ const getSinglePatient = async (req: Request, res: Response, next: NextFunction)
     await Slot.find({ patientId: req.params.id }).populate('doctorId')
         .then(result => {
             doctors = result.map(item => (item.doctorId));
-            Patient.findById({ _id: req.params.id })
+            Patient.findById({ _id: req.params.id }).populate('insurances')
                 .then((data: any) => {
                     const newTemp = JSON.parse(JSON.stringify(data));
                     newTemp.doctors = doctors;
@@ -338,7 +338,7 @@ const deactivePatient = async (req: Request, res: Response, next: NextFunction) 
 const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Get all information of patient
-        const patient = await Patient.findById({ _id: req.params.id });
+        const patient = await Patient.findById({ _id: req.params.id }).populate('insurances');
         const familyMembers = await Family.find({ patientId: req.params.id });
 
         // Get Upcomming Appointments

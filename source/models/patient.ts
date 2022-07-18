@@ -30,10 +30,6 @@ const PatientSchema: Schema = new Schema(
             type: String,
             default: Roles.PATIENT
         },
-        // emiratesIdFile: {
-        //     type: String,
-        //     required: false
-        // },
         birthday: {
             type: String,
             required: false,
@@ -44,14 +40,7 @@ const PatientSchema: Schema = new Schema(
             required: false,
             default: null
         },
-        // issueDate: {
-        //     type: String,
-        //     required: true
-        // },
-        // expiryDate: {
-        //     type: String,
-        //     required: true
-        // },
+
         location: {
             type: String,
             required: true
@@ -144,7 +133,13 @@ const PatientSchema: Schema = new Schema(
             type: String,
             required: false,
             default: false
-        }
+        },
+        insurances: {
+            type: [Schema.Types.ObjectId],
+            ref: "Insurance",
+            index: false,
+            default: []
+        },
     },
     {
         timestamps: true

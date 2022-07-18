@@ -97,7 +97,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
                                 const patient = await Patient.findByIdAndUpdate(users[0].referenceId, {
                                     accountDeletionRequest: false,
                                     deletionDate: ''
-                                }, { new: true });
+                                }, { new: true }).populate("insurances");
 
                                 // const patient = await Patient.findById(users[0].referenceId);
                                 const familyMembers = await Family.find({ patientId: users[0].referenceId });
