@@ -82,7 +82,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
 }
 
 const getAllHospitals = (req: Request, res: Response, next: NextFunction) => {
-    Hospital.find({ status: UserStatus.APPROVED }).populate("insurances")
+    Hospital.find({ status: UserStatus.APPROVED }).populate("insurances").populate("services")
         .then((result: any) => {
             return makeResponse(res, 200, "All Hospitals", result, false)
         })
@@ -154,7 +154,7 @@ const updateHospital = (req: Request, res: Response, next: NextFunction) => {
 
     UserController.updateUser(req, res, _id, updateUser, true)
 
-    Hospital.findOneAndUpdate(filter, update).then((updatedHospital: any) => {
+    Hospital.findOneAndUpdate(filter, update).populate('insurances').populate("services").then((updatedHospital: any) => {
         return makeResponse(res, 200, "Hospital updated Successfully", updatedHospital, false)
     }).catch((err: any) => {
         return makeResponse(res, 400, err.message, null, true)
@@ -194,7 +194,7 @@ const searchHospital = async (req: Request, res: Response, next: NextFunction) =
 
     try {
 
-        const searchedHospitalList = await Hospital.find({ $and: [{ $or: searchQuery }, { status: UserStatus.APPROVED }] })
+        const searchedHospitalList = await Hospital.find({ $and: [{ $or: searchQuery }, { status: UserStatus.APPROVED }] }).populate('insurances')
 
         if (searchedHospitalList.length === 0) {
             const specialitySearchQuery = [
@@ -209,7 +209,7 @@ const searchHospital = async (req: Request, res: Response, next: NextFunction) =
 
             const filteredHospitalIds = searchedDoctorsIds.map(function (obj) { return obj.hospitalId })
 
-            const searchResults = await Hospital.find({ _id: { $in: filteredHospitalIds } })
+            const searchResults = await Hospital.find({ _id: { $in: filteredHospitalIds } }).populate('insurances')
 
             return makeResponse(res, 200, "Search Results", searchResults, false)
         } else {
@@ -258,7 +258,7 @@ const filterHospital = async (req: Request, res: Response, next: NextFunction) =
         ]
     }
 
-    Hospital.find(filterQuery).then(result => {
+    Hospital.find(filterQuery).populate('insurances').then(result => {
         return makeResponse(res, 200, "Filtered Hospital", result, false)
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true)
@@ -457,7 +457,7 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
     const filter = { _id: id }
 
     // @ts-ignore
-    Hospital.findOneAndUpdate(filter, { image: result.url }, { new: true }).then(updatedHospital => {
+    Hospital.findOneAndUpdate(filter, { image: result.url }, { new: true }).populate('insurances').populate("services").then(updatedHospital => {
         return makeResponse(res, 200, "Hospital profile picture uploaded Successfully", updatedHospital, false)
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true)
@@ -486,7 +486,7 @@ const deleteGalleryImage = async (req: Request, res: Response, next: NextFunctio
                     return !item.includes(url)
                 }) ?? []
 
-                Hospital.findOneAndUpdate({ _id: hospitalId }, { images: updatedHospitalImages }, { new: true })
+                Hospital.findOneAndUpdate({ _id: hospitalId }, { images: updatedHospitalImages }, { new: true }).populate('insurances').populate("services")
                     .then(updatedHospital => {
                         console.log("----> Hospital Images => ", updatedHospital);
 
@@ -508,7 +508,7 @@ const deleteProfileImage = async (req: Request, res: Response, next: NextFunctio
     const { hospitalId } = req.params;
     console.log("----> hospitalId => ", hospitalId);
 
-    Hospital.findOneAndUpdate({ _id: hospitalId }, { image: '' }, { new: true })
+    Hospital.findOneAndUpdate({ _id: hospitalId }, { image: '' }, { new: true }).populate('insurances').populate("services")
         .then(updatedHospital => {
             return makeResponse(res, 200, "Hospital profile picture removed", updatedHospital, false)
         })
