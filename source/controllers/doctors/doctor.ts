@@ -317,7 +317,7 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
                 { status: UserStatus.APPROVED }
             ]
         }
-        searchedHospitals = await Hospital.find(filterQuery).populate("category")
+        searchedHospitals = await Hospital.find(filterQuery).populate("category").populate('insurances')
     } else if (searchFor === Roles.DOCTOR) {
 
         const filterQuery = {
@@ -330,7 +330,10 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
             ]
         }
 
-        searchedDoctors = await Doctor.find(filterQuery).populate("specialityId").populate("hospitalId").populate("country")
+        searchedDoctors = await Doctor.find(filterQuery)
+            .populate("specialityId")
+            .populate({ path: 'hospitalId', populate: [{ path: 'insurances' }] })
+            .populate("country")
             .populate("gender")
             .populate("language")
 
@@ -343,15 +346,20 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
             // @ts-ignore
             const filteredIds = searchSpecIds.map(function (obj) { return obj._id })
 
-            searchedDoctors = await Doctor.find({ specialityId: { $in: filteredIds } }).populate('specialityId').populate("hospitalId").populate("country")
+            searchedDoctors = await Doctor.find({ specialityId: { $in: filteredIds } })
+                .populate('specialityId')
+                .populate({ path: 'hospitalId', populate: [{ path: 'insurances' }] })
+                .populate("country")
                 .populate("gender")
                 .populate("language")
         }
     } else {
 
-        searchedHospitals = await Hospital.find({ $and: [{ $or: hospitalSearchQuery }, { status: UserStatus.APPROVED }] }).populate("category")
+        searchedHospitals = await Hospital.find({ $and: [{ $or: hospitalSearchQuery }, { status: UserStatus.APPROVED }] }).populate("category").populate('insurances')
         // @ts-ignore
-        searchedDoctors = await Doctor.find({ $or: doctorSearchQuery }).populate('specialityId', null, { name: "One" }).populate("hospitalId").populate("country")
+        searchedDoctors = await Doctor.find({ $or: doctorSearchQuery }).populate('specialityId', null, { name: "One" })
+            .populate({ path: 'hospitalId', populate: [{ path: 'insurances' }] })
+            .populate("country")
             .populate("gender")
             .populate("language")
 
@@ -364,7 +372,10 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
             // @ts-ignore
             const filteredIds = searchSpecIds.map(function (obj) { return obj._id })
 
-            searchedDoctors = await Doctor.find({ specialityId: { $in: filteredIds } }).populate('specialityId').populate("hospitalId").populate("country")
+            searchedDoctors = await Doctor.find({ specialityId: { $in: filteredIds } })
+                .populate('specialityId')
+                .populate({ path: 'hospitalId', populate: [{ path: 'insurances' }] })
+                .populate("country")
                 .populate("gender")
                 .populate("language")
         }
@@ -374,7 +385,10 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
 }
 
 const searchDoctorBySpeciality = async (req: Request, res: Response, next: NextFunction) => {
-    Doctor.find({ specialityId: req.params.specialityId }).populate("specialityId").populate("hospitalId").populate("country")
+    Doctor.find({ specialityId: req.params.specialityId })
+        .populate("specialityId")
+        .populate({ path: 'hospitalId', populate: [{ path: 'insurances' }] })
+        .populate("country")
         .populate("gender")
         .populate("language")
         .then(data => {
@@ -398,7 +412,7 @@ const filterDoctors = async (req: Request, res: Response, next: NextFunction) =>
         ]
     }
 
-    Doctor.find(filterQuery).then(result => {
+    Doctor.find(filterQuery).populate({ path: 'hospitalId', populate: [{ path: 'insurances' }] }).then(result => {
         return makeResponse(res, 200, "Filtered Doctors", result, false)
     }).catch(err => {
         return makeResponse(res, 400, err.message, null, true)

@@ -108,7 +108,12 @@ const getAllAppointments = (req: Request, res: Response, next: NextFunction) => 
             path: 'doctorId',
             populate: [
                 { path: 'specialityId' },
-                { path: 'hospitalId' }
+                {
+                    path: 'hospitalId',
+                    populate: [
+                        { path: 'insurances' }
+                    ]
+                }
             ]
         })
         .then(result => {

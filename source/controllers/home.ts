@@ -27,7 +27,7 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
           }
         }
       }
-    }).limit(10).skip(0)
+    }).populate('insurances').limit(10).skip(0)
     // @ts-ignore
     const upcommingAppointments = await Slot.find({
       patientId: res.locals.jwt.reference_id,
@@ -40,7 +40,12 @@ const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
         path: 'doctorId',
         populate: [
           { path: 'specialityId' },
-          { path: 'hospitalId' }
+          {
+            path: 'hospitalId',
+            populate: [
+              { path: 'insurances' }
+            ]
+          }
         ]
       }).populate('familyMemberId')
 
