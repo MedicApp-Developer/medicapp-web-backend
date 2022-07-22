@@ -343,7 +343,28 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
         const familyMembers = await Family.find({ patientId: req.params.id });
 
         // Get Upcomming Appointments
-        const upcommingAppointments = await Slot.find({ patientId: req.params.id })
+        const upcommingAppointments = await Slot.find({
+            patientId: req.params.id, from: {
+                $gte: new Date().toDateString()
+            }
+        })
+            .populate("patientId")
+            .populate("familyMemberId")
+            .populate("hospitalId")
+            .populate({
+                path: 'doctorId',
+                populate: [
+                    { path: 'specialityId' },
+                    { path: 'hospitalId' }
+                ]
+            })
+
+        // Get Upcomming Appointments
+        const prevAppointments = await Slot.find({
+            patientId: req.params.id, from: {
+                $lt: new Date().toDateString()
+            }
+        })
             .populate("patientId")
             .populate("familyMemberId")
             .populate("hospitalId")
@@ -377,6 +398,7 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
         return makeResponse(res, 200, "Patient profile data", {
             patient,
             upcommingAppointments,
+            prevAppointments,
             labResults,
             qrPrescriptions,
             familyMembers
