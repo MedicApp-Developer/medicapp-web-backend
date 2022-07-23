@@ -344,12 +344,12 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
         const patient = await Patient.findById({ _id: req.params.id }).populate('insurances');
         const familyMembers = await Family.find({ patientId: req.params.id });
 
-        // Get Upcomming Appointments
         let utc = moment().utc().toISOString();
         console.log("Time", utc);
 
+        // Get Upcomming Appointments
         const upcommingAppointments = await Slot.find({
-            patientId: req.params.id, from: {
+            patientId: req.params.id, to: {
                 $gte: utc
             }
         })
@@ -366,8 +366,8 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
 
         // Get Upcomming Appointments
         const prevAppointments = await Slot.find({
-            patientId: req.params.id, from: {
-                $lt: new Date().toDateString()
+            patientId: req.params.id, to: {
+                $lt: utc
             }
         })
             .populate("patientId")
