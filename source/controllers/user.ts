@@ -230,11 +230,10 @@ const updateUser = async (req: Request, res: Response, id: string, user: any, is
         delete update.password;
     }
 
-    User.findOneAndUpdate({ _id: id }, { ...update }).then(updatedHospital => {
-        return true;
-    }).catch(err => {
-        return false;
-    });
+    const updatedUser = await User.findOneAndUpdate({ _id: id }, { ...update }, { new: true })
+    console.log("Updated server user", updatedUser);
+
+    return updatedUser
 }
 
 const forgetPassword = async (req: Request, res: Response, next: NextFunction) => {

@@ -178,7 +178,7 @@ const getSingleDoctor = (req: Request, res: Response, next: NextFunction) => {
         })
 }
 
-const updateDoctor = (req: Request, res: Response, next: NextFunction) => {
+const updateDoctor = async (req: Request, res: Response, next: NextFunction) => {
     const { _id } = res.locals.jwt
 
     // This id is updated doctor itself id 
@@ -190,13 +190,18 @@ const updateDoctor = (req: Request, res: Response, next: NextFunction) => {
 
     const filter = { _id: id }
 
-    UserController.updateUser(req, res, _id, req.body)
+    const updatedUser = await UserController.updateUser(req, res, _id, req.body)
+    console.log("Type of user", updatedUser);
 
-    Doctor.findOneAndUpdate(filter, update).then(updatedDoctor => {
-        return makeResponse(res, 200, "Doctor updated Successfully", updatedDoctor, false)
-    }).catch(err => {
-        return makeResponse(res, 400, err.message, null, true)
-    })
+    if (updatedUser !== null) {
+        Doctor.findOneAndUpdate(filter, update, { new: true }).populate('specialityId').then(updatedDoctor => {
+            return makeResponse(res, 200, "Doctor updated Successfully", { doctor: updatedDoctor, user: updatedUser }, false)
+        }).catch(err => {
+            return makeResponse(res, 400, err.message, null, true)
+        })
+    } else {
+        return makeResponse(res, 400, 'Failed to update user', null, true)
+    }
 }
 
 const deleteDoctor = async (req: Request, res: Response, next: NextFunction) => {

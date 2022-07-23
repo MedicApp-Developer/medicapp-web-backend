@@ -138,7 +138,7 @@ const getHospitalDetail = async (req: Request, res: Response, next: NextFunction
     }
 }
 
-const updateHospital = (req: Request, res: Response, next: NextFunction) => {
+const updateHospital = async (req: Request, res: Response, next: NextFunction) => {
     // This _id is Hospital User ID
     const { _id } = res.locals.jwt
 
@@ -152,13 +152,19 @@ const updateHospital = (req: Request, res: Response, next: NextFunction) => {
     const filter = { _id: id }
     const updateUser = { ...req.body, firstName: req.body.name }
 
-    UserController.updateUser(req, res, _id, updateUser, true)
+    const updatedUser = await UserController.updateUser(req, res, _id, updateUser, true)
+    console.log("Type of user", updatedUser);
 
-    Hospital.findOneAndUpdate(filter, update).populate('insurances').populate("services").then((updatedHospital: any) => {
-        return makeResponse(res, 200, "Hospital updated Successfully", updatedHospital, false)
-    }).catch((err: any) => {
-        return makeResponse(res, 400, err.message, null, true)
-    })
+    if (updatedUser !== null) {
+        Hospital.findOneAndUpdate(filter, update, { new: true }).populate('insurances').populate("services").then((updatedHospital: any) => {
+            return makeResponse(res, 200, "Hospital updated Successfully", { hospital: updatedHospital, user: updatedUser }, false)
+        }).catch((err: any) => {
+            return makeResponse(res, 400, err.message, null, true)
+        })
+    } else {
+        return makeResponse(res, 400, 'Failed to update user', null, true)
+    }
+
 }
 
 const deleteHospital = async (req: Request, res: Response, next: NextFunction) => {
