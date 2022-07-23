@@ -27,6 +27,7 @@ import fs from 'fs';
 import path from 'path';
 import sendNotification from "../functions/sendNotification";
 const schedule = require('node-schedule');
+import moment from 'moment'
 
 const NAMESPACE = "Patient";
 
@@ -337,15 +338,19 @@ const deactivePatient = async (req: Request, res: Response, next: NextFunction) 
     }
 };
 const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunction) => {
+
     try {
         // Get all information of patient
         const patient = await Patient.findById({ _id: req.params.id }).populate('insurances');
         const familyMembers = await Family.find({ patientId: req.params.id });
 
         // Get Upcomming Appointments
+        let utc = moment().utc().toISOString();
+        console.log("Time", utc);
+
         const upcommingAppointments = await Slot.find({
             patientId: req.params.id, from: {
-                $gte: new Date().toDateString()
+                $gte: utc
             }
         })
             .populate("patientId")

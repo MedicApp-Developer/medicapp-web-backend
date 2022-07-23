@@ -1,8 +1,9 @@
 import moment from 'moment'
+import 'moment-timezone';
 import { getAge } from './SickLeave'
 
-const generatePrescriptionSlip = (prescription: any) => {
-	const prescriptionDate = moment.tz(prescription?.date, 'Asia/Dubai').format("DD/MM/YYYY")
+const generatePrescriptionSlip = (prescription: any, zone: string) => {
+	const prescriptionDate = moment.tz(prescription?.date, zone).format("DD/MM/YYYY")
 
 	return `
 		<!DOCTYPE html>

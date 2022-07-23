@@ -68,6 +68,9 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
 const login = (req: Request, res: Response, next: NextFunction) => {
 
+    console.log("Timezone in Login", req.headers.timezone);
+    console.log("Timezone in Login", req.headers);
+
     // Form validation
     const { errors, isValid } = validateLoginInput(req.body);
     // Check validation

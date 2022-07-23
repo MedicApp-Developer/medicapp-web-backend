@@ -1,9 +1,10 @@
 import moment from 'moment'
+import 'moment-timezone';
 
-const generateAppointmentSlip = (slot: any) => {
-	const appointmentDate = moment.tz(slot?.from, 'Asia/Dubai').format("DD/MM/YYYY")
-	const appointmentTime = moment.tz(slot?.from, 'Asia/Dubai').format('hh:mm a')
-	const todayDate = moment.tz(new Date(), 'Asia/Dubai').format("DD/MM/YYYY")
+const generateAppointmentSlip = (slot: any, zone: string) => {
+	const appointmentDate = moment.tz(slot?.from, zone).format("DD/MM/YYYY")
+	const appointmentTime = moment.tz(slot?.from, zone).format('hh:mm a')
+	const todayDate = moment.tz(new Date(), zone).format("DD/MM/YYYY")
 	return `
 		<!DOCTYPE html>
 		<html>

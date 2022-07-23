@@ -243,11 +243,13 @@ const getHospitalPCRVaccinationSlots = async (req: Request, res: Response, next:
 }
 
 const getAppointmentSlip = async (req: Request, res: Response, next: NextFunction) => {
+
+    const timezone = req.headers.timezone !== undefined ? req.headers.timezone : ''
     const { id } = req.params
 
     try {
         const slot = await Slot.find({ _id: id }).populate('hospitalId').populate('patientId').populate('familyMemberId').populate('doctorId')
-        pdf.create(generateAppointmentSlip(slot[0]), {}).toFile('Appointment Slip.pdf', (err) => {
+        pdf.create(generateAppointmentSlip(slot[0], timezone as string), {}).toFile('Appointment Slip.pdf', (err) => {
             if (err) {
                 return Promise.reject()
             }

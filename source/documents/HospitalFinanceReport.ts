@@ -1,4 +1,5 @@
 import moment from 'moment'
+import 'moment-timezone';
 
 const generateHospitalFinanceReport = (hospital: any, appointments: any, fromDate: any, toDate: any) => {
 	const appointmentFromDate = moment(fromDate).format("YYYY/MM/DD")

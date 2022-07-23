@@ -42,8 +42,8 @@ const getQrPrescription = async (req: Request, res: Response, next: NextFunction
 }
 
 const getQRPrescriptionSlip = async (req: Request, res: Response, next: NextFunction) => {
+    const timezone = req.headers.timezone !== undefined ? req.headers.timezone : ''
     const { id } = req.params
-
     try {
         const prescription = await QrPrescription.find({ _id: id })
             .populate('patientId')
@@ -55,7 +55,7 @@ const getQRPrescriptionSlip = async (req: Request, res: Response, next: NextFunc
                 ]
             })
 
-        pdf.create(generatePrescriptionSlip(prescription[0]), {}).toFile('Prescription.pdf', (err) => {
+        pdf.create(generatePrescriptionSlip(prescription[0], timezone as string), {}).toFile('Prescription.pdf', (err) => {
             if (err) {
                 return Promise.reject()
             }

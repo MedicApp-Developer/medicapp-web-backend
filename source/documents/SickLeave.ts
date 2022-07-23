@@ -1,4 +1,5 @@
 import moment from 'moment'
+import 'moment-timezone';
 
 export function getAge(dateString: any) {
 	var today = new Date()
@@ -11,11 +12,11 @@ export function getAge(dateString: any) {
 	return age
 }
 
-const generateSickLeaveDocument = (leave: any) => {
+const generateSickLeaveDocument = (leave: any, zone: string) => {
 	console.log("leave => ", leave)
-	const todayDate = moment.tz(new Date(), 'Asia/Dubai').format("DD/MM/YYYY")
-	const fromDate = moment.tz(leave?.from, 'Asia/Dubai').format("DD/MM/YYYY")
-	const toDate = moment.tz(leave?.to, 'Asia/Dubai').format("DD/MM/YYYY")
+	const todayDate = moment.tz(new Date(), zone).format("DD/MM/YYYY")
+	const fromDate = moment.tz(leave?.from, zone).format("DD/MM/YYYY")
+	const toDate = moment.tz(leave?.to, zone).format("DD/MM/YYYY")
 	return `
 		<!DOCTYPE html>
 		<html>

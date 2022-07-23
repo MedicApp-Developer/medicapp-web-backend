@@ -47,6 +47,7 @@ const getSickLeaves = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 const downloadSickLeave = async (req: Request, res: Response, next: NextFunction) => {
+	const timezone = req.headers.timezone !== undefined ? req.headers.timezone : ''
 	const { id } = req.params
 	try {
 		const leaves = await Leave.find({ _id: id }).populate({
@@ -57,7 +58,7 @@ const downloadSickLeave = async (req: Request, res: Response, next: NextFunction
 			]
 		}).populate("patientId")
 
-		pdf.create(generateSickLeaveDocument(leaves[0]), {}).toFile('Sick Leave Approval.pdf', (err) => {
+		pdf.create(generateSickLeaveDocument(leaves[0], timezone as string), {}).toFile('Sick Leave Approval.pdf', (err) => {
 			if (err) {
 				return Promise.reject()
 			}
