@@ -8,16 +8,16 @@ const sendMessage = (destination: string, message: string) => {
 		message: message
 	};
 
-	console.log("payload => ", payload);
+	
 
 	smsglobal.sms.send(payload, function (error: any, response: any) {
 
 		if (response) {
-			console.log('Response:', response.data ? response.data : response);
+			
 		}
 
 		if (error) {
-			console.log('Error:', error.data.errors);
+			
 		}
 
 	});

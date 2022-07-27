@@ -60,9 +60,9 @@ const getLabRequests = async (req: Request, res: Response, next: NextFunction) =
 
 const updateLabRequest = async (req: Request, res: Response, next: NextFunction) => {
     // @ts-ignore
-    //console.log(JSON.parse(req.body.data));
-    //console.log(req.body.id);
-    // console.log(req.files);
+    //
+    //
+    // 
 
     // @ts-ignore
     cloudinary.v2.config({

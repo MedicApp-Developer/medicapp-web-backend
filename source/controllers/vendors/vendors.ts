@@ -94,8 +94,8 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
 
 const deleteGalleryImage = async (req: Request, res: Response, next: NextFunction) => {
 	const { url, vendorId } = req.params;
-	console.log("----> URL => ", url);
-	console.log("----> vendorId => ", vendorId);
+	
+	
 
 	// @ts-ignore
 	cloudinary.v2.config({
@@ -116,7 +116,7 @@ const deleteGalleryImage = async (req: Request, res: Response, next: NextFunctio
 
 				Vendor.findOneAndUpdate({ _id: vendorId }, { images: updatedVendorImages }, { new: true })
 					.then(updatedVendor => {
-						console.log("----> Hospital Images => ", updatedVendor);
+						
 
 						return makeResponse(res, 200, "Vandor gallery image deleted", updatedVendor, false)
 					})
@@ -213,7 +213,7 @@ const uploadVendorImages = async (req: Request, res: Response, next: NextFunctio
 
 const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
 	const { vendorId } = req.params;
-	console.log("----> vendorId => ", vendorId);
+	
 
 	Vendor.findOneAndUpdate({ _id: vendorId }, { image: '' }, { new: true })
 		.then(updatedVendor => {

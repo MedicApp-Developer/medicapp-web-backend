@@ -13,7 +13,7 @@ export function getAge(dateString: any) {
 }
 
 const generateSickLeaveDocument = (leave: any, zone: string) => {
-	console.log("leave => ", leave)
+	
 	const todayDate = moment.tz(new Date(), zone).format("DD/MM/YYYY")
 	const fromDate = moment.tz(leave?.from, zone).format("DD/MM/YYYY")
 	const toDate = moment.tz(leave?.to, zone).format("DD/MM/YYYY")

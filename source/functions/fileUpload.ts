@@ -21,12 +21,12 @@ export default upload;
 // **** For Reference **** //
 // Single File Upload
 // router.post("/single", upload.single("image"), (req, res) => {
-//     console.log(req.file);
+//     
 //     res.send("Single file Uploaded Successfully");
 // });
 
 // // Multiple File Upload
 // router.post('/multiple', upload.array('images', 3),(req, res) => {
-//     console.log(req.files);
+//     
 //     res.send("Multiple files Uploaded Successfully");
 // })

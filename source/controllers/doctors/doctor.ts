@@ -21,7 +21,7 @@ const NAMESPACE = "Doctor"
 
 const createDoctor = async (req: Request, res: Response, next: NextFunction) => {
     const { email, firstName, lastName, mobile, specialityId, experience, gender, country, language } = req.body
-    console.log(req.body);
+    
 
     const password = getRandomPassword()
 
@@ -191,7 +191,7 @@ const updateDoctor = async (req: Request, res: Response, next: NextFunction) => 
     const filter = { _id: id }
 
     const updatedUser = await UserController.updateUser(req, res, _id, req.body)
-    console.log("Type of user", updatedUser);
+    
 
     if (updatedUser !== null) {
         Doctor.findOneAndUpdate(filter, update, { new: true }).populate('specialityId').then(updatedDoctor => {
@@ -426,7 +426,7 @@ const filterDoctors = async (req: Request, res: Response, next: NextFunction) =>
 
 const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
     const { doctorId } = req.params;
-    console.log("----> doctorId => ", doctorId);
+    
 
     Doctor.findOneAndUpdate({ _id: doctorId }, { image: '' }, { new: true })
         .then(updatedDoctor => {

@@ -14,11 +14,11 @@ const sendNotification = (fcToken: any, payload: any) => {
 
     admin.messaging().sendToDevice(fcToken, payload, options)
         .then((send: any) => {
-            console.log("send", send);
+            
             return true;
         })
         .catch((err: any) => {
-            console.log("Error found!", err);
+            
             return false;
         })
 }

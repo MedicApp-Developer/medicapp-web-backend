@@ -23,10 +23,10 @@ export const sendEmail = async (options: any, noReply: any) => {
     })
 
     transport.sendMail(options).then((res: any) => {
-        console.log("Email Sent");
+        
         return true;
     }).catch((err: any) => {
-        console.log("Email Sent Error: ", err);
+        
         return false;
     })
 };

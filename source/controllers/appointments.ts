@@ -53,11 +53,11 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
                     bitly.short(locationUrl).then((result: any) => {
                         // @ts-ignore
                         const message = `Appointment Confirmed!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment.tz(slotInfo?.from, 'Asia/Dubai').format('DD/MM/YYYY, hh:mm: a')}\nClinic Location: ${result.link}\n\nDon't forget to ask the receptionist for your code to CLAIM YOUR POINTS!`
-                        console.log(message);
+                        
                         // @ts-ignore
                         sendMessage(patientInfo?.phone.slice(1).replace(/\s+/g, '').replace(/-/g, ""), message);
                     }).catch((err: any) => {
-                        console.log(err);
+                        
                     });
 
                 }

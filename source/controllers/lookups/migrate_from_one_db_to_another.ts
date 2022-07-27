@@ -52,9 +52,9 @@ const migrateData = async () => {
 
 	await mongoose.connect(MONGO_DB_1.url, MONGO_DB_1.options)
 
-	console.log("Connected with DB_1...")
+	
 
-	console.log("Getting documents from DB_1");
+	
 	categories = await Category.find({});
 	services = await Services.find({});
 	specialities = await Speciality.find({});
@@ -77,67 +77,67 @@ const migrateData = async () => {
 
 	await mongoose.connect(MONGO_DB_2.url, MONGO_DB_2.options)
 
-	console.log("Clearing the documents Of DB_2...")
+	
 
 	await Category.deleteMany({})
 	await Services.deleteMany({})
 	await Speciality.deleteMany({})
 
-	console.log("Inserting documents")
+	
 
 	const options = { ordered: true }
 
 	await Category.insertMany(categories, options)
 	//@ts-ignore
-	console.log(`Categories were inserted`)
+	
 
 	await Services.insertMany(services, options)
 	//@ts-ignore
-	console.log("Services were inserted")
+	
 
 	await Speciality.insertMany(specialities, options)
 	// @ts-ignore
-	console.log("Specialities were inserted")
+	
 
 	await Doctor.insertMany(doctors, options)
 	// @ts-ignore
-	console.log("Doctors were inserted")
+	
 
 	await Family.insertMany(families, options)
 	// @ts-ignore
-	console.log("Families were inserted")
+	
 
 	await Hospital.insertMany(hospitals, options)
 	// @ts-ignore
-	console.log("Hospitals were inserted")
+	
 
 	await PackageCategory.insertMany(packageCategories, options)
 	// @ts-ignore
-	console.log("Package Categories were inserted")
+	
 
 	await Package.insertMany(packages, options)
 	// @ts-ignore
-	console.log("Packages were inserted")
+	
 
 	await Patient.insertMany(patients, options)
 	// @ts-ignore
-	console.log("Patients were inserted")
+	
 
 	await PointsCode.insertMany(pointCodes, options)
 	// @ts-ignore
-	console.log("Point Codes were inserted")
+	
 
 	await Slot.insertMany(slots, options)
 	// @ts-ignore
-	console.log("Slots were inserted")
+	
 
 	await User.insertMany(users, options)
 	// @ts-ignore
-	console.log("Users were inserted")
+	
 
 	await Vendor.insertMany(vendors, options)
 	// @ts-ignore
-	console.log("Vendors were inserted")
+	
 
 	process.exit()
 

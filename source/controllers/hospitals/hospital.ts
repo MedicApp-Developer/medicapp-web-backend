@@ -33,7 +33,7 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
 
     const { email, phoneNo, password, name, tradeLicenseNo, insurances, issueDate, expiryDate, location, address, state, type } = req.body
 
-    console.log(req.body);
+    
 
 
     await User.find({ email }).then(async (result: any) => {
@@ -71,11 +71,11 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
                     return makeResponse(res, 201, "Hospital Created Successfully", result, false)
                 })
                 .catch((err: any) => {
-                    console.log(err);
+                    
                     return makeResponse(res, 400, err.message, null, true)
                 })
         } else {
-            console.log("Bad Request");
+            
             return sendErrorResponse(res, 400, "Email already exists", DUPLICATE_VALUE_CODE)
         }
     })
@@ -153,7 +153,7 @@ const updateHospital = async (req: Request, res: Response, next: NextFunction) =
     const updateUser = { ...req.body, firstName: req.body.name }
 
     const updatedUser = await UserController.updateUser(req, res, _id, updateUser, true)
-    console.log("Type of user", updatedUser);
+    
 
     if (updatedUser !== null) {
         Hospital.findOneAndUpdate(filter, update, { new: true }).populate('insurances').populate("services").then((updatedHospital: any) => {
@@ -474,8 +474,8 @@ const uploadProfilePic = async (req: Request, res: Response, next: NextFunction)
 
 const deleteGalleryImage = async (req: Request, res: Response, next: NextFunction) => {
     const { url, hospitalId } = req.params;
-    console.log("----> URL => ", url);
-    console.log("----> hospitalId => ", hospitalId);
+    
+    
 
     // @ts-ignore
     cloudinary.v2.config({
@@ -496,7 +496,7 @@ const deleteGalleryImage = async (req: Request, res: Response, next: NextFunctio
 
                 Hospital.findOneAndUpdate({ _id: hospitalId }, { images: updatedHospitalImages }, { new: true }).populate('insurances').populate("services")
                     .then(updatedHospital => {
-                        console.log("----> Hospital Images => ", updatedHospital);
+                        
 
                         return makeResponse(res, 200, "Hospital gallery image deleted", updatedHospital, false)
                     })
@@ -514,7 +514,7 @@ const deleteGalleryImage = async (req: Request, res: Response, next: NextFunctio
 
 const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
     const { hospitalId } = req.params;
-    console.log("----> hospitalId => ", hospitalId);
+    
 
     Hospital.findOneAndUpdate({ _id: hospitalId }, { image: '' }, { new: true }).populate('insurances').populate("services")
         .then(updatedHospital => {

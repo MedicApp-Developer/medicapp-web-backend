@@ -78,8 +78,6 @@ const getAllPromoVideos = async (req: Request, res: Response, next: NextFunction
   const getAll = req.query.getAll;
 
   if (getAll) {
-    console.log('Get All', getAll);
-
     Promos.find({})
       .populate({
         path: 'hospitalId',

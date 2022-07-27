@@ -12,7 +12,7 @@ const NAMESPACE = "Insurance"
 const createInsurance = async (req: Request, res: Response, next: NextFunction) => {
     // @ts-ignore
 
-    console.log("file", req.file);
+    
 
     cloudinary.v2.config({
         cloud_name: config.cloudinary.name,

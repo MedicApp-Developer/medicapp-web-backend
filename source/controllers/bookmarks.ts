@@ -38,7 +38,7 @@ const createBookmark = async (req: Request, res: Response, next: NextFunction) =
 const deleteBookmark = async (req: Request, res: Response, next: NextFunction) => {
     const { type, id } = req.body;
     const update = type === Roles.DOCTOR ? { doctorIds: id } : { hospitalIds: id };
-    console.log("Update => ", update);
+    
     Bookmark.findOneAndUpdate(
         { user: res.locals.jwt._id },
         { $pull: update },

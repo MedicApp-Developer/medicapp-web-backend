@@ -475,27 +475,27 @@ const insertLookups = async () => {
 
 	await mongoose.connect(MONGO.url, MONGO.options)
 
-	console.log("Clearing the lookups first...")
+	
 
 	await Gender.deleteMany({})
 	await Country.deleteMany({})
 	await Language.deleteMany({})
 
-	console.log("Inserting lookups")
+	
 
 	const options = { ordered: true }
 
 	await Gender.insertMany(gender, options)
 	//@ts-ignore
-	console.log(`Genders were inserted`)
+	
 
 	await Country.insertMany(countryList, options)
 	//@ts-ignore
-	console.log("Countries were inserted")
+	
 
 	await Language.insertMany(languagesList, options)
 	//@ts-ignore
-	console.log("Languages were inserted")
+	
 
 	process.exit()
 

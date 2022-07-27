@@ -23,10 +23,10 @@ export const sendCollaborationsEmail = async (options: any, noReply: any) => {
     })
 
     transport.sendMail(options).then((res: any) => {
-        console.log("Support Email Sent");
+        
         return true;
     }).catch((err: any) => {
-        console.log("Support Email Sent Error: ", err);
+        
         return false;
     })
 };

@@ -61,15 +61,15 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
             _user.save().then(user => {
                 return makeResponse(res, 200, "Authentication Successful", { user: user }, false);
-            }).catch(err => console.log(err));
+            }).catch(err => 
         });
     });
 };
 
 const login = (req: Request, res: Response, next: NextFunction) => {
 
-    console.log("Timezone in Login", req.headers.timezone);
-    console.log("Timezone in Login", req.headers);
+    
+    
 
     // Form validation
     const { errors, isValid } = validateLoginInput(req.body);
@@ -231,7 +231,7 @@ const updateUser = async (req: Request, res: Response, id: string, user: any, is
     }
 
     const updatedUser = await User.findOneAndUpdate({ _id: id }, { ...update }, { new: true })
-    console.log("Updated server user", updatedUser);
+    
 
     return updatedUser
 }

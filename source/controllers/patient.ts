@@ -67,7 +67,7 @@ const createPatient = async (req: Request, res: Response, next: NextFunction) =>
                             if (_error) {
                                 return sendErrorResponse(res, 400, "Unauthorized", UNAUTHORIZED_CODE);
                             } else if (token) {
-                                console.log(path.join((`${__dirname}`)));
+                                
                                 const content = fs.readFileSync(path.join((`${__dirname}/../templates/RegisterationEmail.html`)));
 
                                 let final_template = content.toString().replace('[name]', firstName + " " + lastName).toString().replace('[username]', email).toString().replace('[password]', password);
@@ -270,7 +270,7 @@ const dispatchNotification = async (patient: any) => {
         [patient?.webFctoken, patient?.mobileFctoken],
         payload);
 
-    console.log("Notify:", notifi);
+    
 }
 const deleteUserCronJob = async (_id: string, email: string, nextDate: Date) => {
 
@@ -279,14 +279,14 @@ const deleteUserCronJob = async (_id: string, email: string, nextDate: Date) => 
         if (patient?.accountDeletionRequest == true) {
             let deleted = await Patient.findByIdAndDelete(_id);
             await UserController.deleteUserWithEmail(email)
-            console.log('deleted: ', deleted);
+            
             // await dispatchNotification(patient);
 
         } else {
-            console.log('Account deletion Action revoked by: ', _id)
+            
         }
     });
-    console.log("cron job set---")
+    
     return true;
 }
 
@@ -311,7 +311,7 @@ const deactivePatient = async (req: Request, res: Response, next: NextFunction) 
                 if (updatedPatient?.accountDeletionRequest == true) {
                     await dispatchNotification(updatedPatient);
                     let cronjobset = await deleteUserCronJob(_id, patient?.email ?? '', nextDate)
-                    console.log(`cronJobset: ${cronjobset}`)
+                    
                     const content = fs.readFileSync(path.join((`${__dirname}/../templates/AccountDeactivate.html`)));
 
                     let final_template = content.toString().replace('[name]', updatedPatient.firstName + " " + updatedPatient.lastName);
@@ -345,7 +345,7 @@ const getPatientAccountInfo = async (req: Request, res: Response, next: NextFunc
         const familyMembers = await Family.find({ patientId: req.params.id });
 
         let utc = moment().utc().toISOString();
-        console.log("Time", utc);
+        
 
         // Get Upcomming Appointments
         const upcommingAppointments = await Slot.find({
@@ -498,7 +498,7 @@ const updateMobileFcToken = async (req: Request, res: Response, next: NextFuncti
 
 const deleteProfileImage = async (req: Request, res: Response, next: NextFunction) => {
     const { patientId } = req.params;
-    console.log("----> hospitalId => ", patientId);
+    
 
     Patient.findOneAndUpdate({ _id: patientId }, { image: '' }, { new: true })
         .then(updatedPatient => {
