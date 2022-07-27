@@ -78,16 +78,19 @@ const getAllPromoVideos = async (req: Request, res: Response, next: NextFunction
   const getAll = req.query.getAll;
 
   if (getAll) {
+    console.log('Get All', getAll);
+
     Promos.find({})
       .populate({
         path: 'hospitalId',
         populate: [
           { path: 'category' },
-          { path: 'services' }
+          { path: 'services' },
+          { path: 'insurances' }
         ]
       })
       .then((result: any) => {
-        return makeResponse(res, 200, "All Promo Videos", result, false);
+        return makeResponse(res, 200, "All Promo Videos", { totalItems: 0, totalPages: 0, videos: result }, false);
       })
       .catch((err: any) => {
         return makeResponse(res, 400, err.message, null, true);
@@ -106,7 +109,8 @@ const getAllPromoVideos = async (req: Request, res: Response, next: NextFunction
         path: 'hospitalId',
         populate: [
           { path: 'category' },
-          { path: 'services' }
+          { path: 'services' },
+          { path: 'insurances' }
         ]
       })
       .limit(Pagination.PAGE_SIZE).skip(limit * page)
