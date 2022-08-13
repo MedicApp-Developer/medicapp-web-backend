@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import Appointment from '../models/appointment'
 import makeResponse, { sendErrorResponse } from '../functions/makeResponse'
+import { sendNoReplyEmail } from '../functions/noReplyMailer'
 import { Pagination } from '../constants/pagination'
 import { PARAMETER_MISSING_CODE, RECORD_NOT_FOUND, SERVER_ERROR_CODE } from '../constants/statusCode'
 import Slot from '../models/doctors/slot'
@@ -9,9 +10,12 @@ import Patient from '../models/patient'
 import PointsCode from '../models/pointsCode'
 import { POINTS_CODE } from '../constants/rewards'
 import sendMessage from '../functions/sendSms'
+import config from '../config/config'
 import Hospital from '../models/hospital/hospital'
 import Doctor from '../models/doctors/doctor'
 import moment from 'moment-timezone'
+import fs from 'fs';
+import path from 'path';
 
 const prettylink = require('prettylink');
 
@@ -19,6 +23,7 @@ const NAMESPACE = "Appointment"
 
 const createAppointment = (req: Request, res: Response, next: NextFunction) => {
 
+    const timezone = req.headers.timezone !== undefined ? req.headers.timezone : ''
     const { patientId, slotId, description, familyMemberId } = req.body
 
     if (patientId && slotId) {
@@ -60,6 +65,22 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
                         
                     });
 
+
+                    // send cancellation email to patient
+                    const content = fs.readFileSync(path.join((`${__dirname}/../templates/AppointmentConfirmHospital.html`)));
+
+                    let final_template = content.toString().replace('[name]', patientInfo?.firstName + " " + patientInfo?.lastName).toString().replace('[name]', patientInfo?.firstName + " " + patientInfo?.lastName).toString().replace('[clinic_name]', hospitalInfo?.name ?? "").toString().replace('[doctor_name]', doctorInfo?.firstName + " " + doctorInfo?.lastName).toString().replace('[date]', moment.tz(slotInfo?.from, timezone as string).format('DD/MM/YYYY, hh:mm: a'));
+
+
+                    const options = {
+                        from: config.mailer.user,
+                        to: hospitalInfo?.email,
+                        subject: "New Appointment Booked",
+                        html: final_template
+                    }
+
+                    sendNoReplyEmail(options, false);
+
                 }
 
                 return makeResponse(res, 200, "Appointment booked", updatedSlot, false)
@@ -75,8 +96,9 @@ const createAppointment = (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const cancelAppointment = (req: Request, res: Response, next: NextFunction) => {
+const cancelAppointment = async (req: Request, res: Response, next: NextFunction) => {
 
+    const timezone = req.headers.timezone !== undefined ? req.headers.timezone : ''
     const { slotId } = req.params
 
     if (slotId) {
@@ -84,12 +106,42 @@ const cancelAppointment = (req: Request, res: Response, next: NextFunction) => {
             const filter = { _id: slotId }
             let update = { patientId: null, status: SlotStatus.AVAILABLE, description: "", familyMemberId: null, type: SlotTypes.DOCTOR }
 
-            // @ts-ignore
-            Slot.findOneAndUpdate(filter, update, { upsert: true }).then(updatedSlot => {
-                return makeResponse(res, 200, "Updated Slot", updatedSlot, false)
-            }).catch(err => {
+            const slotInfo = await Slot.findById(slotId);
+            if (slotInfo) {
+
+                const hospitalInfo = await Hospital.findById(slotInfo.hospitalId);
+                const doctorInfo = await Doctor.findById(slotInfo.doctorId);
+                const patientInfo = await Patient.findById(slotInfo.patientId);
+                // @ts-ignore
+                const message = `Appointment Cancelled!\nPatient Name: ${patientInfo?.firstName + " " + patientInfo?.lastName}\nClinic Name: ${hospitalInfo?.name}\nDoctor Name: ${doctorInfo?.firstName + " " + doctorInfo?.lastName}\nDate & Time: ${moment.tz(slotInfo?.from, timezone).format('DD/MM/YYYY, hh:mm: a')}`
+                console.log(message);
+                // @ts-ignore
+                Slot.findOneAndUpdate(filter, update, { upsert: true }).then(async updatedSlot => {
+                    // @ts-ignore
+                    sendMessage(patientInfo?.phone.slice(1).replace(/\s+/g, '').replace(/-/g, ""), message);
+
+                    // send cancellation email to hospital
+                    const contentHospital = fs.readFileSync(path.join((`${__dirname}/../templates/AppointmentCancelHospital.html`)));
+
+                    let hospital_template = contentHospital.toString().replace('[name]', patientInfo?.firstName + " " + patientInfo?.lastName).toString().replace('[name]', patientInfo?.firstName + " " + patientInfo?.lastName).toString().replace('[clinic_name]', hospitalInfo?.name ?? "").toString().replace('[doctor_name]', doctorInfo?.firstName + " " + doctorInfo?.lastName).toString().replace('[date]', moment.tz(slotInfo?.from, timezone as string).format('DD/MM/YYYY, hh:mm: a'));
+
+
+                    const hospitalOptions = {
+                        from: config.mailer.user,
+                        to: hospitalInfo?.email,
+                        subject: "Appointment Cancelled",
+                        html: hospital_template
+                    }
+
+                    sendNoReplyEmail(hospitalOptions, false);
+                    return makeResponse(res, 200, "Updated Slot", updatedSlot, false)
+                }).catch(err => {
+                    return sendErrorResponse(res, 400, "No slot with this ID", RECORD_NOT_FOUND)
+                })
+            } else {
                 return sendErrorResponse(res, 400, "No slot with this ID", RECORD_NOT_FOUND)
-            })
+            }
+
 
         } catch (err) {
             return sendErrorResponse(res, 400, "Validation Failed Error", SERVER_ERROR_CODE)
