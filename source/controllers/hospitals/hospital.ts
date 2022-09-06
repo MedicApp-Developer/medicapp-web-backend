@@ -253,10 +253,11 @@ const uploadHospitalImages = async (req: Request, res: Response, next: NextFunct
 }
 
 const filterHospital = async (req: Request, res: Response, next: NextFunction) => {
-    const { checkedCategories, hospitalTypes, checkedAddons } = req.body
+    const { checkedInsurances, checkedCategories, hospitalTypes, checkedAddons } = req.body
 
     const filterQuery = {
         $and: [
+            checkedInsurances.length > 0 ? { 'insurances': { $in: checkedInsurances } } : {},
             checkedCategories.length > 0 ? { 'category': { $in: checkedCategories } } : {},
             hospitalTypes.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
             checkedAddons.length > 0 ? { 'services': { $in: checkedAddons } } : {},
