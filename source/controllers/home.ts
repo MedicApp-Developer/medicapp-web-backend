@@ -9,6 +9,7 @@ import Slot from '../models/doctors/slot'
 import Gender from '../models/lookups/gender'
 import Language from '../models/lookups/language'
 import Country from '../models/lookups/country'
+import Insurance from '../models/insurance'
 
 const NAMESPACE = "Home"
 
@@ -62,6 +63,7 @@ const getFilters = async (req: Request, res: Response, next: NextFunction) => {
     const specialities = await Speciality.find({}).sort({ 'order': 1 })
     const hospitalCategories = await Category.find({})
     const hospitalServices = await Services.find({})
+    const insurances = await Insurance.find({})
 
     const genderList = await Gender.find({})
     const languageList = await Language.find({})
@@ -70,7 +72,8 @@ const getFilters = async (req: Request, res: Response, next: NextFunction) => {
     const filters = {
       hospitalFilters: {
         hospitalCategories,
-        hospitalServices
+        hospitalServices,
+        insurances
       },
       doctorFilters: {
         specialities,
