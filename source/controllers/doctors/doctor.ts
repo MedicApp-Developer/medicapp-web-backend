@@ -290,7 +290,7 @@ const searchDoctorsOfAllHospitals = async (req: Request, res: Response, next: Ne
 
 const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFunction) => {
 
-    const { text, searchFor, checkedGenders, checkedLanguages, checkedNationalities, checkedSpecialities, checkedCategories, hospitalTypes, checkedAddons } = req.body
+    const { text, searchFor, checkedGenders, checkedLanguages, checkedNationalities, checkedSpecialities, checkedInsurances, checkedCategories, hospitalTypes, checkedAddons } = req.body
 
     // Regex 
     const searchedTextRegex = new RegExp(text, 'i')
@@ -316,6 +316,7 @@ const searchHospitalAndDoctor = async (req: Request, res: Response, next: NextFu
         const filterQuery = {
             $and: [
                 text !== "" ? { $or: hospitalSearchQuery } : {},
+                checkedInsurances?.length > 0 ? { 'insurances': { $in: checkedInsurances } } : {},
                 checkedCategories?.length > 0 ? { 'category': { $in: checkedCategories } } : {},
                 hospitalTypes?.length > 0 ? { 'type': { $in: hospitalTypes } } : {},
                 checkedAddons?.length > 0 ? { 'services': { $in: checkedAddons } } : {},
