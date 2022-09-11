@@ -154,7 +154,7 @@ const updateVendor = async (req: Request, res: Response, next: NextFunction) => 
 
 		const vendorFilter = { _id: id };
 
-		const vendor = await Vendor.findOneAndUpdate(vendorFilter, update);
+		const vendor = await Vendor.findOneAndUpdate(vendorFilter, update, { new: true });
 
 		return makeResponse(res, 200, "Vendor updated Successfully", vendor, false)
 
