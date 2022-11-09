@@ -33,9 +33,6 @@ const createHospital = async (req: Request, res: Response, next: NextFunction) =
 
     const { email, phoneNo, password, name, tradeLicenseNo, insurances, issueDate, expiryDate, location, address, state, type } = req.body
 
-    
-
-
     await User.find({ email }).then(async (result: any) => {
         if (result.length === 0) {
             // @ts-ignore
@@ -195,7 +192,8 @@ const searchHospital = async (req: Request, res: Response, next: NextFunction) =
         { name: searchedTextRegex },
         { address: searchedTextRegex },
         { email: searchedTextRegex },
-        { tradeLicenseNo: searchedTextRegex }
+        { tradeLicenseNo: searchedTextRegex },
+        { phoneNo: searchedTextRegex }
     ]
 
     try {
@@ -526,10 +524,21 @@ const deleteProfileImage = async (req: Request, res: Response, next: NextFunctio
         })
 }
 
+const getAllAdminHospitals = (req: Request, res: Response, next: NextFunction) => {
+    Hospital.find({ }).populate("insurances").populate("services")
+        .then((result: any) => {
+            return makeResponse(res, 200, "All Admin Hospitals", result, false)
+        })
+        .catch((err: any) => {
+            return makeResponse(res, 400, err.message, null, true)
+        })
+}
+
 
 export default {
     createHospital,
     getAllHospitals,
+    getAllAdminHospitals,
     getSingleHospital,
     updateHospital,
     deleteHospital,

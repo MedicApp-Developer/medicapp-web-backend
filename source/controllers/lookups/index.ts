@@ -16,15 +16,15 @@ const MONGO_OPTIONS = {
 }
 
 const MONGO = {
-	host: "mongodb+srv://medicappae:Medicappae@123@cluster0.bse7o.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+	host: "mongodb+srv://medicappae:23gCTYZ3rKgSUEY1@cluster1.a7rb7ku.mongodb.net/?retryWrites=true&w=majority",
 	username: "superuser",
 	password: "supersecretpasswords",
 	options: MONGO_OPTIONS,
-	url: "mongodb+srv://medicappae:Medicappae@123@cluster0.bse7o.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+	url: "mongodb+srv://medicappae:23gCTYZ3rKgSUEY1@cluster1.a7rb7ku.mongodb.net/?retryWrites=true&w=majority"
 }
 
 // mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority
-// mongodb+srv://medicappae:Medicappae@123@cluster0.bse7o.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+// mongodb+srv://medicappae:23gCTYZ3rKgSUEY1@cluster1.a7rb7ku.mongodb.net/?retryWrites=true&w=majority
 
 const gender = [
 	{ name_en: "Male", name_ar: "ذكر" },

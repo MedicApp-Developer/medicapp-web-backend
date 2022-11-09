@@ -42,7 +42,7 @@ const MONGO_OPTIONS = {
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME;
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
-const MONGO_HOST = process.env.MONGO_URL;
+const MONGO_HOST = process.env.MONGO_URL_DEV;
 
 // mongodb://127.0.0.1:27017/medicapp
 // mongodb+srv://Usama123:Usama123@cluster0.oeivl.mongodb.net/Cluster0?retryWrites=true&w=majority

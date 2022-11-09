@@ -509,7 +509,49 @@ const deleteProfileImage = async (req: Request, res: Response, next: NextFunctio
         })
 }
 
+const getAllPatientsAcrossPlateform = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        Patient.find({}).then(result => {
+            return makeResponse(res, 200, "All plateform patients", result, false)
+        })
+    } catch (err) {
+        // @ts-ignore
+        return makeResponse(res, 400, err.message, null, true)
+    }
+}
 
+const searchPatients = async (req: Request, res: Response, next: NextFunction) => {
+    const { searchedText } = req.params
+
+    // Regex
+    const searchedTextRegex = new RegExp(searchedText, 'i')
+
+    const searchQuery = [
+        { firstName: searchedTextRegex },
+        { lastName: searchedTextRegex },
+        { email: searchedTextRegex },
+        { phone: searchedTextRegex },
+        { location: searchedTextRegex },
+        { gender: searchedTextRegex },
+        { birthday: searchedTextRegex },
+        { emiratesId: searchedTextRegex },
+    ]
+
+    let filter = null;
+
+    if (searchedText !== "undefined") {
+        filter  = { $or: searchQuery }
+    } else {
+        filter = {}
+    }
+
+    Patient.find(filter)
+        .then(result => {
+            return makeResponse(res, 200, "Search Results", result, false)
+        }).catch(err => {
+            return makeResponse(res, 400, "No patient found", null, true)
+        })
+}
 
 export default {
     createPatient,
@@ -525,5 +567,7 @@ export default {
     uploadProfilePic,
     updateWebFcToken,
     updateMobileFcToken,
-    deleteProfileImage
+    deleteProfileImage,
+    getAllPatientsAcrossPlateform,
+    searchPatients
 };

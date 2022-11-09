@@ -6,6 +6,7 @@ import upload from '../../functions/multerCloudinary';
 const router = express.Router();
 
 router.get('/', controller.getAllHospitals);
+router.get('/all', extractJWT, controller.getAllAdminHospitals);
 router.get('/:id', controller.getSingleHospital);
 router.get('/details/:id', controller.getHospitalDetail);
 router.post('/', upload.single("tradeLicenseFile"), controller.createHospital);

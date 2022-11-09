@@ -33,6 +33,9 @@ import packagesRoutes from './routes/vendors/packages'
 import rewardsRoutes from './routes/rewards'
 import pointCodeRoutes from './routes/pointsCode'
 import packageCategoryRoutes from './routes/vendors/packageCategory'
+import employeesRoutes from './routes/employees/employee'
+import employeeRequestRoutes from './routes/employees/employeeRequest'
+import checkInRoutes from './routes/employees/checkin'
 import cors from 'cors'
 
 const NAMESPACE = 'Server'
@@ -115,6 +118,9 @@ router.use('/api/packages', packagesRoutes)
 router.use('/api/rewards', rewardsRoutes)
 router.use('/api/codes', pointCodeRoutes)
 router.use('/api/packageCategories', packageCategoryRoutes)
+router.use('/api/employees', employeesRoutes)
+router.use('/api/employeeRequests', employeeRequestRoutes)
+router.use('/api/check', checkInRoutes)
 
 // Simple Root Message
 router.get('/', (req, res) => {

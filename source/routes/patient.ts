@@ -10,6 +10,8 @@ import upload from '../functions/multerCloudinary';
 const router = express.Router();
 
 router.get('/', extractJWT,controller.getAllPatients);
+router.get('/plateform/patients', extractJWT, controller.getAllPatientsAcrossPlateform);
+router.get('/search/:searchedText', extractJWT, controller.searchPatients);
 router.get('/:id', extractJWT,controller.getSinglePatient);
 router.get('/profile/:id', extractJWT,controller.getPatientAccountInfo);
 router.post('/', controller.createPatient);
@@ -17,7 +19,7 @@ router.put('/webfcToken', controller.updateWebFcToken);
 router.put('/mobilefcToken', controller.updateMobileFcToken);
 
 router.put('/:id', extractJWT, controller.updatePatient);
-router.delete('/:id', isHospitalOrNurse, controller.deletePatient);
+router.delete('/:id', extractJWT, controller.deletePatient);
 router.delete('/deactivateUser/:id', isPatient, controller.deactivePatient); //deactive user by Umair
 router.post('/createNursePatient', isNurse, controller.createPatientFromNurse);
 router.get('/labResults/:id', extractJWT, controller.getLabResults);

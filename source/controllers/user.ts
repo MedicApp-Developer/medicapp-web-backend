@@ -30,7 +30,7 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-const register = async (req: Request, res: Response, next: NextFunction) => {
+const registerAdmin = async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, email, password } = req.body;
 
     if (!firstName || !lastName || !email || !password) {
@@ -55,6 +55,42 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
                 email,
                 password: hash,
                 role: Roles.ADMIN,
+                emiratesId: "",
+                referenceId: null
+            });
+
+            _user.save().then(user => {
+                return makeResponse(res, 200, "Authentication Successful", { user: user }, false);
+            }).catch(err => { });
+        });
+    });
+};
+
+const registerCEO = async (req: Request, res: Response, next: NextFunction) => {
+    const { firstName, lastName, email, password } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+        return sendErrorResponse(res, 400, "Parameter missing", PARAMETER_MISSING_CODE);
+    }
+
+    await User.find({ email }).exec().then(user => {
+        if (user.length > 0) {
+            return sendErrorResponse(res, 400, "User with this email already exists", DUPLICATE_VALUE_CODE);
+        }
+
+        // If email is valid
+        bcryptjs.hash(password, 10, async (hashError, hash) => {
+            if (hashError) {
+                return false;
+            }
+
+            const _user = new User({
+                _id: new mongoose.Types.ObjectId(),
+                firstName,
+                lastName,
+                email,
+                password: hash,
+                role: Roles.CEO,
                 emiratesId: "",
                 referenceId: null
             });
@@ -223,6 +259,9 @@ const updateUser = async (req: Request, res: Response, id: string, user: any, is
 
     let update = isHospital ? { ...user } : { ...req.body };
 
+    console.log("Updated User ID => ", id);
+    console.log("Updated BODY => ", update);
+
     if (req.body.password) {
         const hash = await bcryptjs.hash(user.password, 10);
         update = { ...update, password: hash }
@@ -231,7 +270,24 @@ const updateUser = async (req: Request, res: Response, id: string, user: any, is
     }
 
     const updatedUser = await User.findOneAndUpdate({ _id: id }, { ...update }, { new: true })
-    console.log("Updated server user", updatedUser);
+
+    return updatedUser
+}
+
+const updateEmployeeByCeo = async (req: Request, res: Response, email: string, user: any, isHospital: boolean = false) => {
+
+    let update = { ...req.body, firstName: req.body.name, role: req.body.department };
+
+    if (req.body.password) {
+        const hash = await bcryptjs.hash(user.password, 10);
+        update = { ...update, password: hash }
+    } else {
+        delete update.password;
+    }
+
+    const updatedUser = await User.findOneAndUpdate({ email }, { ...update }, { new: true })
+
+    console.log("updatedUser => ", updatedUser);
 
     return updatedUser
 }
@@ -327,7 +383,8 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
 export default {
     validateToken,
     login,
-    register,
+    registerAdmin,
+    registerCEO,
     getAllUsers,
     deleteUser,
     createUserFromEmailAndPassword,
@@ -337,4 +394,5 @@ export default {
     resetPassword,
     getSingleUser,
     forgetPassword,
+    updateEmployeeByCeo
 };
