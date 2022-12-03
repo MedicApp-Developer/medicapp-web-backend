@@ -49,9 +49,20 @@ const getEmployeeAttendance = (req: Request, res: Response, next: NextFunction) 
 
 }
 
+const getRecentEmployeeAttendance = (req: Request, res: Response, next: NextFunction) => {
+  Checkin.find({})
+  .limit(20)
+  .populate("employeeId")
+  .sort({date:-1})
+  .then(checkinInfoRes => {
+    return makeResponse(res, 200, "Employee Attendance", checkinInfoRes, false)
+  })
+}
+
 export default {
   employeeCheckin,
   updateCheckout,
   getSingleCheckinInfoWithDate,
-  getEmployeeAttendance
+  getEmployeeAttendance,
+  getRecentEmployeeAttendance
 }

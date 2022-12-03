@@ -36,6 +36,9 @@ import packageCategoryRoutes from './routes/vendors/packageCategory'
 import employeesRoutes from './routes/employees/employee'
 import employeeRequestRoutes from './routes/employees/employeeRequest'
 import checkInRoutes from './routes/employees/checkin'
+import todoRoutes from "./routes/ceo/todos"
+import archiveRoutes from './routes/archive'
+import expensesRoutes from "./routes/expenses"
 import cors from 'cors'
 
 const NAMESPACE = 'Server'
@@ -121,6 +124,10 @@ router.use('/api/packageCategories', packageCategoryRoutes)
 router.use('/api/employees', employeesRoutes)
 router.use('/api/employeeRequests', employeeRequestRoutes)
 router.use('/api/check', checkInRoutes)
+router.use('/api/todo', todoRoutes)
+router.use('/api/expenses', expensesRoutes)
+router.use('/api/archives', archiveRoutes)
+
 
 // Simple Root Message
 router.get('/', (req, res) => {

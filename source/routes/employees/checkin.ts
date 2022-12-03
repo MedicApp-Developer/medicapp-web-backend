@@ -7,6 +7,8 @@ const router = express.Router();
 router.post('/in', extractJWT, controller.employeeCheckin);
 router.put('/out/:id', extractJWT, controller.updateCheckout);
 router.post('/in-out', extractJWT, controller.getSingleCheckinInfoWithDate);
+router.get('/recents', controller.getRecentEmployeeAttendance);
 router.get('/:employeeId', extractJWT, controller.getEmployeeAttendance);
+
 
 export = router;

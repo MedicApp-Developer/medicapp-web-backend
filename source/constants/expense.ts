@@ -1,0 +1,7 @@
+export class ExpenseTypes {
+    public static EXPENSETYE_SALARY: string = "EXPENSETYE_SALARY"; 
+    public static EXPENSETYE_ELECTICITY_WATER: string = "EXPENSETYE_ELECTICITY_WATER";
+    public static EXPENSETYE_OFFICE_RENT: string = "EXPENSETYE_OFFICE_RENT";
+    public static EXPENSETYE_VEHICLE_CONSUMABLE: string = "EXPENSETYE_VEHICLE_CONSUMABLE";
+    public static EXPENSETYE_UN_EXPECTED: string = "EXPENSETYE_UN_EXPECTED";
+}
