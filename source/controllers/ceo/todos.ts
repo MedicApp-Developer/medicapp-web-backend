@@ -69,8 +69,22 @@ const getTodos = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const deleteTodo = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params
+
+    try {
+        const slot = await Todo.deleteOne({ _id: id });
+
+        return makeResponse(res, 200, "Todo deleted successfully", slot, false)
+    } catch (err) {
+        // @ts-ignore
+        return sendErrorResponse(res, 400, err.message, SERVER_ERROR_CODE)
+    }
+}
+
 export default {
     createTodo,
     getTodos,
-    getDateTodos
+    getDateTodos,
+    deleteTodo
 };

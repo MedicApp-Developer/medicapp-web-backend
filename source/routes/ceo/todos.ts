@@ -8,8 +8,6 @@ const router = express.Router()
 router.post('/', extractJWT, controller.createTodo)
 router.get('/:date', extractJWT, controller.getDateTodos)
 router.get('/', extractJWT, controller.getTodos)
-
-
-// router.delete('/delete/:id', extractJWT, controller.deleteDoctorSlot);
+router.delete('/delete/:id', extractJWT, controller.deleteTodo);
 
 export = router
